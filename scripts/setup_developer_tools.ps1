@@ -1,4 +1,4 @@
-﻿# UTF-8 Compatibility
+# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [switch]$CheckOnly,
@@ -11,8 +11,7 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$OutputEncoding = [System.Text.Encoding]::UTF8
+. (Join-Path $PSScriptRoot 'lib\bootstrap.ps1')
 
 
 $homeRepo = Split-Path -Parent $PSScriptRoot

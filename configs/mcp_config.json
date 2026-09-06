@@ -15,7 +15,7 @@
       "args": [
         "-y",
         "mcp-server-sqlite-npx",
-        "D:/Development/GitHub/00_Dev-Control-Center/cases.db"
+        "__HOME_REPO__/cases.db"
       ]
     }
   }

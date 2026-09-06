@@ -1,12 +1,11 @@
-﻿# UTF-8 Compatibility
+# UTF-8 Compatibility
 [CmdletBinding()]
 param()
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$OutputEncoding = [System.Text.Encoding]::UTF8
+. (Join-Path $PSScriptRoot 'lib\bootstrap.ps1')
 
 $homeRepo = Split-Path -Parent $PSScriptRoot
 $powerShell7 = Get-Command 'pwsh.exe' -ErrorAction SilentlyContinue | Select-Object -First 1

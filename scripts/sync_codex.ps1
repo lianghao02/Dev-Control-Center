@@ -10,19 +10,15 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$OutputEncoding = [System.Text.Encoding]::UTF8
+. (Join-Path $PSScriptRoot 'lib\bootstrap.ps1')
 
-if ($Execute) {
-    $Force = $true
-    $PruneBackups = $true
-} elseif (-not $Force -and -not $CheckOnly) {
+if (-not $Execute -and -not $Force -and -not $CheckOnly) {
     $CheckOnly = $true
 }
 
 $homeRepo = Split-Path -Parent $PSScriptRoot
 if ([string]::IsNullOrWhiteSpace($homeRepo)) {
-    $homeRepo = if (Test-Path -LiteralPath 'C:\Development\GitHub\00_Dev-Control-Center') { 'C:\Development\GitHub\00_Dev-Control-Center' } else { 'C:\Development\GitHub\00_home' }
+    throw '無法從腳本位置判定控制中心專案根目錄。'
 }
 $githubRoot = Split-Path -Parent $homeRepo
 $codexHome = Join-Path $env:USERPROFILE '.codex'
@@ -48,6 +44,13 @@ function Get-TreeHash([string]$Path) {
     finally { $stream.Dispose() }
 }
 
+function Get-TextHash([string]$Content) {
+    $bytes = [Text.Encoding]::UTF8.GetBytes($Content)
+    $stream = [IO.MemoryStream]::new($bytes)
+    try { return (Get-FileHash -InputStream $stream -Algorithm SHA256).Hash }
+    finally { $stream.Dispose() }
+}
+
 function Get-BackupDirectory([string]$Target) {
     $backupSession = Get-Date -Format 'yyyyMMdd-HHmmss'
     $targetLabel = [regex]::Replace($Target.TrimEnd([char[]]('\', '/')), '[^A-Za-z0-9._-]', '_').Trim('_')
@@ -57,9 +60,9 @@ function Get-BackupDirectory([string]$Target) {
     return Join-Path $codexHome (Join-Path (Join-Path 'bridge-backups' $backupSession) $targetLabel)
 }
 
-function Sync-ManagedItem([string]$Source, [string]$Target, [hashtable]$Old, [hashtable]$New) {
-    if (-not (Test-Path -LiteralPath $Source)) { throw "Source does not exist: $Source" }
-    $sourceHash = Get-TreeHash $Source
+function Sync-ManagedItem([string]$Source, [string]$Target, [hashtable]$Old, [hashtable]$New, [string]$Content = $null) {
+    if ($null -eq $Content -and -not (Test-Path -LiteralPath $Source)) { throw "Source does not exist: $Source" }
+    $sourceHash = if ($null -eq $Content) { Get-TreeHash $Source } else { Get-TextHash $Content }
     $targetHash = if (Test-Path -LiteralPath $Target) { Get-TreeHash $Target } else { $null }
     $knownHash = if ($Old.ContainsKey($Target)) { $Old[$Target] } else { $null }
 
@@ -101,7 +104,11 @@ function Sync-ManagedItem([string]$Source, [string]$Target, [hashtable]$Old, [ha
         Copy-Item -LiteralPath $Target -Destination $backup -Recurse -Force
         Remove-Item -LiteralPath $Target -Recurse -Force
     }
-    Copy-Item -LiteralPath $Source -Destination $Target -Recurse -Force
+    if ($null -eq $Content) {
+        Copy-Item -LiteralPath $Source -Destination $Target -Recurse -Force
+    } else {
+        [IO.File]::WriteAllText($Target, $Content, [Text.UTF8Encoding]::new($false))
+    }
     Write-Output "Synced: $Target"
 }
 
@@ -121,7 +128,13 @@ $items = @(
 )
 $mcpConfigSrc = Join-Path $homeRepo 'configs\mcp_config.json'
 if (Test-Path -LiteralPath $mcpConfigSrc -PathType Leaf) {
-    $items += @{ Source = $mcpConfigSrc; Target = Join-Path $antigravityHome 'mcp_config.json' }
+    $mcpConfigContent = Get-Content -LiteralPath $mcpConfigSrc -Raw -Encoding UTF8
+    if ($mcpConfigContent -notmatch '__HOME_REPO__') {
+        throw "MCP 設定缺少 __HOME_REPO__ 路徑權杖：$mcpConfigSrc"
+    }
+    $resolvedHomeRepo = [IO.Path]::GetFullPath($homeRepo).Replace('\', '/')
+    $mcpConfigContent = $mcpConfigContent.Replace('__HOME_REPO__', $resolvedHomeRepo)
+    $items += @{ Source = $mcpConfigSrc; Target = Join-Path $antigravityHome 'mcp_config.json'; Content = $mcpConfigContent }
 }
 $skillSets = @(
     @{ Name = '共用'; Skills = @($skillManifest.shared); Targets = @($codexSkillRoot, $antigravitySkillRoot) },
@@ -149,7 +162,10 @@ foreach ($dir in $availableSkillDirs) {
         Write-Warning "發現未分流的 Skill 目錄 [$($dir.Name)]，未包含於 configs\skills-manifest.json 中。"
     }
 }
-foreach ($item in $items) { Sync-ManagedItem $item.Source $item.Target $old $new }
+foreach ($item in $items) {
+    $content = if ($item.ContainsKey('Content')) { $item['Content'] } else { $null }
+    Sync-ManagedItem $item.Source $item.Target $old $new $content
+}
 
 if (-not $CheckOnly -and $PruneBackups) {
     $backupBase = Join-Path $codexHome 'bridge-backups'

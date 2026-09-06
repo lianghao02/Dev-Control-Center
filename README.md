@@ -85,8 +85,11 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\0
 # 唯讀檢查
 .\scripts\sync_codex.ps1 -CheckOnly
 
-# 正式同步
-.\scripts\sync_codex.ps1
+# 正式同步（不覆蓋已修改或未受管理的個人設定）
+.\scripts\sync_codex.ps1 -Execute
+
+# 僅在已確認要覆蓋目標設定時才使用 Force
+.\scripts\sync_codex.ps1 -Execute -Force
 ```
 
 ## 本機專屬資料
@@ -105,6 +108,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\0
 
 - 同步專案前先檢查 Git 狀態；有未提交變更時直接略過。
 - 只允許 `pull --ff-only`，不自動合併、rebase 或 force push。
+- 同步中樞將每個版本庫明確分為 `Synced`、`Modified`、`Ahead`、`Behind`、`Diverged`、`Error` 或 `Missing`；只有 `Ahead` 會進入「推送既有提交」流程，該流程不會執行 `git add` 或 `git commit`。
 - 產生 JSON 與部署文件時使用 UTF-8 無 BOM，避免 PowerShell 5.1 編碼差異。
 - 部署前保留可復原備份，並限制備份數量，避免長期累積。
 

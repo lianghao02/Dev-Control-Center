@@ -1,4 +1,4 @@
-﻿# UTF-8 Compatibility
+# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [string]$DevelopmentRoot = '',
@@ -9,8 +9,7 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$OutputEncoding = [System.Text.Encoding]::UTF8
+. (Join-Path $PSScriptRoot 'scripts\lib\bootstrap.ps1')
 
 # 優先使用 PowerShell 7 正確解析無 BOM 的 UTF-8 子腳本；未安裝時仍支援
 # Windows PowerShell 5.1，並於呼叫階段建立同目錄的暫時 BOM 複本。

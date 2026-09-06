@@ -1,10 +1,10 @@
-﻿@echo off
+@echo off
 chcp 65001 >nul
 title [2] 建置所有桌面應用程式
 cd /d "%~dp0"
 set "PS_HOST=pwsh.exe"
 where.exe pwsh.exe >nul 2>&1
 if errorlevel 1 set "PS_HOST=powershell.exe"
-"%PS_HOST%" -NoProfile -ExecutionPolicy Bypass -File "%~dp0build_all_desktop_apps.ps1" -Execute %*
+"%PS_HOST%" -NoProfile -ExecutionPolicy Bypass -File "%~dp0build_all_desktop_apps.ps1" -Execute
 echo.
 pause

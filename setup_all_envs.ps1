@@ -1,4 +1,4 @@
-﻿# UTF-8 Compatibility
+# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [string]$DevelopmentRoot = '',
@@ -8,18 +8,14 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$OutputEncoding = [System.Text.Encoding]::UTF8
+. (Join-Path $PSScriptRoot 'scripts\lib\bootstrap.ps1')
 
 if ([string]::IsNullOrWhiteSpace($DevelopmentRoot)) {
     $parent = Split-Path -Parent $PSScriptRoot
-    if ($parent -and ((Split-Path -Leaf $parent) -match '(?i)^GitHub$')) {
-        $DevelopmentRoot = $parent
-    } elseif (Test-Path -LiteralPath 'D:\Development\GitHub') {
-        $DevelopmentRoot = 'D:\Development\GitHub'
-    } else {
-        $DevelopmentRoot = 'C:\Development\GitHub'
+    if ([string]::IsNullOrWhiteSpace($parent)) {
+        throw '無法從腳本位置判定開發根目錄；請以 -DevelopmentRoot 明確指定。'
     }
+    $DevelopmentRoot = $parent
 }
 
 $root = [IO.Path]::GetFullPath($DevelopmentRoot)

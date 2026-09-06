@@ -1,4 +1,4 @@
-﻿# UTF-8 Compatibility
+# UTF-8 Compatibility
 param(
 
 
@@ -36,6 +36,8 @@ $ErrorActionPreference = 'Stop'
 
 
 Set-StrictMode -Version Latest
+
+. (Join-Path $PSScriptRoot 'lib\bootstrap.ps1')
 
 
 
@@ -172,41 +174,11 @@ if (-not (Test-Path -LiteralPath $config.Manifest -PathType Leaf)) {
 
 
 if ([string]::IsNullOrWhiteSpace($DevelopmentRoot)) {
-
-
-
     $parent = Split-Path -Parent $projectRoot
-
-
-
-    if ($parent -and ((Split-Path -Leaf $parent) -match '(?i)^GitHub$')) {
-
-
-
-        $DevelopmentRoot = $parent
-
-
-
-    } elseif (Test-Path -LiteralPath 'D:\') {
-
-
-
-        $DevelopmentRoot = 'D:\Development\GitHub'
-
-
-
-    } else {
-
-
-
-        $DevelopmentRoot = 'C:\Development\GitHub'
-
-
-
+    if ([string]::IsNullOrWhiteSpace($parent)) {
+        throw '無法從腳本位置判定開發根目錄；請以 -DevelopmentRoot 明確指定。'
     }
-
-
-
+    $DevelopmentRoot = $parent
 }
 
 
