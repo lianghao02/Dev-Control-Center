@@ -1,37 +1,43 @@
 # LiangHao Dev Control Center (開發控制中心)
 
-本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.3、共用 Agent Skills、13 個開發 Repository 清單，以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.5.0**。
+本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.3、共用 Agent Skills、14 個開發 Repository 清單，以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.6.0**。
 
 > 🌐 **公開專案展示入口**：所有作品集、Demo 與 GitHub Pages 頁面已獨立遷移至 [lianghao02/Project-Hub](https://github.com/lianghao02/Project-Hub)（展示站：[https://lianghao02.github.io/Project-Hub/](https://lianghao02.github.io/Project-Hub/)）。中央控制中心專注於環境與治理，不再兼任展示網站。
 
-## 技術架構現況（2026-09-04）
+## 技術架構現況（2026-09-08）
 
 - 工作區主力技術依專案用途分流：AI 鑑識與行政自動化維持 Python、免安裝資料工具維持純 Web、Windows 原生工具採 C#／.NET 8／WPF。
 - `03_Police-Image-Toolkit`、`06_System-Optimizer-Tool` 與 `09_PaperSwitch` 已完成 C#／.NET 8／WPF 遷移；舊版分別封存於 `legacy_web/` 與 `legacy-python/`，供回歸比對與備援。
 - `04_Photo-Report-Generator` 已為純前端 SPA，並不依賴 VBA 或 Microsoft Office；其餘專案尚未進行 Rust、Tauri 或 TypeScript 遷移。
 - 專案入口網站已獨立為 `13_Project-Hub`，採純靜態 Web 與 GitHub Pages 託管。
+- 最新納入相片管理工具 `14_Google-Photos-Takeout-Organizer`，總計管理 14 個 Repository。
 
 ## 下載、需求與執行入口
 
 - **用途**：集中管理專案清單、Git 同步、Codex／Antigravity 規則，以及仍採 Python 的專案可攜環境。
 - **必要軟體**：Windows 10/11、Git for Windows；建議使用 PowerShell 7，未安裝時各入口會自動退回 Windows PowerShell 5.1。管理功能本身不要求先安裝 Python。
 - **下載**：`git clone https://github.com/lianghao02/Dev-Control-Center.git 00_Dev-Control-Center`。
-- **主要入口**：一般使用者直接雙擊根目錄的 `1_`～`3_` 旗艦批次檔；進階使用者可執行 `scripts/` 下對應 PowerShell 腳本。
+- **主要入口**：一般使用者直接雙擊根目錄的 `0_` 手帳儀表板或 `1_`～`3_` 旗艦批次檔；進階使用者可執行 `scripts/` 下對應 PowerShell 腳本。
 - **網路需求**：Clone、Pull、Push 與首次下載 Python 可攜核心時需要網路；若 `downloads/` 已有安裝母檔，Python 環境可離線建置。
 - **打包方式**：本專案是管理腳本集合，不需編譯或安裝；備份時保留完整資料夾即可。
 
 ## 雙擊快捷捷徑 (One-Click Flagship Batch Tools)
 
-在 `00_Dev-Control-Center` 根目錄提供精煉的 **3 大旗艦批次中樞**，全數採用純數字選單與 UTF-8 with BOM 防亂碼架構：
+在 `00_Dev-Control-Center` 根目錄提供精煉的 **4 大旗艦批次中樞**，全數採用 UTF-8 with BOM 防亂碼架構：
+
+0. 📔 **`0_控制中心_手帳儀表板.bat`** (v1.6.0 全新旗艦 GUI)：
+   - 採用**日系手帳雜貨風格（Japanese Techo / Zakka）**之 WPF 現代圖形介面（70% 專業管理效率 + 30% 手帳美學）。
+   - 整合 **5 大管理分頁**：專案總覽 (14 Repo)、安全 Git 同步、桌面程式建置、開發環境管理、Codex / Antigravity 管理。
+   - 具備 10 條嚴格安全防線：絕不 Force Push、絕不自動 Commit/Stash、非快轉或分歧/衝突嚴格略過。
 
 1. 🌟 **`1_全專案智慧同步中樞.bat`** (日常開發主力)：
-   - 雙擊即時掃描 13 個專案之本機與雲端狀態。
+   - 雙擊即時掃描 14 個專案之本機與雲端狀態。
    - **`[1] ⚡ 智慧全自動同步`**：只拉取工作目錄乾淨的版本庫，分發 AI 設定後只推送既有提交；未提交修改一律保留並提示逐案檢視。
    - 支援 `main` 與 `master`，並提供 `[2]` 僅拉取更新、`[3]` 僅推送既有提交、`[4]` 僅分發 AI 憲法與 Skills。
 
-2. 🌟 **`2_建置所有桌面應用程式.bat`** (版本發布主力)：
+2. 🌟 **`2_建置所有桌面應用程式.bat`** (版本建置主力)：
    - 一鍵集中編譯 6 個桌面／可攜式應用程式（`01`, `03`, `04`, `06`, `07`, `09`）。
-   - `03`、`04`、`06`、`09` 的發布版號直接讀取各自 `version.txt`；正式 Release 僅在 HEAD 與目標 tag 完全一致時才允許上傳。
+   - 嚴格分離「建置」與「發布（Release）」；GUI 與批次檔皆提供安全建置與即時輸出檢視。
 
 3. 🌟 **`3_環境建置與工具安裝.bat`** (環境初始化與維護)：
    - **`[1]`** 一鍵為 Python 專案（`01`, `07`, `10`, `12`）建置可攜式 Python 3.13 環境（`python_embed`）。

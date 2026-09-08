@@ -1,6 +1,15 @@
 # 📜 變更歷史 (CHANGELOG)
 
-## 未發布（2026-09-03）
+## 🚀 v1.6.0 (2026-09-08)
+- **日系手帳雜貨風 GUI (LiangHao 開發手帳)**：新增 `0_控制中心_手帳儀表板.bat`、`scripts/gui.ps1` 與 `scripts/gui/MainWindow.xaml`。提供 70% 專業管理工具清晰度 + 30% 日系手帳美學（米白底色、芥末綠、乾燥玫瑰色彩標籤、紙質便籤卡片）。
+- **完整 14 專案管理**：`development-repositories.json` 納入第 14 個專案 `14_Google-Photos-Takeout-Organizer`，提供即時狀態掃描與過濾。
+- **10 條嚴格安全防線**：全面落實 Git 安全狀態流（只 Push 已存在 Commit、只 `--ff-only` 快轉更新、`Modified`/`Diverged`/`Conflict` 嚴格略過；執行前再次檢查狀態；網路失敗安全標註為「無法確認」而非誤判「已同步」）。
+- **建置與發布嚴格分離**：GUI 桌面建置分頁直連現有穩定之 `build_all_desktop_apps.ps1`，不混淆日常建置與正式 Tag 發布流程。
+- **環境初始化隔離**：將 Git、PowerShell、Python、.NET 之檢測與「全新電腦初始化（Clone 專案 / 建立 Python 可攜環境）」分區管理，避免日常使用誤觸初始化動作。
+- **Codex / Antigravity 治理強化**：支援 `AGENTS.md` 與中央 Skills 設定檢查與分流同步（封裝 `sync_codex.ps1`），維持控制中心職責，不偏題建立聊天介面。
+- **自動化驗收測試套件**：建立 `scripts/tests/test_v16_acceptance.ps1`，涵蓋 Clean、Modified、Ahead、Behind、Unknown、Missing、隔離性、14 專案掃描、Build 預覽與 GUI 載入 10 大核心測試，驗收全數通過。
+
+## 2026-09-03
 - **中央同步可靠性**：同步中樞以分支實際上游判定 `Synced`、`Modified`、`Ahead`、`Behind`、`Diverged`、`Error` 與 `Missing`；拉取僅允許快轉，推送只處理既有提交。
 - **新電腦可攜性**：核心腳本改由 `00_Dev-Control-Center` 所在位置推導開發根目錄，移除對固定 `D:`／`C:` 路徑的假設；MCP 設定部署時自動填入實際專案位置。
 - **個人設定保護**：`sync_codex.ps1 -Execute` 不再隱含強制覆蓋；只有明確加上 `-Force` 才能覆蓋受管理目標的既有修改。

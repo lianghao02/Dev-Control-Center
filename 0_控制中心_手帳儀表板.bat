@@ -1,0 +1,9 @@
+@echo off
+chcp 65001 >nul
+title [0] 開發控制中心 - 手帳儀表板
+cd /d "%~dp0"
+set "PS_HOST=pwsh.exe"
+where.exe pwsh.exe >nul 2>&1
+if errorlevel 1 set "PS_HOST=powershell.exe"
+"%PS_HOST%" -STA -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\gui.ps1"
+if errorlevel 1 pause

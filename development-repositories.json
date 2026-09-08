@@ -14,6 +14,7 @@
     { "folder": "10_Smart-Photo-Organizer", "repository": "Smart-Photo-Organizer" },
     { "folder": "11_Calendar-Card-App", "repository": "Calendar-Card-App" },
     { "folder": "12_ClipMask-AI", "repository": "ClipMask-AI" },
-    { "folder": "13_Project-Hub", "repository": "Project-Hub" }
+    { "folder": "13_Project-Hub", "repository": "Project-Hub" },
+    { "folder": "14_Google-Photos-Takeout-Organizer", "repository": "14_Google-Photos-Takeout-Organizer" }
   ]
 }

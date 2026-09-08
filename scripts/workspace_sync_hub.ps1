@@ -20,16 +20,17 @@ $repositories = @((Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | 
 
 function Get-StateColor([string]$State) {
     switch ($State) {
-        'Synced' { 'Green' }; 'Ahead' { 'Magenta' }; 'Behind' { 'Cyan' }
-        'Modified' { 'Yellow' }; 'Diverged' { 'Red' }; 'Missing' { 'DarkYellow' }
+        'Clean' { 'Green' }; 'Synced' { 'Green' }; 'Ahead' { 'Magenta' }; 'Behind' { 'Cyan' }
+        'Modified' { 'Yellow' }; 'Diverged' { 'Red' }; 'Conflict' { 'Red' }; 'Missing' { 'DarkYellow' }
+        'Unknown' { 'DarkGray' }
         default { 'Red' }
     }
 }
 
 function Write-ProjectState([object]$Status) {
     $symbol = switch ($Status.State) {
-        'Synced' { '✓' }; 'Ahead' { '↑' }; 'Behind' { '↓' }; 'Modified' { '⚠' }
-        'Diverged' { '↕' }; 'Missing' { '?' }; default { '✕' }
+        'Clean' { '✓' }; 'Synced' { '✓' }; 'Ahead' { '↑' }; 'Behind' { '↓' }; 'Modified' { '⚠' }
+        'Diverged' { '↕' }; 'Conflict' { '⚡' }; 'Missing' { '?' }; 'Unknown' { '◌' }; default { '✕' }
     }
     Write-Host ("{0,-38} {1} {2}" -f $Status.Name, $symbol, $Status.Detail) -ForegroundColor (Get-StateColor $Status.State)
 }
@@ -46,17 +47,17 @@ function Get-WorkspaceStatus {
         $name = [string]$repository.folder
         $path = Join-Path $devRoot $name
         $status = Get-ManagedRepositoryStatus -RepositoryPath $path
-        if ($status.State -notin @('Missing', 'Error')) {
+        if ($status.State -notin @('Missing', 'Error', 'Unknown', 'Conflict')) {
             $safePath = $path.Replace('\', '/')
             $null = @(git -c "safe.directory=$safePath" -C $path fetch origin --prune --quiet 2>$null)
             if ($LASTEXITCODE -ne 0) {
-                $status.State = 'Error'; $status.Detail = '無法取得遠端狀態；請檢查網路或 origin'
+                $status.State = 'Unknown'; $status.Detail = '無法連線遠端或查詢失敗 (無法確認)'
             } else {
                 $status = Get-ManagedRepositoryStatus -RepositoryPath $path
             }
         }
-        $status | Add-Member -NotePropertyName Index -NotePropertyValue $index
-        $status | Add-Member -NotePropertyName Name -NotePropertyValue $name
+        $status | Add-Member -NotePropertyName Index -NotePropertyValue $index -Force
+        $status | Add-Member -NotePropertyName Name -NotePropertyValue $name -Force
         $results.Add($status)
         Write-ProjectState $status
     }
@@ -69,11 +70,15 @@ function Get-WorkspaceStatus {
 
 function Invoke-PullAll([object[]]$ScanList) {
     foreach ($item in $ScanList) {
-        if ($item.State -ne 'Behind') {
-            if ($item.State -in @('Modified', 'Diverged', 'Error')) { Write-Host "🛡️  $($item.Name)：$($item.Detail)" -ForegroundColor Yellow }
+        # 真正操作前重新檢查 Git 狀態 (安全規則 3)
+        $fresh = Get-ManagedRepositoryStatus -RepositoryPath $item.Path
+        if ($fresh.State -ne 'Behind') {
+            if ($fresh.State -in @('Modified', 'Diverged', 'Conflict', 'Unknown', 'Error')) {
+                Write-Host "🛡️  $($item.Name)：$($fresh.Detail)；已略過安全快轉。" -ForegroundColor Yellow
+            }
             continue
         }
-        Write-Host "⏳ 正在安全快轉：$($item.Name) ($($item.Detail))" -ForegroundColor Yellow
+        Write-Host "⏳ 正在安全快轉：$($item.Name) ($($fresh.Detail))" -ForegroundColor Yellow
         $safePath = $item.Path.Replace('\', '/')
         $null = @(git -c "safe.directory=$safePath" -C $item.Path merge --ff-only '@{upstream}' 2>$null)
         if ($LASTEXITCODE -eq 0) { Write-Host "✅ $($item.Name)：已完成安全快轉" -ForegroundColor Green }
@@ -83,11 +88,15 @@ function Invoke-PullAll([object[]]$ScanList) {
 
 function Invoke-PushExistingCommits([object[]]$ScanList) {
     foreach ($item in $ScanList) {
-        if ($item.State -ne 'Ahead') {
-            if ($item.State -in @('Modified', 'Behind', 'Diverged', 'Error')) { Write-Host "🛡️  $($item.Name)：$($item.Detail)；僅 Push 模式未進行任何提交或修改。" -ForegroundColor Yellow }
+        # 真正操作前重新檢查 Git 狀態 (安全規則 3)
+        $fresh = Get-ManagedRepositoryStatus -RepositoryPath $item.Path
+        if ($fresh.State -ne 'Ahead') {
+            if ($fresh.State -in @('Modified', 'Behind', 'Diverged', 'Conflict', 'Unknown', 'Error')) {
+                Write-Host "🛡️  $($item.Name)：$($fresh.Detail)；僅 Push 模式未進行任何提交或修改。" -ForegroundColor Yellow
+            }
             continue
         }
-        Write-Host "⏳ 正在推送既有提交：$($item.Name) ($($item.Detail))" -ForegroundColor Yellow
+        Write-Host "⏳ 正在推送既有提交：$($item.Name) ($($fresh.Detail))" -ForegroundColor Yellow
         $safePath = $item.Path.Replace('\', '/')
         $null = @(git -c "safe.directory=$safePath" -C $item.Path push 2>$null)
         if ($LASTEXITCODE -eq 0) { Write-Host "✅ $($item.Name)：既有提交已推送" -ForegroundColor Green }

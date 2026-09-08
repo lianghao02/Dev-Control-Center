@@ -1,0 +1,778 @@
+<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="📓 LiangHao 開發手帳 🌸 Dev Control Center v1.6"
+    Height="820" Width="1180"
+    MinHeight="700" MinWidth="980"
+    WindowStartupLocation="CenterScreen"
+    Background="#FBF9F5"
+    FontFamily="Microsoft JhengHei UI, Segoe UI, sans-serif"
+    FontSize="13"
+    Foreground="#2D3748">
+
+    <Window.Resources>
+        <!-- 日系手帳奶油低飽和色系調色盤 -->
+        <SolidColorBrush x:Key="BgCream" Color="#FBF9F5" />
+        <SolidColorBrush x:Key="CardBg" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="CardBorder" Color="#EAE3D6" />
+        <SolidColorBrush x:Key="CardBorderDark" Color="#D5C7B2" />
+        
+        <SolidColorBrush x:Key="MemoYellow" Color="#FFFDF2" />
+        <SolidColorBrush x:Key="MemoBorderYellow" Color="#EFE1B8" />
+        <SolidColorBrush x:Key="MemoGreen" Color="#F4F8F5" />
+        <SolidColorBrush x:Key="MemoBorderGreen" Color="#C9DEC7" />
+        <SolidColorBrush x:Key="MemoRose" Color="#FDF5F5" />
+        <SolidColorBrush x:Key="MemoBorderRose" Color="#F3D1D1" />
+        
+        <SolidColorBrush x:Key="TapeSage" Color="#7A9A8B" />
+        <SolidColorBrush x:Key="TapeRose" Color="#D88A8A" />
+        <SolidColorBrush x:Key="TapeHoney" Color="#D4A373" />
+        <SolidColorBrush x:Key="TapeSky" Color="#5C8FA8" />
+        <SolidColorBrush x:Key="TapeLavender" Color="#9B8AA8" />
+        <SolidColorBrush x:Key="TapeCharcoal" Color="#4A5568" />
+        
+        <SolidColorBrush x:Key="TextMain" Color="#2D3748" />
+        <SolidColorBrush x:Key="TextMuted" Color="#718096" />
+        <SolidColorBrush x:Key="TextWarm" Color="#8C6D53" />
+
+        <!-- 貼紙標籤樣式 -->
+        <Style x:Key="StickerTag" TargetType="Border">
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="8,3" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+
+        <!-- 手帳風格按鈕樣式 -->
+        <Style x:Key="TechoButton" TargetType="Button">
+            <Setter Property="Background" Value="#F7F3EC" />
+            <Setter Property="Foreground" Value="#2D3748" />
+            <Setter Property="BorderBrush" Value="#D5C7B2" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="14,6" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#EFE9DC" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#B8A48B" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#E5DDD0" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 主要動作按鈕 (薄荷鼠尾草綠) -->
+        <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource TechoButton}">
+            <Setter Property="Background" Value="#7A9A8B" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="BorderBrush" Value="#678476" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#678476" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#556E62" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 警示/次要動作按鈕 (玫瑰赤陶色) -->
+        <Style x:Key="WarningActionButton" TargetType="Button" BasedOn="{StaticResource TechoButton}">
+            <Setter Property="Background" Value="#D88A8A" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="BorderBrush" Value="#BA6F6F" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#BA6F6F" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#9F5858" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 藍天溫潤動作按鈕 -->
+        <Style x:Key="SkyActionButton" TargetType="Button" BasedOn="{StaticResource TechoButton}">
+            <Setter Property="Background" Value="#5C8FA8" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="BorderBrush" Value="#49758C" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#49758C" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#385F73" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- 0: 頂部手帳紙膠帶裝飾與標題列 -->
+            <RowDefinition Height="Auto" />
+            <!-- 1: 便條紙速覽列 (Memos) -->
+            <RowDefinition Height="Auto" />
+            <!-- 2: 主功能頁面 (Tabs) -->
+            <RowDefinition Height="*" />
+            <!-- 3: 底部手帳日誌控制台 -->
+            <RowDefinition Height="Auto" />
+            <!-- 4: 最底狀態列 -->
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- 0: 頂部手帳紙膠帶裝飾與標題列 -->
+        <Border Grid.Row="0" Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="0,0,0,1" Padding="20,12,20,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- 左側：手帳標題與紙膠帶徽章 -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#7A9A8B" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                        <TextBlock Text="📓 TECHO" Foreground="#FFFFFF" FontSize="11" FontWeight="Bold" />
+                    </Border>
+                    <TextBlock Text="LiangHao 開發手帳" FontSize="20" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <Border Background="#F4EFEA" BorderBrush="#D5C7B2" BorderThickness="1" CornerRadius="12" Padding="8,2" VerticalAlignment="Center">
+                        <TextBlock Text="🌸 Dev Control Center v1.6" FontSize="12" FontWeight="SemiBold" Foreground="#7A624E" />
+                    </Border>
+                    <TextBlock Text="｜ 70% 管理中樞 + 30% 手帳裝飾" FontSize="12" Foreground="#A0AEC0" VerticalAlignment="Center" Margin="10,0,0,0" />
+                </StackPanel>
+
+                <!-- 右側：全域重新整理與說明按鈕 -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="BtnQuickScan" Content="⚡ 快速掃描 (本機)" Style="{StaticResource TechoButton}" Margin="0,0,8,0" Padding="12,5" ToolTip="快速讀取本機 Git 狀態與快取差異，無網路等待" />
+                    <Button x:Name="BtnFullScan" Content="🔍 完整掃描 (含遠端)" Style="{StaticResource PrimaryActionButton}" Margin="0,0,8,0" Padding="12,5" ToolTip="連線 GitHub 更新遠端分支後進行完整比對" />
+                    <Button x:Name="BtnOpenWorkspace" Content="📂 開啟工作區" Style="{StaticResource TechoButton}" Padding="10,5" ToolTip="開啟 D:\Development\GitHub" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 1: 便條紙速覽列 (Memos) -->
+        <Border Grid.Row="1" Background="#FBF9F5" Padding="20,12,20,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2.5*" />
+                    <ColumnDefinition Width="3.2*" />
+                    <ColumnDefinition Width="2.3*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Memo 1: 專案總覽統計便條 (黃色紙張) -->
+                <Border Grid.Column="0" Background="{StaticResource MemoYellow}" BorderBrush="{StaticResource MemoBorderYellow}" BorderThickness="1" CornerRadius="10" Padding="14,10" Margin="0,0,10,0">
+                    <StackPanel>
+                        <DockPanel LastChildFill="True" Margin="0,0,0,6">
+                            <Border Background="#D4A373" CornerRadius="3" Padding="4,1" Margin="0,0,6,0">
+                                <TextBlock Text="📌 專案概況" Foreground="#FFFFFF" FontSize="11" FontWeight="Bold" />
+                            </Border>
+                            <TextBlock x:Name="TxtRepoCountLabel" Text="管理 14 個版本庫" FontSize="12" FontWeight="Bold" Foreground="#6B533E" VerticalAlignment="Center" />
+                        </DockPanel>
+                        <WrapPanel x:Name="PanelRepoStats">
+                            <Border Background="#E8F4EC" BorderBrush="#B2D8BB" BorderThickness="1" CornerRadius="10" Padding="6,2" Margin="0,0,6,4">
+                                <TextBlock x:Name="TxtStatClean" Text="✓ 已同步: 0" FontSize="11" Foreground="#2A6B3C" FontWeight="SemiBold" />
+                            </Border>
+                            <Border Background="#FEF0F0" BorderBrush="#F5BABA" BorderThickness="1" CornerRadius="10" Padding="6,2" Margin="0,0,6,4">
+                                <TextBlock x:Name="TxtStatModified" Text="⚠ 待處理: 0" FontSize="11" Foreground="#A83232" FontWeight="SemiBold" />
+                            </Border>
+                            <Border Background="#F3F0F8" BorderBrush="#D1C4E9" BorderThickness="1" CornerRadius="10" Padding="6,2" Margin="0,0,6,4">
+                                <TextBlock x:Name="TxtStatAhead" Text="↑ 待上傳: 0" FontSize="11" Foreground="#5E35B1" FontWeight="SemiBold" />
+                            </Border>
+                            <Border Background="#EDF4F9" BorderBrush="#B8D5E8" BorderThickness="1" CornerRadius="10" Padding="6,2" Margin="0,0,6,4">
+                                <TextBlock x:Name="TxtStatBehind" Text="↓ 待下載: 0" FontSize="11" Foreground="#1976D2" FontWeight="SemiBold" />
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Memo 2: 10 條安全守則守護中 (綠色紙張) -->
+                <Border Grid.Column="1" Background="{StaticResource MemoGreen}" BorderBrush="{StaticResource MemoBorderGreen}" BorderThickness="1" CornerRadius="10" Padding="14,10" Margin="0,0,10,0">
+                    <StackPanel>
+                        <DockPanel LastChildFill="True" Margin="0,0,0,6">
+                            <Border Background="#7A9A8B" CornerRadius="3" Padding="4,1" Margin="0,0,6,0">
+                                <TextBlock Text="🛡️ 安全防線" Foreground="#FFFFFF" FontSize="11" FontWeight="Bold" />
+                            </Border>
+                            <TextBlock Text="10 條安全守則嚴格防護中" FontSize="12" FontWeight="Bold" Foreground="#335841" VerticalAlignment="Center" />
+                        </DockPanel>
+                        <TextBlock Text="• 永不執行 Force Push ｜ 異常停止自動處理 ｜ 先預覽後執行" FontSize="11" Foreground="#4A6B53" Margin="0,0,0,2" />
+                        <TextBlock Text="• 不自動執行 add/commit/stash ｜ 僅限 ff-only 快轉 ｜ 單一失敗不中斷" FontSize="11" Foreground="#4A6B53" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Memo 3: 開發環境狀態小便條 (米白粉色紙張) -->
+                <Border Grid.Column="2" Background="{StaticResource MemoRose}" BorderBrush="{StaticResource MemoBorderRose}" BorderThickness="1" CornerRadius="10" Padding="14,10">
+                    <StackPanel>
+                        <DockPanel LastChildFill="True" Margin="0,0,0,6">
+                            <Border Background="#D88A8A" CornerRadius="3" Padding="4,1" Margin="0,0,6,0">
+                                <TextBlock Text="🌱 開發環境" Foreground="#FFFFFF" FontSize="11" FontWeight="Bold" />
+                            </Border>
+                            <TextBlock Text="主要核心工具鏈" FontSize="12" FontWeight="Bold" Foreground="#6E3B3B" VerticalAlignment="Center" />
+                        </DockPanel>
+                        <TextBlock x:Name="TxtEnvSummary" Text="Git: 檢查中... ｜ PS: pwsh ｜ .NET: 8.0" FontSize="11" Foreground="#6E4E4E" TextTrimming="CharacterEllipsis" Margin="0,0,0,2" />
+                        <TextBlock x:Name="TxtAgentSummary" Text="Agent 憲法: configs/AGENTS.md" FontSize="11" Foreground="#8A6B6B" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- 2: 主功能頁面 (Tabs) -->
+        <TabControl Grid.Row="2" x:Name="MainTabs" Margin="20,6,20,10" Background="Transparent" BorderThickness="0">
+            <TabControl.Resources>
+                <!-- 手帳分頁標籤樣式 -->
+                <Style TargetType="TabItem">
+                    <Setter Property="Background" Value="#EAE3D6" />
+                    <Setter Property="Foreground" Value="#554B3E" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="FontSize" Value="13" />
+                    <Setter Property="Margin" Value="0,0,4,0" />
+                    <Setter Property="Padding" Value="16,8" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border x:Name="tabBorder" Background="{TemplateBinding Background}"
+                                        BorderBrush="#D5C7B2" BorderThickness="1,1,1,0"
+                                        CornerRadius="8,8,0,0"
+                                        Padding="{TemplateBinding Padding}" Margin="{TemplateBinding Margin}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="tabBorder" Property="Background" Value="#FFFFFF" />
+                                        <Setter TargetName="tabBorder" Property="BorderBrush" Value="#EAE3D6" />
+                                        <Setter Property="Foreground" Value="#2D3748" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="tabBorder" Property="Background" Value="#F7F3EC" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+
+            <!-- 頁面 1: 📋 專案總覽 -->
+            <TabItem Header="📋 專案總覽 (14)">
+                <Border Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="1" CornerRadius="0,10,10,10" Padding="16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <!-- 篩選與搜尋工具列 -->
+                            <RowDefinition Height="Auto" />
+                            <!-- 專案清單資料表 -->
+                            <RowDefinition Height="*" />
+                            <!-- 底部項目快速動作 -->
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- 篩選與搜尋列 -->
+                        <Grid Grid.Row="0" Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="篩選標籤：" FontWeight="SemiBold" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <Button x:Name="BtnFilterAll" Content="全部 (14)" Style="{StaticResource TechoButton}" Margin="0,0,6,0" Padding="10,3" />
+                                <Button x:Name="BtnFilterAttention" Content="⚠ 需注意" Style="{StaticResource TechoButton}" Margin="0,0,6,0" Padding="10,3" />
+                                <Button x:Name="BtnFilterAhead" Content="↑ 待上傳" Style="{StaticResource TechoButton}" Margin="0,0,6,0" Padding="10,3" />
+                                <Button x:Name="BtnFilterBehind" Content="↓ 待下載" Style="{StaticResource TechoButton}" Margin="0,0,6,0" Padding="10,3" />
+                                <Button x:Name="BtnFilterClean" Content="✓ 已同步" Style="{StaticResource TechoButton}" Margin="0,0,6,0" Padding="10,3" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="🔍 搜尋專案：" Foreground="#718096" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBox x:Name="TxtSearchBox" Width="200" Padding="6,4" Background="#FBF9F5" BorderBrush="#D5C7B2" BorderThickness="1" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- 專案清單 DataGrid -->
+                        <DataGrid Grid.Row="1" x:Name="GridRepositories" AutoGenerateColumns="False" CanUserAddRows="False"
+                                  CanUserDeleteRows="False" IsReadOnly="True" HeadersVisibility="Column"
+                                  GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F4EFEA"
+                                  Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="1"
+                                  RowHeight="36" SelectionMode="Single" AlternatingRowBackground="#FAF8F5">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="40" />
+                                <DataGridTextColumn Header="專案名稱" Binding="{Binding Name}" Width="260">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                            <Setter Property="Foreground" Value="#2D3748" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                            <Setter Property="Margin" Value="6,0,0,0" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="目前分支" Binding="{Binding Branch}" Width="100">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#4A5568" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Working Tree 狀態" Binding="{Binding WorkingTreeDisplay}" Width="170">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                            <Setter Property="Foreground" Value="{Binding WorkingTreeColor}" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="GitHub 同步狀態" Binding="{Binding SyncDisplay}" Width="170">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                            <Setter Property="Foreground" Value="{Binding SyncColor}" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="狀態詳情 / 人工處理提示" Binding="{Binding Detail}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- 底部項目快速動作列 -->
+                        <Border Grid.Row="2" Background="#FAF8F5" BorderBrush="#EAE3D6" BorderThickness="1,0,1,1" Padding="12,8">
+                            <DockPanel LastChildFill="True">
+                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                                    <Button x:Name="BtnOpenSelectedFolder" Content="📂 開啟所選資料夾" Style="{StaticResource TechoButton}" Margin="0,0,8,0" Padding="10,4" />
+                                    <Button x:Name="BtnOpenSelectedGitHub" Content="🌐 在 GitHub 開啟" Style="{StaticResource TechoButton}" Margin="0,0,8,0" Padding="10,4" />
+                                    <Button x:Name="BtnCopySelectedPath" Content="📋 複製路徑" Style="{StaticResource TechoButton}" Padding="10,4" />
+                                </StackPanel>
+                                <TextBlock x:Name="TxtSelectedRepoInfo" Text="請點選上方專案以檢視詳細路徑與操作" VerticalAlignment="Center" Foreground="#718096" TextTrimming="CharacterEllipsis" />
+                            </DockPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- 頁面 2: ⚡ 安全 Git 同步 -->
+            <TabItem Header="⚡ 安全 Git 同步">
+                <Border Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="1" CornerRadius="0,10,10,10" Padding="20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <!-- 動作控制面板 -->
+                            <RowDefinition Height="Auto" />
+                            <!-- 預覽明細表格 -->
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- 動作面板 -->
+                        <Border Grid.Row="0" Background="{StaticResource MemoYellow}" BorderBrush="{StaticResource MemoBorderYellow}" BorderThickness="1" CornerRadius="10" Padding="16" Margin="0,0,0,16">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock Text="🛡️ 依 10 條安全規則執行 Git 智慧同步" FontSize="15" FontWeight="Bold" Foreground="#4A3B2C" Margin="0,0,0,6" />
+                                    <TextBlock Text="• Ahead → 僅 Push 已存在的 Commit ｜ Behind → 僅以 ff-only 安全快轉" FontSize="12" Foreground="#6B533E" Margin="0,0,0,2" />
+                                    <TextBlock Text="• Modified / Diverged / Conflict / 無法確認 → 自動略過，提示人工處理，絕不覆寫或合併" FontSize="12" Foreground="#6B533E" Margin="0,0,0,2" />
+                                    <TextBlock Text="• 真正執行前，一律重新重新檢查各版本庫 Git 狀態；所有批次操作先預覽，後執行" FontSize="12" Foreground="#8C6D53" FontWeight="SemiBold" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button x:Name="BtnPreviewSyncPlan" Content="👁️ 預覽同步計畫" Style="{StaticResource TechoButton}" Margin="0,0,10,0" Padding="16,10" ToolTip="掃描即時狀態並產生安全同步執行計畫，不修改任何檔案" />
+                                    <Button x:Name="BtnExecuteSafeSync" Content="🚀 執行安全同步" Style="{StaticResource PrimaryActionButton}" Padding="18,10" ToolTip="重新核對 Git 狀態後，執行安全 Pull (ff-only) 與安全 Push" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- 同步計畫預覽清單 -->
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Text="📋 同步執行預覽清冊 (點擊「預覽同步計畫」更新)" FontSize="13" FontWeight="Bold" Foreground="#4A5568" Margin="0,0,0,8" />
+
+                            <DataGrid Grid.Row="1" x:Name="GridSyncPlan" AutoGenerateColumns="False" CanUserAddRows="False"
+                                      CanUserDeleteRows="False" IsReadOnly="True" HeadersVisibility="Column"
+                                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F4EFEA"
+                                      Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="1"
+                                      RowHeight="34" AlternatingRowBackground="#FAF8F5">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="40" />
+                                    <DataGridTextColumn Header="專案名稱" Binding="{Binding Name}" Width="260">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="SemiBold" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="Margin" Value="6,0,0,0" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="當前狀態" Binding="{Binding StateDisplay}" Width="150">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="SemiBold" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="Foreground" Value="{Binding StateColor}" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="預計執行安全動作" Binding="{Binding PlannedAction}" Width="220">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="Bold" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="Foreground" Value="{Binding ActionColor}" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="安全規則防護原因 / 說明" Binding="{Binding ActionReason}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- 頁面 3: 🔨 桌面程式建置 -->
+            <TabItem Header="🔨 桌面程式建置">
+                <Border Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="1" CornerRadius="0,10,10,10" Padding="20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- 控制面板與說明 -->
+                        <Border Grid.Row="0" Background="{StaticResource MemoGreen}" BorderBrush="{StaticResource MemoBorderGreen}" BorderThickness="1" CornerRadius="10" Padding="16" Margin="0,0,0,16">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock Text="🔨 呼叫現有 build_all_desktop_apps.ps1 集中建置" FontSize="15" FontWeight="Bold" Foreground="#2A593E" Margin="0,0,0,6" />
+                                    <TextBlock Text="• GUI 僅作為控制層觸發建置與監看日誌，不重新實作或改寫原有 Build 核心邏輯" FontSize="12" Foreground="#3E6B52" Margin="0,0,0,2" />
+                                    <TextBlock Text="• ⚠️ 建置 (Build) 與發行 (Release) 嚴格分離！本操作僅產出本機二進位包，不建立 GitHub Release 標籤" FontSize="12" FontWeight="Bold" Foreground="#8C4E33" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button x:Name="BtnPreviewBuild" Content="🔍 預覽建置清單" Style="{StaticResource TechoButton}" Margin="0,0,10,0" Padding="14,10" ToolTip="執行 build_all_desktop_apps.ps1 檢查各專案路徑與版本宣告" />
+                                    <Button x:Name="BtnExecuteBuild" Content="🔨 執行本機集中建置" Style="{StaticResource PrimaryActionButton}" Padding="16,10" ToolTip="執行 build_all_desktop_apps.ps1 -Execute 集中編譯全部桌面應用程式" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- 桌面應用程式清冊 -->
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="📦 受管桌面與獨立可攜式應用程式清單" FontSize="13" FontWeight="Bold" Foreground="#4A5568" Margin="0,0,0,8" />
+
+                            <DataGrid Grid.Row="1" x:Name="GridDesktopApps" AutoGenerateColumns="False" CanUserAddRows="False"
+                                      CanUserDeleteRows="False" IsReadOnly="True" HeadersVisibility="Column"
+                                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F4EFEA"
+                                      Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="1"
+                                      RowHeight="34" AlternatingRowBackground="#FAF8F5">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="40" />
+                                    <DataGridTextColumn Header="專案代號與名稱" Binding="{Binding Name}" Width="280">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="SemiBold" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="Margin" Value="6,0,0,0" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="技術架構" Binding="{Binding Tech}" Width="160" />
+                                    <DataGridTextColumn Header="版本號 (version.txt)" Binding="{Binding Version}" Width="150">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="Bold" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="Foreground" Value="#2A6B3C" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="產出目標說明" Binding="{Binding OutputType}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- 頁面 4: 🌿 開發環境管理 -->
+            <TabItem Header="🌿 開發環境管理">
+                <Border Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="1" CornerRadius="0,10,10,10" Padding="20">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <!-- 核心工具狀態卡片 -->
+                            <Border Background="{StaticResource MemoYellow}" BorderBrush="{StaticResource MemoBorderYellow}" BorderThickness="1" CornerRadius="10" Padding="16" Margin="0,0,0,16">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🌱 開發工具鏈檢測 (Git / PowerShell / Python / .NET)" FontSize="15" FontWeight="Bold" Foreground="#4A3B2C" Margin="0,0,0,4" />
+                                        <TextBlock Text="呼叫現有 setup_developer_tools.ps1 進行工具鏈檢查；正常日常操作不重複安裝已存在工具" FontSize="12" Foreground="#7A6046" />
+                                    </StackPanel>
+                                    <Button Grid.Column="1" x:Name="BtnCheckDevTools" Content="🔍 檢查工具鏈狀態" Style="{StaticResource PrimaryActionButton}" Padding="16,8" VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+
+                            <!-- 工具狀態表格 -->
+                            <DataGrid x:Name="GridDevTools" AutoGenerateColumns="False" CanUserAddRows="False"
+                                      CanUserDeleteRows="False" IsReadOnly="True" HeadersVisibility="Column"
+                                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F4EFEA"
+                                      Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="1"
+                                      RowHeight="34" Margin="0,0,0,16" AlternatingRowBackground="#FAF8F5">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="工具名稱" Binding="{Binding Name}" Width="160">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="SemiBold" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="Margin" Value="6,0,0,0" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="安裝狀態" Binding="{Binding StatusDisplay}" Width="130">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="Bold" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="Foreground" Value="{Binding StatusColor}" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="版本號" Binding="{Binding Version}" Width="200" />
+                                    <DataGridTextColumn Header="執行檔路徑 / 說明" Binding="{Binding Path}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <!-- 各專案環境技術分流 -->
+                            <TextBlock Text="📑 各專案技術類型與環境需求" FontSize="13" FontWeight="Bold" Foreground="#4A5568" Margin="0,0,0,8" />
+                            <Border Background="#FAF8F5" BorderBrush="#EAE3D6" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="• Python 可攜專案 (01, 07, 10, 12, 14)：需要 Python 3.13 或各自可攜式 python_embed 環境" FontSize="12" Foreground="#4A5568" Margin="0,0,0,4" />
+                                    <TextBlock Text="• C# .NET 8 WPF 專案 (03, 06, 09)：需要 .NET 8 SDK (建置) 或 .NET 8 Desktop Runtime (執行)" FontSize="12" Foreground="#4A5568" Margin="0,0,0,4" />
+                                    <TextBlock Text="• 純 Web / SPA 專案 (02, 04, 08, 11, 13)：無額外編譯器需求，直接透過瀏覽器執行" FontSize="12" Foreground="#4A5568" />
+                                </StackPanel>
+                            </Border>
+
+                            <!-- 新電腦初始化專區 (紅色警示便條) -->
+                            <Border Background="{StaticResource MemoRose}" BorderBrush="{StaticResource MemoBorderRose}" BorderThickness="1" CornerRadius="10" Padding="16">
+                                <StackPanel>
+                                    <DockPanel LastChildFill="True" Margin="0,0,0,8">
+                                        <Border Background="#D88A8A" CornerRadius="3" Padding="6,2" Margin="0,0,8,0">
+                                            <TextBlock Text="⚠️ 新電腦初始化專區" Foreground="#FFFFFF" FontSize="11" FontWeight="Bold" />
+                                        </Border>
+                                        <TextBlock Text="僅在新電腦初次建置時使用；日常操作請勿反覆執行初始化" FontSize="12" FontWeight="Bold" Foreground="#8C3333" VerticalAlignment="Center" />
+                                    </DockPanel>
+
+                                    <TextBlock Text="本專區包含缺少 Repository 的 Clone 下載，以及 Python 可攜環境 setup_all_envs.ps1 的初始建置。為防誤觸，請先打勾確認。" FontSize="12" Foreground="#7A4A4A" Margin="0,0,0,10" />
+
+                                    <CheckBox x:Name="ChkEnableInit" Content="我確認這是新電腦初次建置或修復環境，日常操作不執行此流程" FontSize="12" FontWeight="SemiBold" Foreground="#6E3B3B" Margin="0,0,0,12" />
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="BtnCloneMissingRepos" Content="📦 補齊缺少之 Repository (git clone)" Style="{StaticResource TechoButton}" Margin="0,0,10,0" Padding="14,8" IsEnabled="False" />
+                                        <Button x:Name="BtnSetupPythonEmbed" Content="🐍 建置 Python 可攜環境 (setup_all_envs.ps1)" Style="{StaticResource WarningActionButton}" Padding="14,8" IsEnabled="False" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </TabItem>
+
+            <!-- 頁面 5: 🤖 Codex / Antigravity 管理 -->
+            <TabItem Header="🤖 Codex / Antigravity 管理">
+                <Border Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="1" CornerRadius="0,10,10,10" Padding="20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- 控制面板與說明 -->
+                        <Border Grid.Row="0" Background="{StaticResource MemoYellow}" BorderBrush="{StaticResource MemoBorderYellow}" BorderThickness="1" CornerRadius="10" Padding="16" Margin="0,0,0,16">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock Text="🤖 Agent 開發憲法與 Skills 同步管理" FontSize="15" FontWeight="Bold" Foreground="#4A3B2C" Margin="0,0,0,6" />
+                                    <TextBlock Text="• 中央單一維護源：configs/AGENTS.md 與 configs/skills/" FontSize="12" Foreground="#6B533E" Margin="0,0,0,2" />
+                                    <TextBlock Text="• 分流部署：依 configs/skills-manifest.json 分流至 Codex (.agents\skills) 與 Antigravity (.gemini\config\skills)" FontSize="12" Foreground="#6B533E" Margin="0,0,0,2" />
+                                    <TextBlock Text="• 📌 定位原則：本工具僅負責 Agent 環境與規則管理，不實作 Agent Chat 對話功能" FontSize="12" FontWeight="Bold" Foreground="#7A6046" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button x:Name="BtnCheckAgentSync" Content="🔍 檢查設定差異 (-CheckOnly)" Style="{StaticResource TechoButton}" Margin="0,0,10,0" Padding="14,10" ToolTip="呼叫 sync_codex.ps1 -CheckOnly 檢查中央設定與本機 Agent 環境的一致性" />
+                                    <Button x:Name="BtnExecuteAgentSync" Content="🔀 正式同步部署 (-Execute)" Style="{StaticResource PrimaryActionButton}" Padding="16,10" ToolTip="呼叫 sync_codex.ps1 -Execute 將中央憲法與 Skills 部署至各 Agent 環境" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- 狀態清單 -->
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="📑 Agent 受管檔案與 Skills 部署狀態清冊" FontSize="13" FontWeight="Bold" Foreground="#4A5568" Margin="0,0,0,8" />
+
+                            <DataGrid Grid.Row="1" x:Name="GridAgentItems" AutoGenerateColumns="False" CanUserAddRows="False"
+                                      CanUserDeleteRows="False" IsReadOnly="True" HeadersVisibility="Column"
+                                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F4EFEA"
+                                      Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="1"
+                                      RowHeight="34" AlternatingRowBackground="#FAF8F5">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="項目名稱" Binding="{Binding Name}" Width="200">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="SemiBold" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="Margin" Value="6,0,0,0" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="類型" Binding="{Binding Type}" Width="120" />
+                                    <DataGridTextColumn Header="部署目標" Binding="{Binding Target}" Width="160" />
+                                    <DataGridTextColumn Header="同步狀態" Binding="{Binding StatusDisplay}" Width="130">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="Bold" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="Foreground" Value="{Binding StatusColor}" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="詳細路徑 / 說明" Binding="{Binding Path}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </TabItem>
+        </TabControl>
+
+        <!-- 3: 底部手帳日誌控制台 (可摺疊/展開) -->
+        <Border Grid.Row="3" Background="#FFFFFF" BorderBrush="#EAE3D6" BorderThickness="0,1,0,0" Margin="20,0,20,0">
+            <Expander x:Name="ExpanderLog" IsExpanded="False" Background="Transparent" BorderThickness="0" Padding="0">
+                <Expander.Header>
+                    <DockPanel LastChildFill="True">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="📝 執行日誌便條 (Console Log)" FontWeight="Bold" FontSize="12" Foreground="#718096" />
+                            <TextBlock x:Name="TxtLogStatus" Text="｜ 就緒" FontSize="11" Foreground="#A0AEC0" Margin="4,0,0,0" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+                            <Button x:Name="BtnClearLog" Content="🧹 清除日誌" Style="{StaticResource TechoButton}" Padding="8,2" FontSize="11" Margin="0,0,6,0" />
+                            <Button x:Name="BtnCopyLog" Content="📋 複製日誌" Style="{StaticResource TechoButton}" Padding="8,2" FontSize="11" />
+                        </StackPanel>
+                    </DockPanel>
+                </Expander.Header>
+                <Border Background="#2B2D42" CornerRadius="8" Padding="12" Margin="0,6,0,10">
+                    <TextBox x:Name="TxtConsoleLog" Height="140" Background="Transparent" Foreground="#EDF2F7"
+                             BorderThickness="0" FontFamily="Consolas, Cascadia Code, monospace" FontSize="11"
+                             IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                </Border>
+            </Expander>
+        </Border>
+
+        <!-- 4: 最底狀態列 -->
+        <Border Grid.Row="4" Background="#F4EFEA" BorderBrush="#EAE3D6" BorderThickness="0,1,0,0" Padding="20,6,20,6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock x:Name="TxtFooterStatus" Text="💡 準備就緒。點擊「快速掃描」或「完整掃描」讀取 14 個專案最新狀態。" FontSize="11" Foreground="#554B3E" />
+                    <ProgressBar x:Name="ProgressScan" Width="120" Height="8" Margin="12,0,0,0" IsIndeterminate="False" Visibility="Collapsed" />
+                </StackPanel>
+
+                <TextBlock Grid.Column="1" x:Name="TxtLastScanTime" Text="上次掃描時間：尚未掃描" FontSize="11" Foreground="#8C7E72" VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
