@@ -1,7 +1,12 @@
 # HANDOFF
 
 ## 目前狀態
-可交付 (Production Ready - v1.6.0)
+可交付 (Production Ready - v1.6.0 維護修正)
+
+## 2026-09-09 維護修正
+- Level 1 改為背景 Job，首次畫面 Render 後啟動；14 專案掃描完成後才由 UI 執行緒更新畫面。
+- Tab Header 前景色明確套用至內容；BAT 成功預檢後立即結束 CMD，GUI 程序持續執行。
+- Git 狀態改以 porcelain v2 單次查詢取得分支、上游與 ahead/behind；實測掃描 160.953 秒降至 40.301 秒。
 
 ## 本輪目標
 Dev-Control-Center v1.6「日常操作中心化」：

@@ -301,7 +301,8 @@
                                         BorderBrush="#D5C7B2" BorderThickness="1,1,1,0"
                                         CornerRadius="8,8,0,0"
                                         Padding="{TemplateBinding Padding}" Margin="{TemplateBinding Margin}">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                      TextElement.Foreground="{TemplateBinding Foreground}" />
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
@@ -312,6 +313,7 @@
                                     </Trigger>
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter TargetName="tabBorder" Property="Background" Value="#F7F3EC" />
+                                        <Setter Property="Foreground" Value="#2D3748" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>

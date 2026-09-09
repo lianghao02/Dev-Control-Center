@@ -1,4 +1,4 @@
-function Get-ManagedRepositoryStatus {
+﻿function Get-ManagedRepositoryStatus {
     param(
         [Parameter(Mandatory = $true)][string]$RepositoryPath
     )
@@ -26,18 +26,22 @@ function Get-ManagedRepositoryStatus {
     }
 
     $safePath = $RepositoryPath.Replace('\', '/')
-    $changes = @(git -c "safe.directory=$safePath" -C $RepositoryPath status --porcelain 2>$null)
+    # porcelain v2 的 branch 標頭同時提供分支、上游與領先／落後資訊，
+    # 避免每個 Repository 額外啟動 branch、rev-parse、rev-list 三個 Git 程序。
+    $gitCommand = "git -c ""safe.directory=$safePath"" -C ""$RepositoryPath"" status --porcelain=v2 --branch 2>NUL"
+    $gitOutput = @(cmd.exe /d /c $gitCommand)
     if ($LASTEXITCODE -ne 0) {
         $result.State = 'Unknown'
         $result.Detail = '無法讀取工作目錄狀態 (無法確認)'
         return [PSCustomObject]$result
     }
+    $changes = @($gitOutput | Where-Object { $_ -notmatch '^# ' })
     $result.ModifiedFiles = $changes.Count
 
     # 檢查是否有未解決的合併衝突 (Conflict)
     $hasConflict = $false
     foreach ($line in $changes) {
-        if ($line -match '^(DD|AU|UD|UA|DU|AA|UU)\s') {
+        if ($line -match '^u\s') {
             $hasConflict = $true
             break
         }
@@ -48,23 +52,27 @@ function Get-ManagedRepositoryStatus {
         return [PSCustomObject]$result
     }
 
-    $branch = @(git -c "safe.directory=$safePath" -C $RepositoryPath branch --show-current 2>$null)
-    if ($LASTEXITCODE -ne 0 -or -not $branch -or [string]::IsNullOrWhiteSpace([string]$branch[0])) {
+    $branchHeader = @($gitOutput | Where-Object { $_ -match '^# branch\.head ' } | Select-Object -First 1)
+    if (-not $branchHeader) {
         $result.Detail = '目前不在可同步的本機分支'
         return [PSCustomObject]$result
     }
-    $result.Branch = ([string]$branch[0]).Trim()
+    $result.Branch = ([string]$branchHeader).Substring('# branch.head '.Length).Trim()
+    if ([string]::IsNullOrWhiteSpace($result.Branch) -or $result.Branch -eq '(detached)') {
+        $result.Detail = '目前不在可同步的本機分支'
+        return [PSCustomObject]$result
+    }
 
-    $upstream = @(git -c "safe.directory=$safePath" -C $RepositoryPath rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>$null)
-    if ($LASTEXITCODE -ne 0 -or -not $upstream) {
+    $upstreamHeader = @($gitOutput | Where-Object { $_ -match '^# branch\.upstream ' } | Select-Object -First 1)
+    if (-not $upstreamHeader) {
         $result.State = 'Unknown'
         $result.Detail = '目前分支未設定上游；無法確認遠端狀態'
         return [PSCustomObject]$result
     }
-    $result.Upstream = ([string]$upstream[0]).Trim()
+    $result.Upstream = ([string]$upstreamHeader).Substring('# branch.upstream '.Length).Trim()
 
-    $counts = @(git -c "safe.directory=$safePath" -C $RepositoryPath rev-list --left-right --count 'HEAD...@{upstream}' 2>$null)
-    if ($LASTEXITCODE -ne 0 -or -not $counts -or ([string]$counts[0]) -notmatch '^(\d+)\s+(\d+)$') {
+    $aheadBehindHeader = @($gitOutput | Where-Object { $_ -match '^# branch\.ab ' } | Select-Object -First 1)
+    if (-not $aheadBehindHeader -or ([string]$aheadBehindHeader) -notmatch '^# branch\.ab \+(\d+) -(\d+)$') {
         $result.State = 'Unknown'
         $result.Detail = '無法比較本機與上游提交 (無法確認)'
         return [PSCustomObject]$result

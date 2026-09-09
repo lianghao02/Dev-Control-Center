@@ -1,7 +1,8 @@
-# UTF-8 Compatibility
+﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param(
-    [string]$DevelopmentRoot = ''
+    [string]$DevelopmentRoot = '',
+    [switch]$StartupCheck
 )
 
 $ErrorActionPreference = 'Stop'
@@ -183,6 +184,100 @@ function Get-SyncVisual([string]$State, [int]$Ahead, [int]$Behind) {
             return [ordered]@{ Display = '✕ 錯誤'; Color = '#E53E3E' }
         }
     }
+}
+
+# Level 1 僅讀取本機 Git 狀態，但每個版本庫仍須呼叫 Git；改由背景 Job 執行，
+# 完成後才在 Dispatcher 所屬 UI 執行緒寫入控制項。
+function Start-Level1BackgroundScan {
+    if ($global:Level1ScanJob -and $global:Level1ScanJob.State -eq 'Running') {
+        Write-GuiLog 'Level 1 快速掃描仍在執行中。'
+        return
+    }
+
+    Write-GuiLog '開始進行快速本機掃描 (Level 1，背景執行)...'
+    $txtFooterStatus.Text = '⏳ 正在背景執行 Level 1 快速本機掃描...'
+    $progressScan.Visibility = [System.Windows.Visibility]::Visible
+    $progressScan.IsIndeterminate = $true
+
+    $bootstrapPath = Join-Path $PSScriptRoot 'lib\bootstrap.ps1'
+    $gitStatusPath = Join-Path $PSScriptRoot 'lib\git-status.ps1'
+    $global:Level1ScanJob = Start-Job -ArgumentList @($repoList, $devRoot, $bootstrapPath, $gitStatusPath) -ScriptBlock {
+        param($Repositories, $DevelopmentRoot, $BootstrapPath, $GitStatusPath)
+        . $BootstrapPath
+        . $GitStatusPath
+        foreach ($item in $Repositories) {
+            $path = Join-Path $DevelopmentRoot ([string]$item.folder)
+            $status = Get-ManagedRepositoryStatus -RepositoryPath $path
+            [PSCustomObject]@{
+                Name       = [string]$item.folder
+                Repository = [string]$item.repository
+                Path       = $path
+                Status     = $status
+                Version    = Get-RepositoryVersion -RepoPath $path
+            }
+        }
+    }
+
+    $timer = [System.Windows.Threading.DispatcherTimer]::new()
+    $timer.Interval = [TimeSpan]::FromMilliseconds(250)
+    $timer.Add_Tick({
+        if ($global:Level1ScanJob -and $global:Level1ScanJob.State -eq 'Running') {
+            return
+        }
+
+        $timer.Stop()
+        try {
+            if (-not $global:Level1ScanJob -or $global:Level1ScanJob.State -ne 'Completed') {
+                $reason = if ($global:Level1ScanJob) { ($global:Level1ScanJob.ChildJobs[0].JobStateInfo.Reason | Out-String).Trim() } else { '背景工作未建立' }
+                throw "Level 1 背景掃描失敗：$reason"
+            }
+
+            $scanResults = @($global:Level1ScanJob | Receive-Job)
+            $global:RepoData.Clear()
+            $cleanCount = 0
+            $modifiedCount = 0
+            $aheadCount = 0
+            $behindCount = 0
+            $idx = 0
+            foreach ($entry in $scanResults) {
+                $idx++
+                $status = $entry.Status
+                if ($status.State -in @('Clean', 'Synced')) { $cleanCount++ }
+                elseif ($status.State -in @('Modified', 'Conflict', 'Diverged', 'Missing', 'Unknown', 'Error')) { $modifiedCount++ }
+                if ($status.Ahead -gt 0) { $aheadCount++ }
+                if ($status.Behind -gt 0) { $behindCount++ }
+
+                $wtVisual = Get-WorkingTreeVisual $status.State $status.ModifiedFiles
+                $syncVisual = Get-SyncVisual $status.State $status.Ahead $status.Behind
+                $global:RepoData.Add([PSCustomObject]@{
+                    Index = $idx; Name = $entry.Name; Repository = $entry.Repository; Path = $entry.Path; Version = $entry.Version
+                    Branch = if ($status.Branch) { $status.Branch } else { '-' }
+                    WorkingTreeDisplay = $wtVisual.Display; WorkingTreeColor = $wtVisual.Color
+                    SyncDisplay = $syncVisual.Display; SyncColor = $syncVisual.Color; Detail = $status.Detail
+                    State = $status.State; Ahead = $status.Ahead; Behind = $status.Behind; ModifiedFiles = $status.ModifiedFiles
+                    GitHubUrl = "https://github.com/$githubOwner/$($entry.Repository)"
+                })
+            }
+            $txtRepoCountLabel.Text = "管理 $($global:RepoData.Count) 個版本庫"
+            $txtStatClean.Text = "✓ 已同步: $cleanCount"
+            $txtStatModified.Text = "⚠ 待處理: $modifiedCount"
+            $txtStatAhead.Text = "↑ 待上傳: $aheadCount"
+            $txtStatBehind.Text = "↓ 待下載: $behindCount"
+            $txtLastScanTime.Text = "上次掃描時間：$(Get-Date -Format 'HH:mm:ss')"
+            $txtFooterStatus.Text = "💡 掃描完成：共 $($global:RepoData.Count) 個版本庫 ($cleanCount 已同步, $modifiedCount 需注意)"
+            Apply-RepositoryFilters
+            Write-GuiLog "Level 1 背景掃描完成：$cleanCount 已同步, $modifiedCount 需注意, $aheadCount 待上傳, $behindCount 待下載。"
+        } catch {
+            $txtFooterStatus.Text = '⚠ Level 1 背景掃描失敗，請查看日誌。'
+            Write-GuiLog $_.Exception.Message -Expand
+        } finally {
+            $progressScan.Visibility = [System.Windows.Visibility]::Collapsed
+            if ($global:Level1ScanJob) { Remove-Job -Job $global:Level1ScanJob -Force -ErrorAction SilentlyContinue }
+            $global:Level1ScanJob = $null
+        }
+    })
+    $global:Level1ScanTimer = $timer
+    $timer.Start()
 }
 
 # 輔助函式：掃描全部 Repository (Level 1: 快速本機, Level 2: 遠端重整)
@@ -893,7 +988,7 @@ function Invoke-FullSystemCheck {
 
 # 掃描按鈕 (三級掃描分級)
 $btnQuickScan.Add_Click({
-    Update-WorkspaceRepositories -FetchRemote $false
+    Start-Level1BackgroundScan
 })
 
 if ($btnRemoteRefresh) {
@@ -1089,7 +1184,7 @@ $btnCopyLog.Add_Click({
     }
 })
 
-# 視窗載入初始化 (優化啟動速度：立即顯示 UI，優先執行 Level 1 快速本機掃描，延後外部耗時命令)
+# 視窗載入初始化：先完成 Shell 資料，掃描交由首次畫面 Render 後的背景工作。
 $window.Add_Loaded({
     # 1. 立即載入桌面應用程式清單與 Agent 設定
     Load-DesktopAppsList
@@ -1098,9 +1193,14 @@ $window.Add_Loaded({
     # 2. 初始狀態列與工具鏈摘要預設值 (避免啟動時執行外部 CLI 阻塞)
     $txtEnvSummary.Text = "Git: 就緒 ｜ PS: $(if (Get-Command 'pwsh.exe' -ErrorAction SilentlyContinue) {'pwsh 7'} else {'PS 5.1'}) ｜ .NET: 8.0"
 
-    # 3. 立即進行 Level 1 快速本機掃描 (純本機，無網路等待)
-    Update-WorkspaceRepositories -FetchRemote $false
+})
+
+$window.Add_ContentRendered({
+    Start-Level1BackgroundScan
 })
 
 # 顯示視窗
+if ($StartupCheck) {
+    exit 0
+}
 $window.ShowDialog() | Out-Null

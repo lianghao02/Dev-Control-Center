@@ -1,4 +1,4 @@
-# UTF-8 Compatibility
+﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param()
 
@@ -31,7 +31,13 @@ function Report-Test([string]$TestName, [bool]$Success, [string]$Message) {
 
 function Invoke-GitCmd {
     param([string]$Repo, [string[]]$GitArgs)
-    $out = & git -C $Repo @GitArgs 2>&1
+    $previousErrorAction = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $out = @(& git -C $Repo @GitArgs 2>&1)
+    } finally {
+        $ErrorActionPreference = $previousErrorAction
+    }
     if ($LASTEXITCODE -ne 0) {
         throw "Git 指令失敗 (git -C $Repo $($GitArgs -join ' '))：$($out -join ' ')"
     }
@@ -45,7 +51,7 @@ Write-Host "=================================================================" -
 $tempRoot = Join-Path ([IO.Path]::GetTempPath()) ("dev-ctrl-v16-test-" + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $tempRoot -Force | Out-Null
 
-try {
+& {
     # 建立測試環境：bare remote 與 seed repo
     $bareRemote = Join-Path $tempRoot 'bare.git'
     $seedRepo = Join-Path $tempRoot 'seed'
@@ -54,7 +60,7 @@ try {
     Invoke-GitCmd -Repo $seedRepo -GitArgs @('config', 'user.email', 'test@example.com')
     Invoke-GitCmd -Repo $seedRepo -GitArgs @('config', 'user.name', 'Tester')
     Invoke-GitCmd -Repo $seedRepo -GitArgs @('branch', '-M', 'main')
-    [IO.File]::WriteAllText((Join-Path $seedRepo 'file.txt'), "initial content`n", [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText((Join-Path $seedRepo 'file.txt'), "initial content`r`n", [Text.UTF8Encoding]::new($false))
     Invoke-GitCmd -Repo $seedRepo -GitArgs @('add', 'file.txt')
     Invoke-GitCmd -Repo $seedRepo -GitArgs @('commit', '-m', 'feat: initial')
     Invoke-GitCmd -Repo $seedRepo -GitArgs @('remote', 'add', 'origin', $bareRemote)
@@ -75,7 +81,7 @@ try {
     & git clone --quiet $bareRemote $modRepo 2>&1 | Out-Null
     Invoke-GitCmd -Repo $modRepo -GitArgs @('config', 'user.email', 'test@example.com')
     Invoke-GitCmd -Repo $modRepo -GitArgs @('config', 'user.name', 'Tester')
-    [IO.File]::AppendAllText((Join-Path $modRepo 'file.txt'), "uncommitted line`n", [Text.UTF8Encoding]::new($false))
+    [IO.File]::AppendAllText((Join-Path $modRepo 'file.txt'), "uncommitted line`r`n", [Text.UTF8Encoding]::new($false))
     $modStatus = Get-ManagedRepositoryStatus -RepositoryPath $modRepo
     $isMod = ($modStatus.State -eq 'Modified' -and $modStatus.ModifiedFiles -gt 0)
     Report-Test "3. Modified Repository 測試" $isMod "狀態正確識別為 Modified（$($modStatus.Detail)），未提交檔案數: $($modStatus.ModifiedFiles)"
@@ -85,7 +91,7 @@ try {
     & git clone --quiet $bareRemote $aheadRepo 2>&1 | Out-Null
     Invoke-GitCmd -Repo $aheadRepo -GitArgs @('config', 'user.email', 'test@example.com')
     Invoke-GitCmd -Repo $aheadRepo -GitArgs @('config', 'user.name', 'Tester')
-    [IO.File]::AppendAllText((Join-Path $aheadRepo 'file.txt'), "ahead line`n", [Text.UTF8Encoding]::new($false))
+    [IO.File]::AppendAllText((Join-Path $aheadRepo 'file.txt'), "ahead line`r`n", [Text.UTF8Encoding]::new($false))
     Invoke-GitCmd -Repo $aheadRepo -GitArgs @('add', 'file.txt')
     Invoke-GitCmd -Repo $aheadRepo -GitArgs @('commit', '-m', 'feat: ahead commit')
     $aheadStatus = Get-ManagedRepositoryStatus -RepositoryPath $aheadRepo
@@ -98,7 +104,7 @@ try {
     Invoke-GitCmd -Repo $behindRepo -GitArgs @('config', 'user.email', 'test@example.com')
     Invoke-GitCmd -Repo $behindRepo -GitArgs @('config', 'user.name', 'Tester')
     # 在 seed repo 增加 commit 並 push 到 remote
-    [IO.File]::AppendAllText((Join-Path $seedRepo 'file.txt'), "remote line`n", [Text.UTF8Encoding]::new($false))
+    [IO.File]::AppendAllText((Join-Path $seedRepo 'file.txt'), "remote line`r`n", [Text.UTF8Encoding]::new($false))
     Invoke-GitCmd -Repo $seedRepo -GitArgs @('add', 'file.txt')
     Invoke-GitCmd -Repo $seedRepo -GitArgs @('commit', '-m', 'feat: remote commit')
     Invoke-GitCmd -Repo $seedRepo -GitArgs @('push')
@@ -115,8 +121,14 @@ try {
     Invoke-GitCmd -Repo $unknownRepo -GitArgs @('remote', 'set-url', 'origin', 'file:///C:/nonexistent-repo/missing.git')
     # 模擬遠端查詢失敗時的判斷
     $safePath = $unknownRepo.Replace('\', '/')
-    $fetchOut = @(git -c "safe.directory=$safePath" -C $unknownRepo fetch origin --prune 2>$null)
-    $fetchFailed = ($LASTEXITCODE -ne 0)
+    $previousErrorAction = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $fetchOut = @(git -c "safe.directory=$safePath" -C $unknownRepo fetch origin --prune 2>&1)
+        $fetchFailed = ($LASTEXITCODE -ne 0)
+    } finally {
+        $ErrorActionPreference = $previousErrorAction
+    }
     $unknownStatus = Get-ManagedRepositoryStatus -RepositoryPath $unknownRepo
     if ($fetchFailed) {
         # 依規則 8：無法連線時必須標註為無法確認
@@ -216,10 +228,10 @@ try {
     }
     Report-Test "10. 啟動 GUI 並完成一次基本操作流程" $guiInitPass "XAML 解析正常，14 個專案總覽、同步、建置、環境、Agent 及 v1.6 三級掃描控制項完整載入"
 
-} finally {
-    if (Test-Path -LiteralPath $tempRoot) {
-        Remove-Item -LiteralPath $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
-    }
+}
+
+if (Test-Path -LiteralPath $tempRoot) {
+    Remove-Item -LiteralPath $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 Write-Host "-----------------------------------------------------------------" -ForegroundColor Cyan
