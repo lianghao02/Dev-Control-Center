@@ -103,6 +103,9 @@ $txtLastScanTime = $window.FindName('TxtLastScanTime')
 $global:RepoData = [System.Collections.Generic.List[PSCustomObject]]::new()
 $global:CurrentFilter = 'All'
 $global:CurrentSearch = ''
+$global:Level1ScanJob = $null
+$global:Level1ScanTimer = $null
+$script:InitialScanStarted = $false  # 防止 ContentRendered 重複觸發 Level 1
 
 $global:LogFilePath = Join-Path $homeRepo 'logs\dev-control-center.log'
 $logDir = Split-Path -Parent $global:LogFilePath
@@ -201,35 +204,59 @@ function Start-Level1BackgroundScan {
 
     $bootstrapPath = Join-Path $PSScriptRoot 'lib\bootstrap.ps1'
     $gitStatusPath = Join-Path $PSScriptRoot 'lib\git-status.ps1'
-    $global:Level1ScanJob = Start-Job -ArgumentList @($repoList, $devRoot, $bootstrapPath, $gitStatusPath) -ScriptBlock {
-        param($Repositories, $DevelopmentRoot, $BootstrapPath, $GitStatusPath)
-        . $BootstrapPath
-        . $GitStatusPath
-        foreach ($item in $Repositories) {
-            $path = Join-Path $DevelopmentRoot ([string]$item.folder)
-            $status = Get-ManagedRepositoryStatus -RepositoryPath $path
-            [PSCustomObject]@{
-                Name       = [string]$item.folder
-                Repository = [string]$item.repository
-                Path       = $path
-                Status     = $status
-                Version    = Get-RepositoryVersion -RepoPath $path
+    try {
+        $global:Level1ScanJob = Start-Job -ArgumentList @($repoList, $devRoot, $bootstrapPath, $gitStatusPath) -ScriptBlock {
+            param($Repositories, $DevelopmentRoot, $BootstrapPath, $GitStatusPath)
+            . $BootstrapPath
+            . $GitStatusPath
+            foreach ($item in $Repositories) {
+                $path = Join-Path $DevelopmentRoot ([string]$item.folder)
+                $status = Get-ManagedRepositoryStatus -RepositoryPath $path
+                [PSCustomObject]@{
+                    Name       = [string]$item.folder
+                    Repository = [string]$item.repository
+                    Path       = $path
+                    Status     = $status
+                    Version    = Get-RepositoryVersion -RepoPath $path
+                }
             }
         }
+    } catch {
+        # Start-Job 本身失敗時：記錄錯誤、還原 UI 狀態，不再建立 Timer
+        $errMsg = "[Start-Level1BackgroundScan] Start-Job 失敗：$($_.Exception.Message) | StackTrace=$($_.ScriptStackTrace)"
+        try { [IO.File]::AppendAllText($global:LogFilePath, "[$((Get-Date).ToString('yyyy-MM-dd HH:mm:ss'))] $errMsg`r`n", [Text.Encoding]::UTF8) } catch {}
+        $global:Level1ScanJob = $null
+        if ($txtFooterStatus) { $txtFooterStatus.Text = '⚠ Level 1 背景掃描啟動失敗，請手動點擊「快速掃描」重試。' }
+        if ($progressScan) { $progressScan.Visibility = [System.Windows.Visibility]::Collapsed }
+        if ($txtConsoleLog) {
+            $txtConsoleLog.AppendText("[$((Get-Date).ToString('HH:mm:ss'))] ⚠ Level 1 啟動失敗：$($_.Exception.Message)`r`n")
+            $txtConsoleLog.ScrollToEnd()
+        }
+        return
     }
 
     $timer = [System.Windows.Threading.DispatcherTimer]::new()
-    $timer.Interval = [TimeSpan]::FromMilliseconds(250)
+    $timer.Interval = [TimeSpan]::FromMilliseconds(500)
     $timer.Add_Tick({
-        if ($global:Level1ScanJob -and $global:Level1ScanJob.State -eq 'Running') {
-            return
-        }
-
-        $timer.Stop()
         try {
+            if ($global:Level1ScanJob -and $global:Level1ScanJob.State -eq 'Running') {
+                return
+            }
+
+            # 防護：若 Job 尚未被賦值（極短暫的 Race Window），等待下次 Tick
+            if ($global:Level1ScanJob -eq $null) {
+                return
+            }
+
+            # 使用 closure 捕獲的 $timer 局部變數停止 Timer，避免誤停後續掃描的新 Timer
+            $timer.Stop()
+
             if (-not $global:Level1ScanJob -or $global:Level1ScanJob.State -ne 'Completed') {
-                $reason = if ($global:Level1ScanJob) { ($global:Level1ScanJob.ChildJobs[0].JobStateInfo.Reason | Out-String).Trim() } else { '背景工作未建立' }
-                throw "Level 1 背景掃描失敗：$reason"
+                $jobState = if ($global:Level1ScanJob) { $global:Level1ScanJob.State } else { 'None' }
+                $reason = if ($global:Level1ScanJob -and $global:Level1ScanJob.ChildJobs.Count -gt 0) {
+                    ($global:Level1ScanJob.ChildJobs[0].JobStateInfo.Reason | Out-String).Trim()
+                } else { '背景工作未建立' }
+                throw "Level 1 背景掃描失敗 [Job State=$jobState]：$reason"
             }
 
             $scanResults = @($global:Level1ScanJob | Receive-Job)
@@ -268,10 +295,19 @@ function Start-Level1BackgroundScan {
             Apply-RepositoryFilters
             Write-GuiLog "Level 1 背景掃描完成：$cleanCount 已同步, $modifiedCount 需注意, $aheadCount 待上傳, $behindCount 待下載。"
         } catch {
-            $txtFooterStatus.Text = '⚠ Level 1 背景掃描失敗，請查看日誌。'
-            Write-GuiLog $_.Exception.Message -Expand
+            # 必須記錄完整例外資訊，不得讓例外冒泡導致 WPF Dispatcher 異常終止
+            $jobState = if ($global:Level1ScanJob) { $global:Level1ScanJob.State } else { 'None' }
+            $errMsg = "[Level1 Tick Error] Message=$($_.Exception.Message) | JobState=$jobState | StackTrace=$($_.ScriptStackTrace)"
+            try { [IO.File]::AppendAllText($global:LogFilePath, "[$((Get-Date).ToString('yyyy-MM-dd HH:mm:ss'))] $errMsg`r`n", [Text.Encoding]::UTF8) } catch {}
+            if ($txtFooterStatus) { $txtFooterStatus.Text = '⚠ Level 1 背景掃描失敗，請查看日誌或手動點擊「快速掃描」重試。' }
+            if ($expanderLog) { $expanderLog.IsExpanded = $true }
+            if ($txtConsoleLog) {
+                $txtConsoleLog.AppendText("[$((Get-Date).ToString('HH:mm:ss'))] ⚠ Level 1 掃描失敗：$($_.Exception.Message)`r`n")
+                $txtConsoleLog.ScrollToEnd()
+            }
+            if ($progressScan) { $progressScan.Visibility = [System.Windows.Visibility]::Collapsed }
         } finally {
-            $progressScan.Visibility = [System.Windows.Visibility]::Collapsed
+            if ($progressScan) { $progressScan.Visibility = [System.Windows.Visibility]::Collapsed }
             if ($global:Level1ScanJob) { Remove-Job -Job $global:Level1ScanJob -Force -ErrorAction SilentlyContinue }
             $global:Level1ScanJob = $null
         }
@@ -1196,7 +1232,22 @@ $window.Add_Loaded({
 })
 
 $window.Add_ContentRendered({
+    # 防止 ContentRendered 重複觸發（視窗 resize、Tab 切換等可能重新觸發）
+    if ($script:InitialScanStarted) { return }
+    $script:InitialScanStarted = $true
     Start-Level1BackgroundScan
+})
+
+# 視窗關閉時清理背景 Job 與 Timer，避免殘留資源
+$window.Add_Closing({
+    if ($global:Level1ScanTimer -and $global:Level1ScanTimer.IsEnabled) {
+        try { $global:Level1ScanTimer.Stop() } catch {}
+        $global:Level1ScanTimer = $null
+    }
+    if ($global:Level1ScanJob) {
+        try { Remove-Job -Job $global:Level1ScanJob -Force -ErrorAction SilentlyContinue } catch {}
+        $global:Level1ScanJob = $null
+    }
 })
 
 # 顯示視窗
