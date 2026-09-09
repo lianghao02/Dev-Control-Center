@@ -1,4 +1,4 @@
-# 共用主控台與解譯器初始化；相容 PowerShell 7 與 Windows PowerShell 5.1。
+﻿# 共用主控台與解譯器初始化；相容 PowerShell 7 與 Windows PowerShell 5.1。
 try {
     [Console]::InputEncoding = [System.Text.Encoding]::UTF8
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
@@ -21,4 +21,29 @@ function Get-HomeDevelopmentRoot([string]$HomeRepository) {
         throw "無法從 home 專案路徑判斷開發根目錄：$HomeRepository"
     }
     return [IO.Path]::GetFullPath($parent)
+}
+
+function Get-RepositoryVersion([string]$RepoPath) {
+    if (-not (Test-Path -LiteralPath $RepoPath)) {
+        return '未存在'
+    }
+
+    $candidateFiles = @(
+        (Join-Path $RepoPath 'version.txt'),
+        (Join-Path $RepoPath 'src\PoliceImageToolkit\version.txt'),
+        (Join-Path $RepoPath 'dotnet-src\version.txt')
+    )
+
+    foreach ($f in $candidateFiles) {
+        if (Test-Path -LiteralPath $f -PathType Leaf) {
+            try {
+                $raw = (Get-Content -LiteralPath $f -Encoding UTF8 -TotalCount 1).Trim()
+                if ($raw -match '^[vV]?\d+(\.\d+)+') {
+                    return $raw
+                }
+            } catch {}
+        }
+    }
+
+    return '未標註'
 }

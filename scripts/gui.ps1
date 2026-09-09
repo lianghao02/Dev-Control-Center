@@ -51,7 +51,8 @@ $txtEnvSummary = $window.FindName('TxtEnvSummary')
 $txtAgentSummary = $window.FindName('TxtAgentSummary')
 
 $btnQuickScan = $window.FindName('BtnQuickScan')
-$btnFullScan = $window.FindName('BtnFullScan')
+$btnRemoteRefresh = $window.FindName('BtnRemoteRefresh')
+$btnFullCheck = $window.FindName('BtnFullCheck')
 $btnOpenWorkspace = $window.FindName('BtnOpenWorkspace')
 
 $btnFilterAll = $window.FindName('BtnFilterAll')
@@ -72,6 +73,8 @@ $btnExecuteSafeSync = $window.FindName('BtnExecuteSafeSync')
 $gridSyncPlan = $window.FindName('GridSyncPlan')
 
 $btnPreviewBuild = $window.FindName('BtnPreviewBuild')
+$btnCheckShortcuts = $window.FindName('BtnCheckShortcuts')
+$btnBuildSelected = $window.FindName('BtnBuildSelected')
 $btnExecuteBuild = $window.FindName('BtnExecuteBuild')
 $gridDesktopApps = $window.FindName('GridDesktopApps')
 
@@ -100,12 +103,18 @@ $global:RepoData = [System.Collections.Generic.List[PSCustomObject]]::new()
 $global:CurrentFilter = 'All'
 $global:CurrentSearch = ''
 
+$global:LogFilePath = Join-Path $homeRepo 'logs\dev-control-center.log'
+$logDir = Split-Path -Parent $global:LogFilePath
+if (-not (Test-Path -LiteralPath $logDir)) {
+    New-Item -ItemType Directory -Path $logDir -Force | Out-Null
+}
+
 # 輔助函式：日誌輸出
 function Write-GuiLog([string]$Message, [switch]$Expand) {
-    $time = Get-Date -Format 'HH:mm:ss'
+    $time = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
     $logLine = "[$time] $Message"
     if ($txtConsoleLog) {
-        $txtConsoleLog.AppendText("$logLine`r`n")
+        $txtConsoleLog.AppendText("[$((Get-Date).ToString('HH:mm:ss'))] $Message`r`n")
         $txtConsoleLog.ScrollToEnd()
     }
     if ($txtLogStatus) {
@@ -114,6 +123,12 @@ function Write-GuiLog([string]$Message, [switch]$Expand) {
     if ($Expand -and $expanderLog) {
         $expanderLog.IsExpanded = $true
     }
+
+    # 記錄至檔案 (自動排除敏感資訊)
+    try {
+        [IO.File]::AppendAllText($global:LogFilePath, "$logLine`r`n", [Text.Encoding]::UTF8)
+    } catch {}
+
     [System.Windows.Forms.Application]::DoEvents()
 }
 
@@ -170,9 +185,9 @@ function Get-SyncVisual([string]$State, [int]$Ahead, [int]$Behind) {
     }
 }
 
-# 輔助函式：掃描全部 Repository
+# 輔助函式：掃描全部 Repository (Level 1: 快速本機, Level 2: 遠端重整)
 function Update-WorkspaceRepositories([bool]$FetchRemote = $false) {
-    $modeName = if ($FetchRemote) { "完整掃描 (含 GitHub fetch)" } else { "快速本機掃描" }
+    $modeName = if ($FetchRemote) { "遠端重新整理 (Level 2: 含 GitHub fetch)" } else { "快速本機掃描 (Level 1: 僅本機狀態)" }
     Write-GuiLog "開始進行 $modeName..."
     $txtFooterStatus.Text = "⏳ 正在進行 $modeName..."
     $progressScan.Visibility = [System.Windows.Visibility]::Visible
@@ -195,7 +210,7 @@ function Update-WorkspaceRepositories([bool]$FetchRemote = $false) {
 
         $status = Get-ManagedRepositoryStatus -RepositoryPath $path
         
-        # 若為完整掃描且專案存在且非衝突/錯誤，嘗試連線 GitHub fetch 更新狀態
+        # 若為 Level 2 遠端重整且專案存在且非衝突/錯誤，連線 GitHub fetch 更新狀態
         if ($FetchRemote -and $status.State -notin @('Missing', 'Error', 'Conflict')) {
             $safePath = $path.Replace('\', '/')
             $null = @(git -c "safe.directory=$safePath" -C $path fetch origin --prune --quiet 2>$null)
@@ -206,6 +221,9 @@ function Update-WorkspaceRepositories([bool]$FetchRemote = $false) {
                 $status = Get-ManagedRepositoryStatus -RepositoryPath $path
             }
         }
+
+        # 讀取版本號 (以 version.txt 為 Source of Truth)
+        $repoVer = Get-RepositoryVersion -RepoPath $path
 
         # 統計計數
         if ($status.State -in @('Clean', 'Synced')) {
@@ -224,6 +242,7 @@ function Update-WorkspaceRepositories([bool]$FetchRemote = $false) {
             Name               = $name
             Repository         = $repoName
             Path               = $path
+            Version            = $repoVer
             Branch             = if ($status.Branch) { $status.Branch } else { '-' }
             WorkingTreeDisplay = $wtVisual.Display
             WorkingTreeColor   = $wtVisual.Color
@@ -447,73 +466,65 @@ function Load-DesktopAppsList {
             Index      = 1
             Name       = '01_AG-MONITOR-Smart-Video-Screening'
             Tech       = 'Python Embed / Standalone'
-            Version    = 'v4.0.0'
+            Version    = (Get-RepositoryVersion (Join-Path $devRoot '01_AG-MONITOR-Smart-Video-Screening'))
             OutputType = 'CPU 獨立可攜包 (dist\AG-MONITOR-Smart-Video-Screening-CPU.zip)'
         },
         [PSCustomObject]@{
             Index      = 2
             Name       = '03_Police-Image-Toolkit'
             Tech       = 'C# .NET 8 WPF'
-            Version    = (Get-RepoVersionText (Join-Path $devRoot '03_Police-Image-Toolkit\version.txt'))
+            Version    = (Get-RepositoryVersion (Join-Path $devRoot '03_Police-Image-Toolkit'))
             OutputType = '單檔 EXE、ZIP 與使用者指南'
         },
         [PSCustomObject]@{
             Index      = 3
             Name       = '04_Photo-Report-Generator'
             Tech       = 'Web SPA / 免安裝'
-            Version    = (Get-RepoVersionText (Join-Path $devRoot '04_Photo-Report-Generator\version.txt'))
+            Version    = (Get-RepositoryVersion (Join-Path $devRoot '04_Photo-Report-Generator'))
             OutputType = '前端發行包 (Setup / Portable ZIP)'
         },
         [PSCustomObject]@{
             Index      = 4
             Name       = '06_System-Optimizer-Tool'
             Tech       = 'C# .NET 8 WPF'
-            Version    = (Get-RepoVersionText (Join-Path $devRoot '06_System-Optimizer-Tool\version.txt'))
+            Version    = (Get-RepositoryVersion (Join-Path $devRoot '06_System-Optimizer-Tool'))
             OutputType = 'Standalone / Slim 雙版本發行檔'
         },
         [PSCustomObject]@{
             Index      = 5
             Name       = '07_auto-learning-bot'
             Tech       = 'Python Embed'
-            Version    = 'v3.1.1'
+            Version    = (Get-RepositoryVersion (Join-Path $devRoot '07_auto-learning-bot'))
             OutputType = '可攜式發行包 (dist\auto-learning-bot-v*.zip)'
         },
         [PSCustomObject]@{
             Index      = 6
             Name       = '09_PaperSwitch'
             Tech       = 'C# .NET 8 WPF'
-            Version    = (Get-RepoVersionText (Join-Path $devRoot '09_PaperSwitch\version.txt'))
+            Version    = (Get-RepositoryVersion (Join-Path $devRoot '09_PaperSwitch'))
             OutputType = 'Standalone / Framework-dependent 發行檔'
         }
     )
     $gridDesktopApps.ItemsSource = $apps
 }
 
-function Get-RepoVersionText([string]$Path) {
-    if (Test-Path -LiteralPath $Path -PathType Leaf) {
-        try {
-            $v = (Get-Content -LiteralPath $Path -Encoding UTF8 -TotalCount 1).Trim()
-            if ($v) { return $v }
-        } catch {}
-    }
-    return '未標註'
-}
-
 # 輔助函式：執行桌面建置腳本
-function Invoke-DesktopAppsBuild([bool]$Execute) {
+function Invoke-DesktopAppsBuild([bool]$Execute, [string]$TargetProject = '') {
     $script = Join-Path $homeRepo 'build_all_desktop_apps.ps1'
     if (-not (Test-Path -LiteralPath $script -PathType Leaf)) {
         [System.Windows.MessageBox]::Show("找不到建置腳本：$script", "錯誤", "OK", "Error")
         return
     }
 
-    $mode = if ($Execute) { "執行本機集中建置 (-Execute)" } else { "預覽建置清單" }
+    $targetDesc = if ($TargetProject) { "[$TargetProject]" } else { "[全部專案]" }
+    $mode = if ($Execute) { "執行本機建置 (-Execute) $targetDesc" } else { "預覽建置清單 $targetDesc" }
     Write-GuiLog "開始呼叫 build_all_desktop_apps.ps1 [$mode]..." -Expand
     $txtFooterStatus.Text = "⏳ 正在執行桌面程式建置 [$mode]..."
 
     $powerShellCmd = Get-HomePowerShell
     $args = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $script)
     if ($Execute) { $args += '-Execute' }
+    if ($TargetProject) { $args += @('-Project', $TargetProject) }
 
     $pinfo = New-Object System.Diagnostics.ProcessStartInfo
     $pinfo.FileName = $powerShellCmd
@@ -805,16 +816,97 @@ function Invoke-AgentSync([bool]$Execute) {
     }
 }
 
+# 輔助函式：檢查桌面捷徑狀態 (Phase 10)
+function Test-DesktopShortcutsStatus {
+    Write-GuiLog "正在檢查桌面捷徑狀態..." -Expand
+    $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
+    if (-not (Test-Path -LiteralPath $desktop)) {
+        Write-GuiLog "⚠️ 無法取得使用者桌面目錄。"
+        return
+    }
+
+    $wsh = New-Object -ComObject WScript.Shell
+    $checkedCount = 0
+    $validCount = 0
+    $missingCount = 0
+
+    $appConfigs = @(
+        @{ Name = '01_AG-MONITOR-Smart-Video-Screening'; Exe = '01_AG-MONITOR-Smart-Video-Screening\dist\AG-MONITOR-v4.0.0\AG-MONITOR.exe'; Lnk = 'AG-MONITOR 智慧影像快篩系統.lnk' },
+        @{ Name = '03_Police-Image-Toolkit'; Exe = '03_Police-Image-Toolkit\dist\PoliceImageToolkit.exe'; Lnk = 'PoliceImageToolkit.lnk' },
+        @{ Name = '06_System-Optimizer-Tool'; Exe = '06_System-Optimizer-Tool\dotnet-src\publish\standalone\SystemOptimizer.App.exe'; Lnk = 'SystemOptimizer.lnk' },
+        @{ Name = '09_PaperSwitch'; Exe = '09_PaperSwitch\dist\publish\PaperSwitch.exe'; Lnk = 'PaperSwitch.lnk' }
+    )
+
+    foreach ($app in $appConfigs) {
+        $checkedCount++
+        $lnkPath = Join-Path $desktop $app.Lnk
+        $exePath = Join-Path $devRoot $app.Exe
+
+        if (Test-Path -LiteralPath $lnkPath) {
+            try {
+                $shortcut = $wsh.CreateShortcut($lnkPath)
+                $target = $shortcut.TargetPath
+                if (Test-Path -LiteralPath $target) {
+                    Write-GuiLog "✓ [捷徑正常] $($app.Name) ➜ $($app.Lnk) 指向有效檔案"
+                    $validCount++
+                } else {
+                    Write-GuiLog "⚠ [捷徑失效] $($app.Name) ➜ 目標檔案不存在 ($target)"
+                    $missingCount++
+                }
+            } catch {
+                Write-GuiLog "⚠️ 無法讀取捷徑：$lnkPath"
+            }
+        } else {
+            Write-GuiLog "◌ [無捷徑] $($app.Name) ➜ 桌面尚未建立 $($app.Lnk) (可執行集中建置建立)"
+        }
+    }
+    [System.Runtime.InteropServices.Marshal]::ReleaseComObject($wsh) | Out-Null
+    Write-GuiLog "桌面捷徑檢查結束：已建立 $validCount 個，無效 $missingCount 個。"
+    $txtFooterStatus.Text = "📌 捷徑檢查完成：有效 $validCount 個，失效 $missingCount 個。"
+}
+
+# 輔助函式：Level 3 完整檢查 (Git + 環境工具鏈 + 建置預覽 + Agent 設定)
+function Invoke-FullSystemCheck {
+    Write-GuiLog "🚀 開始執行 Level 3 完整檢查 (Git + 環境 + 建置 + Agent)..." -Expand
+    $txtFooterStatus.Text = "⏳ 正在執行 Level 3 完整系統檢查..."
+
+    # 1. 執行遠端 Git 狀態更新
+    Update-WorkspaceRepositories -FetchRemote $true
+
+    # 2. 檢測開發工具鏈狀態
+    Update-DevToolsStatus
+
+    # 3. 檢查 Agent 治理設定差異
+    Invoke-AgentSync -Execute $false
+
+    # 4. 預覽建置狀態
+    Invoke-DesktopAppsBuild -Execute $false
+
+    # 5. 檢查桌面捷徑
+    Test-DesktopShortcutsStatus
+
+    Write-GuiLog "✅ Level 3 完整檢查作業已全數完成！"
+    $txtFooterStatus.Text = "💡 Level 3 完整檢查完成，所有模組狀態已更新。"
+}
+
 # ==================== 事件處理器綁定 ====================
 
-# 掃描按鈕
+# 掃描按鈕 (三級掃描分級)
 $btnQuickScan.Add_Click({
     Update-WorkspaceRepositories -FetchRemote $false
 })
 
-$btnFullScan.Add_Click({
-    Update-WorkspaceRepositories -FetchRemote $true
-})
+if ($btnRemoteRefresh) {
+    $btnRemoteRefresh.Add_Click({
+        Update-WorkspaceRepositories -FetchRemote $true
+    })
+}
+
+if ($btnFullCheck) {
+    $btnFullCheck.Add_Click({
+        Invoke-FullSystemCheck
+    })
+}
 
 $btnOpenWorkspace.Add_Click({
     if (Test-Path -LiteralPath $devRoot) {
@@ -854,7 +946,7 @@ $txtSearchBox.Add_TextChanged({
 $gridRepositories.Add_SelectionChanged({
     $selected = $gridRepositories.SelectedItem
     if ($selected) {
-        $txtSelectedRepoInfo.Text = "選取：$($selected.Name) ｜ 目錄：$($selected.Path) ｜ 分支：$($selected.Branch) ｜ 狀態：$($selected.Detail)"
+        $txtSelectedRepoInfo.Text = "選取：$($selected.Name) ($($selected.Version)) ｜ 目錄：$($selected.Path) ｜ 分支：$($selected.Branch) ｜ 狀態：$($selected.Detail)"
     } else {
         $txtSelectedRepoInfo.Text = "請點選上方專案以檢視詳細路徑與操作"
     }
@@ -901,8 +993,28 @@ $btnPreviewBuild.Add_Click({
     Invoke-DesktopAppsBuild -Execute $false
 })
 
+if ($btnCheckShortcuts) {
+    $btnCheckShortcuts.Add_Click({
+        Test-DesktopShortcutsStatus
+    })
+}
+
+if ($btnBuildSelected) {
+    $btnBuildSelected.Add_Click({
+        $selectedApp = $gridDesktopApps.SelectedItem
+        if (-not $selectedApp) {
+            [System.Windows.MessageBox]::Show("請先於下方表格中選取要建置的桌面應用程式。", "提示", "OK", "Information")
+            return
+        }
+        $confirm = [System.Windows.MessageBox]::Show("即將執行 [$($selectedApp.Name)] 本機建置。`n本操作僅產出本機二進位包，不包含 GitHub Release 發行。是否繼續？", "確認單項建置", "YesNo", "Question")
+        if ($confirm -eq [System.Windows.Forms.DialogResult]::Yes) {
+            Invoke-DesktopAppsBuild -Execute $true -TargetProject $selectedApp.Name
+        }
+    })
+}
+
 $btnExecuteBuild.Add_Click({
-    $confirm = [System.Windows.MessageBox]::Show("即將執行桌面應用程式本機集中建置。`n本操作僅產出本機二進位包，不包含 GitHub Release 發行。是否繼續？", "確認建置", "YesNo", "Question")
+    $confirm = [System.Windows.MessageBox]::Show("即將執行全部桌面應用程式本機集中建置。`n本操作僅產出本機二進位包，不包含 GitHub Release 發行。是否繼續？", "確認建置", "YesNo", "Question")
     if ($confirm -eq [System.Windows.Forms.DialogResult]::Yes) {
         Invoke-DesktopAppsBuild -Execute $true
     }
@@ -977,11 +1089,16 @@ $btnCopyLog.Add_Click({
     }
 })
 
-# 視窗載入初始化
+# 視窗載入初始化 (優化啟動速度：立即顯示 UI，優先執行 Level 1 快速本機掃描，延後外部耗時命令)
 $window.Add_Loaded({
+    # 1. 立即載入桌面應用程式清單與 Agent 設定
     Load-DesktopAppsList
     Load-AgentConfigItems
-    Update-DevToolsStatus
+
+    # 2. 初始狀態列與工具鏈摘要預設值 (避免啟動時執行外部 CLI 阻塞)
+    $txtEnvSummary.Text = "Git: 就緒 ｜ PS: $(if (Get-Command 'pwsh.exe' -ErrorAction SilentlyContinue) {'pwsh 7'} else {'PS 5.1'}) ｜ .NET: 8.0"
+
+    # 3. 立即進行 Level 1 快速本機掃描 (純本機，無網路等待)
     Update-WorkspaceRepositories -FetchRemote $false
 })
 

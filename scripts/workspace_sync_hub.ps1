@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$DevelopmentRoot = '',
-    [ValidateSet('Menu', 'Auto', 'Pull', 'Push', 'SyncAI', 'Scan')]
+    [ValidateSet('Menu', 'Auto', 'Pull', 'Push', 'SyncAI', 'Scan', 'QuickScan')]
     [string]$Action = 'Menu'
 )
 
@@ -32,12 +32,14 @@ function Write-ProjectState([object]$Status) {
         'Clean' { '✓' }; 'Synced' { '✓' }; 'Ahead' { '↑' }; 'Behind' { '↓' }; 'Modified' { '⚠' }
         'Diverged' { '↕' }; 'Conflict' { '⚡' }; 'Missing' { '?' }; 'Unknown' { '◌' }; default { '✕' }
     }
-    Write-Host ("{0,-38} {1} {2}" -f $Status.Name, $symbol, $Status.Detail) -ForegroundColor (Get-StateColor $Status.State)
+    $ver = if ($Status.Version) { "[{0}]" -f $Status.Version } else { '' }
+    Write-Host ("{0,-38} {1,-10} {2} {3}" -f $Status.Name, $ver, $symbol, $Status.Detail) -ForegroundColor (Get-StateColor $Status.State)
 }
 
-function Get-WorkspaceStatus {
+function Get-WorkspaceStatus([switch]$QuickScan) {
+    $scanDesc = if ($QuickScan) { '快速本機掃描 (不連線遠端)' } else { '完整遠端狀態掃描 (含 fetch)' }
     Write-Host '=================================================================' -ForegroundColor Cyan
-    Write-Host '🔍 【專案狀態掃描】只讀取 Git 狀態，不改寫工作檔案' -ForegroundColor Yellow
+    Write-Host "🔍 【專案狀態掃描】$scanDesc" -ForegroundColor Yellow
     Write-Host "📁 【工作目錄】$devRoot" -ForegroundColor Gray
     Write-Host '-----------------------------------------------------------------' -ForegroundColor Cyan
     $results = New-Object 'System.Collections.Generic.List[object]'
@@ -47,7 +49,7 @@ function Get-WorkspaceStatus {
         $name = [string]$repository.folder
         $path = Join-Path $devRoot $name
         $status = Get-ManagedRepositoryStatus -RepositoryPath $path
-        if ($status.State -notin @('Missing', 'Error', 'Unknown', 'Conflict')) {
+        if (-not $QuickScan -and $status.State -notin @('Missing', 'Error', 'Unknown', 'Conflict')) {
             $safePath = $path.Replace('\', '/')
             $null = @(git -c "safe.directory=$safePath" -C $path fetch origin --prune --quiet 2>$null)
             if ($LASTEXITCODE -ne 0) {
@@ -56,8 +58,10 @@ function Get-WorkspaceStatus {
                 $status = Get-ManagedRepositoryStatus -RepositoryPath $path
             }
         }
+        $repoVer = Get-RepositoryVersion -RepoPath $path
         $status | Add-Member -NotePropertyName Index -NotePropertyValue $index -Force
         $status | Add-Member -NotePropertyName Name -NotePropertyValue $name -Force
+        $status | Add-Member -NotePropertyName Version -NotePropertyValue $repoVer -Force
         $results.Add($status)
         Write-ProjectState $status
     }
@@ -112,13 +116,15 @@ function Invoke-DeployAgentConfiguration {
     if ($LASTEXITCODE -ne 0) { Write-Host '❌ Agent 設定未完成部署；請依上方訊息處理受保護目標。' -ForegroundColor Red }
 }
 
-$current = Get-WorkspaceStatus
+$isQuick = ($Action -eq 'QuickScan')
+$current = Get-WorkspaceStatus -QuickScan:$isQuick
 switch ($Action) {
     'Auto' { Invoke-PullAll $current; Invoke-DeployAgentConfiguration; Invoke-PushExistingCommits (Get-WorkspaceStatus); break }
     'Pull' { Invoke-PullAll $current; break }
     'Push' { Invoke-PushExistingCommits $current; break }
     'SyncAI' { Invoke-DeployAgentConfiguration; break }
     'Scan' { break }
+    'QuickScan' { break }
     default {
         Write-Host ''
         Write-Host '  [1] ⚡ 智慧同步：安全 Pull → 部署受管 Agent 設定 → 僅 Push 既有提交' -ForegroundColor Yellow

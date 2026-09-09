@@ -1,4 +1,4 @@
-# UTF-8 Compatibility
+﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [string]$DevelopmentRoot = '',

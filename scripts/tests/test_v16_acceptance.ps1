@@ -173,14 +173,21 @@ try {
     $buildScriptExists = (Test-Path -LiteralPath $buildScript -PathType Leaf)
     $buildPreviewPass = $false
     if ($buildScriptExists) {
-        $buildOut = & (Get-HomePowerShell) -NoProfile -ExecutionPolicy Bypass -File $buildScript 2>&1
-        if ($LASTEXITCODE -eq 0) {
+        $homePs = Get-HomePowerShell
+        $proc = Start-Process -FilePath $homePs -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $buildScript) -NoNewWindow -Wait -PassThru
+        if ($proc.ExitCode -eq 0) {
             $buildPreviewPass = $true
         }
     }
     Report-Test "7. Build 腳本成功／失敗處理測試" ($buildScriptExists -and $buildPreviewPass) "成功執行 build_all_desktop_apps.ps1 預覽模式，ExitCode 為 0，未異常當機"
 
-    # 10. 測試：啟動 GUI 並完成一次基本操作流程 (任務 6)
+    # 10. 測試：專案版本解析功能 Get-RepositoryVersion (任務 1)
+    $vCenter = Get-RepositoryVersion $homeRepo
+    $vPaper = Get-RepositoryVersion (Join-Path $devRoot '09_PaperSwitch')
+    $versionTestPass = ($vCenter -match '^v?\d+\.\d+' -or $vCenter -eq '未標註') -and ($vPaper -match '^v?\d+\.\d+')
+    Report-Test "11. 專案版本號解析功能驗證" $versionTestPass "成功解析各 Repository 之版本號 (如 PaperSwitch: $vPaper)"
+
+    # 12. 測試：啟動 GUI 並完成一次基本操作流程 (任務 6)
     $guiScript = Join-Path $homeRepo 'scripts\gui.ps1'
     $xamlPath = Join-Path $homeRepo 'scripts\gui\MainWindow.xaml'
     $guiReady = (Test-Path -LiteralPath $guiScript) -and (Test-Path -LiteralPath $xamlPath)
@@ -192,18 +199,22 @@ try {
         $xReader = [System.Xml.XmlNodeReader]::new($xXml)
         $testWindow = [System.Windows.Markup.XamlReader]::Load($xReader)
         if ($testWindow -and $testWindow.Title -match 'LiangHao 開發手帳') {
-            # 驗證關鍵控制項
+            # 驗證關鍵控制項與 v1.6 三級按鈕
             $hasGrid = ($null -ne $testWindow.FindName('GridRepositories'))
             $hasTabs = ($null -ne $testWindow.FindName('MainTabs'))
             $hasBuild = ($null -ne $testWindow.FindName('GridDesktopApps'))
             $hasTools = ($null -ne $testWindow.FindName('GridDevTools'))
             $hasAgent = ($null -ne $testWindow.FindName('GridAgentItems'))
-            if ($hasGrid -and $hasTabs -and $hasBuild -and $hasTools -and $hasAgent) {
+            $hasQuickBtn = ($null -ne $testWindow.FindName('BtnQuickScan'))
+            $hasRemoteBtn = ($null -ne $testWindow.FindName('BtnRemoteRefresh'))
+            $hasFullBtn = ($null -ne $testWindow.FindName('BtnFullCheck'))
+            $hasShortcutBtn = ($null -ne $testWindow.FindName('BtnCheckShortcuts'))
+            if ($hasGrid -and $hasTabs -and $hasBuild -and $hasTools -and $hasAgent -and $hasQuickBtn -and $hasRemoteBtn -and $hasFullBtn -and $hasShortcutBtn) {
                 $guiInitPass = $true
             }
         }
     }
-    Report-Test "10. 啟動 GUI 並完成一次基本操作流程" $guiInitPass "XAML 解析正常，14 個專案總覽、同步、建置、環境與 Agent 5 大分頁控制項完整載入"
+    Report-Test "10. 啟動 GUI 並完成一次基本操作流程" $guiInitPass "XAML 解析正常，14 個專案總覽、同步、建置、環境、Agent 及 v1.6 三級掃描控制項完整載入"
 
 } finally {
     if (Test-Path -LiteralPath $tempRoot) {

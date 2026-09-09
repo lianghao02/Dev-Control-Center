@@ -208,10 +208,11 @@
                     <TextBlock Text="｜ 70% 管理中樞 + 30% 手帳裝飾" FontSize="12" Foreground="#A0AEC0" VerticalAlignment="Center" Margin="10,0,0,0" />
                 </StackPanel>
 
-                <!-- 右側：全域重新整理與說明按鈕 -->
+                <!-- 右側：全域三級掃描與工作區按鈕 -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button x:Name="BtnQuickScan" Content="⚡ 快速掃描 (本機)" Style="{StaticResource TechoButton}" Margin="0,0,8,0" Padding="12,5" ToolTip="快速讀取本機 Git 狀態與快取差異，無網路等待" />
-                    <Button x:Name="BtnFullScan" Content="🔍 完整掃描 (含遠端)" Style="{StaticResource PrimaryActionButton}" Margin="0,0,8,0" Padding="12,5" ToolTip="連線 GitHub 更新遠端分支後進行完整比對" />
+                    <Button x:Name="BtnQuickScan" Content="⚡ 快速掃描 (L1)" Style="{StaticResource TechoButton}" Margin="0,0,6,0" Padding="10,5" ToolTip="Level 1 快速本機掃描：純本機檔案與狀態，秒級無等待" />
+                    <Button x:Name="BtnRemoteRefresh" Content="🔄 遠端重整 (L2)" Style="{StaticResource TechoButton}" Margin="0,0,6,0" Padding="10,5" ToolTip="Level 2 遠端重新整理：執行 git fetch origin 並比對最新上游分支" />
+                    <Button x:Name="BtnFullCheck" Content="🔍 完整檢查 (L3)" Style="{StaticResource PrimaryActionButton}" Margin="0,0,8,0" Padding="12,5" ToolTip="Level 3 完整檢查：涵蓋 Git、環境工具鏈、建置預覽與 Agent 設定" />
                     <Button x:Name="BtnOpenWorkspace" Content="📂 開啟工作區" Style="{StaticResource TechoButton}" Padding="10,5" ToolTip="開啟 D:\Development\GitHub" />
                 </StackPanel>
             </Grid>
@@ -363,13 +364,22 @@
                                   RowHeight="36" SelectionMode="Single" AlternatingRowBackground="#FAF8F5">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="40" />
-                                <DataGridTextColumn Header="專案名稱" Binding="{Binding Name}" Width="260">
+                                <DataGridTextColumn Header="專案名稱" Binding="{Binding Name}" Width="240">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="FontWeight" Value="SemiBold" />
                                             <Setter Property="Foreground" Value="#2D3748" />
                                             <Setter Property="VerticalAlignment" Value="Center" />
                                             <Setter Property="Margin" Value="6,0,0,0" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="版本" Binding="{Binding Version}" Width="90">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                            <Setter Property="Foreground" Value="#2A6B3C" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
@@ -526,8 +536,10 @@
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Button x:Name="BtnPreviewBuild" Content="🔍 預覽建置清單" Style="{StaticResource TechoButton}" Margin="0,0,10,0" Padding="14,10" ToolTip="執行 build_all_desktop_apps.ps1 檢查各專案路徑與版本宣告" />
-                                    <Button x:Name="BtnExecuteBuild" Content="🔨 執行本機集中建置" Style="{StaticResource PrimaryActionButton}" Padding="16,10" ToolTip="執行 build_all_desktop_apps.ps1 -Execute 集中編譯全部桌面應用程式" />
+                                    <Button x:Name="BtnPreviewBuild" Content="🔍 預覽清單" Style="{StaticResource TechoButton}" Margin="0,0,8,0" Padding="12,10" ToolTip="執行 build_all_desktop_apps.ps1 檢查各專案路徑與版本宣告" />
+                                    <Button x:Name="BtnCheckShortcuts" Content="📌 檢查桌面捷徑" Style="{StaticResource TechoButton}" Margin="0,0,8,0" Padding="12,10" ToolTip="檢查桌面捷徑指向之執行檔與當前版本是否相符" />
+                                    <Button x:Name="BtnBuildSelected" Content="🔨 建置所選" Style="{StaticResource TechoButton}" Margin="0,0,8,0" Padding="12,10" ToolTip="只編譯下方清單中選取的單一桌面應用程式" />
+                                    <Button x:Name="BtnExecuteBuild" Content="🚀 建置全部" Style="{StaticResource PrimaryActionButton}" Padding="14,10" ToolTip="執行 build_all_desktop_apps.ps1 -Execute 集中編譯全部桌面應用程式" />
                                 </StackPanel>
                             </Grid>
                         </Border>

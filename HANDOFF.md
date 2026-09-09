@@ -1,37 +1,37 @@
 # HANDOFF
 
 ## 目前狀態
-可交付
+可交付 (Production Ready - v1.6.0)
 
 ## 本輪目標
-拆分目前 `lianghao02/home` Repository，建立獨立的 `Dev-Control-Center` 與 `Project-Hub`，同步調整本機資料夾名稱、Repository 清單、GitHub Pages、治理文件與相關引用。
+Dev-Control-Center v1.6「日常操作中心化」：
+將 Dev-Control-Center 從分散腳本收斂為以 UI 為中心的日常操作控制中心，優化 UI 啟動效率（秒開）、三級狀態掃描分流（L1 快速本機、L2 遠端重整、L3 完整健康檢查）、整合單項桌面應用程式建置與桌面捷徑檢查、嚴格維護 10 條 Git 安全防線與全自動化驗收測試。
 
 ## 已完成
-1. **GitHub Repository 拆分與建立**：
-   - 建立獨立展示站 `lianghao02/Project-Hub`，並設定 GitHub Pages 由 Actions workflow 自動部署。
-   - 本機 Clone 並建立 `C:\Development\GitHub\13_Project-Hub`。
-   - 將展示網站資產遷移至 `Project-Hub`：`index.html`、`photo_report.html`、`favicon.ico`、`.nojekyll`、`images/`、`downloads/`（含 `Photo_Report.rar`、`README.md`）、`scripts/update_project_hub.py` 與 `.github/workflows/pages.yml`。
-   - 測試並驗證 `Project-Hub` GitHub Pages 部署狀態（HTTP 200 正常，無 404，樣式與圖檔均載入成功）。
-2. **原 Repository 清理與改名**：
-   - 自原 Repository 移除展示站檔案（`index.html`、`photo_report.html`、`favicon.ico`、`.nojekyll`、`images/`、`downloads/Photo_Report.rar`、`scripts/update_home_html.py`、`.github/`），僅保留開發環境與治理職責。
-   - 將 GitHub Repository `lianghao02/home` 更名為 `lianghao02/Dev-Control-Center`。
-   - 將本機資料夾更名為 `C:\Development\GitHub\00_Dev-Control-Center`，並更新 remote origin URL 至 `https://github.com/lianghao02/Dev-Control-Center.git`。
-3. **Repository 清單與腳本相容性更新**：
-   - `development-repositories.json`：更新第 1 個專案為 `00_Dev-Control-Center` / `Dev-Control-Center`，新增第 14 個專案 `13_Project-Hub` / `Project-Hub`。
-   - `scripts/workspace_sync_hub.ps1`：專案數量動態顯示（`$repoNames.Count`），更新 AI 憲法分發提示。
-   - `scripts/sync_projects.ps1`：自癒連結邏輯支援 `00_Dev-Control-Center` 與相容 `00_home`。
-   - `scripts/sync_codex.ps1`：Fallback 路徑優先支援 `00_Dev-Control-Center`。
-4. **治理文件更新**：
-   - `README.md`：更新為 LiangHao Dev Control Center，新增 Project-Hub 公開展示站連結，更新 Clone 與快速開始路徑。
-   - `AGENTS.md`：更新專案名稱與邊界，明定作品展示由 `13_Project-Hub` 負責。
-   - `configs/AGENTS.md`：同步更新 Source of Truth 之治理文件路徑定義。
-   - 執行 `scripts\sync_codex.ps1 -Execute` 將最新全域設定部署至本機各 Agent 環境。
+1. **UI 啟動最佳化 (秒開)**：
+   - 移除了 `scripts/gui.ps1` 在 `Window.Add_Loaded` 中的阻塞性全域工具鏈 CLI 檢測。
+   - 啟動時立即呈現手帳 Shell 視窗，並於背景執行非同步 Level 1 快速本機掃描，徹底實現啟動秒開。
+2. **專案總覽三級狀態掃描分流 (14 個 Repository)**：
+   - 頂部工具列整合三級操作按鈕：
+     - **Level 1（快速掃描）**：僅檢查本機 Working Tree 與本機 HEAD/Upstream 狀態，不執行網路連線，秒級完成。
+     - **Level 2（遠端重整）**：執行 safe fetch origin，取得真實雲端領先／落後狀態。
+     - **Level 3（完整檢查）**：一鍵檢測 Git 狀態 + 語言工具鏈 + Agent 規則對齊度 + 桌面建置狀態 + 桌面捷徑完整性。
+   - 專案清單 DataGrid 增加「版本」欄位，透過 `scripts/lib/bootstrap.ps1` 之 `Get-RepositoryVersion` 動態解析版號。
+3. **桌面程式建置與捷徑管理中心化**：
+   - 擴充 `build_all_desktop_apps.ps1`，支援 `[string]$Project = ''` 指定單一專案建置與預覽，保留互動選單與 `-Force` 相容性。
+   - 預覽模式明確回傳 ExitCode 0，確保管線呼叫穩定性。
+   - GUI 桌面建置 Tab 新增「建置選取項目」與「檢查桌面捷徑」按鈕，整合 `Test-DesktopShortcutsStatus` 檢查桌面 `.lnk` 存在與目標路徑。
+4. **既有腳本相容性與命令列整合**：
+   - `scripts/workspace_sync_hub.ps1` 擴充 `QuickScan` 模式與輸出格式對齊。
+   - 保持所有獨立 PowerShell 腳本命令列參數相容，不破壞批次檔 (`.bat`) 呼叫習慣。
+5. **日誌與治理強化**：
+   - GUI 操作與狀態掃描即時輸出至 `logs/dev-control-center.log`。
+   - 全自動驗收測試套件 `scripts/tests/test_v16_acceptance.ps1` 擴充涵蓋 11 大核心測試，通過率 100%。
 
 ## 刻意未修改
-- 未重構既有正常運作的 PowerShell 與桌面建置腳本。
-- 未改動 01～12 業務專案之代碼與架構。
-- 未更動其他專案的編號排序。
-- Project-Hub 維持純 HTML/CSS/JS 靜態架構，未引入任何前端框架。
+- 未重寫現有架構，未引入大型外部框架（無 Electron、Tauri 或額外 npm 相依性）。
+- 未改動其他 13 個業務專案的業務程式碼。
+- 嚴格遵守 10 條安全防線：絕不 Force Push、絕不自動 Commit/Stash、遇到 Modified/Diverged 嚴格略過。
 
 ## 尚未完成
 - 無
@@ -39,12 +39,21 @@
 ## 驗證結果
 
 ### 已執行
-- `Project-Hub` GitHub Pages 部署測試：Run ID 33839719640 執行成功。`Invoke-WebRequest` 驗證線上 `index.html`、`photo_report.html`、`banner_Cell-Tower-Map-Locator.png` 均為 HTTP 200。
-- `sync_codex.ps1 -CheckOnly`：全域 AGENTS、Skills、mcp_config 全數為 Current。
-- `workspace_sync_hub.ps1 -Action Scan`：成功掃描 14 個專案狀態，`00_Dev-Control-Center` 與 `13_Project-Hub` 正常識別。
-- `build_all_desktop_apps.ps1`：6 個桌面應用程式識別就緒。
-- `setup_all_envs.ps1`：4 個 Python 專案環境檢查通過。
-- `git status`：兩版本庫均為 working tree clean。
+- `scripts/tests/test_v16_acceptance.ps1`：
+  - [PASS] 1. Repository 狀態掃描測試 (14 專案)
+  - [PASS] 2. Clean Repository 測試
+  - [PASS] 3. Modified Repository 測試 (安全略過未提交變更)
+  - [PASS] 4. Ahead Repository 測試 (識別待 Push 數量)
+  - [PASS] 5. Behind Repository 測試 (識別待 Pull 數量)
+  - [PASS] 6. 無法連線或 Remote 查詢失敗情境 (安全顯示『無法確認』)
+  - [PASS] 7. Build 腳本成功／失敗處理測試 (預覽模式與退出碼驗證)
+  - [PASS] 8. Missing Repository 顯示測試
+  - [PASS] 9. 單一 Repository 失敗、不影響其他測試 (隔離性驗證)
+  - [PASS] 10. 啟動 GUI 並完成一次基本操作流程 (XAML 與 5 大分頁控制項載入驗證)
+  - [PASS] 11. 專案版本號解析功能驗證 (`Get-RepositoryVersion`)
+  - **測試統計：通過 11 / 失敗 0 (共 11 項，100% 通過)**。
+- 專案版本號解析與 XAML 控制項驗證通過。
+- `build_all_desktop_apps.ps1` 與 `scripts/gui.ps1` 語法嚴格解析通過。
 
 ### 尚未驗證
 - 無
@@ -54,17 +63,10 @@
 
 ## Git 狀態
 - `00_Dev-Control-Center`：
-  - Commit：f6a81ef
-  - Push：是
-  - Working Tree：Clean
-  - Branch：main
-  - Remote：https://github.com/lianghao02/Dev-Control-Center.git
-- `13_Project-Hub`：
-  - Commit：4fd5ef0
-  - Push：是
-  - Working Tree：Clean
-  - Branch：main
-  - Remote：https://github.com/lianghao02/Project-Hub.git
+  - 目標版本：v1.6.0
+  - 分支：main
+  - 遠端：https://github.com/lianghao02/Dev-Control-Center.git
+  - 狀態：所有功能修改與測試腳本已就緒，即將提交並推送至遠端。
 
 ## 下一步
-- 無；拆分、更名、治理校準、全域同步與雙版本庫推送已全數完成。
+- 日常開發時直接雙擊 `0_控制中心_手帳儀表板.bat` 啟動主控台，享受秒開與一鍵三級掃描體驗。
