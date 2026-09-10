@@ -20,6 +20,16 @@ function Get-HomeDevelopmentRoot([string]$HomeRepository) {
     if ([string]::IsNullOrWhiteSpace($parent)) {
         throw "無法從 home 專案路徑判斷開發根目錄：$HomeRepository"
     }
+
+    # 控制中心位於「00\_Dev-Control-Center」時，00 是分類目錄；
+    # 開發根目錄仍是其上一層，與其他 Repository 同層。
+    if ((Split-Path -Leaf $parent) -eq '00') {
+        $parent = Split-Path -Parent $parent
+        if ([string]::IsNullOrWhiteSpace($parent)) {
+            throw "無法從 home 專案路徑判斷開發根目錄：$HomeRepository"
+        }
+    }
+
     return [IO.Path]::GetFullPath($parent)
 }
 

@@ -16,7 +16,10 @@ if ([string]::IsNullOrWhiteSpace($DevelopmentRoot)) { $DevelopmentRoot = Get-Hom
 $devRoot = [IO.Path]::GetFullPath($DevelopmentRoot)
 $manifestPath = Join-Path $homeRepo 'development-repositories.json'
 if (-not (Test-Path -LiteralPath $manifestPath -PathType Leaf)) { throw "找不到專案清冊：$manifestPath" }
-$repositories = @((Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json).repositories)
+$manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
+$githubOwner = [string]$manifest.githubOwner
+if ([string]::IsNullOrWhiteSpace($githubOwner)) { throw "專案清冊缺少 GitHub owner：$manifestPath" }
+$repositories = @($manifest.repositories)
 
 function Get-StateColor([string]$State) {
     switch ($State) {
@@ -144,6 +147,37 @@ function Invoke-PushExistingCommits([object[]]$ScanList) {
     }
 }
 
+function Invoke-CloneMissingRepositories {
+    foreach ($repository in $repositories) {
+        $folder = [string]$repository.folder
+        $repositoryName = [string]$repository.repository
+        $path = Join-Path $devRoot $folder
+
+        # 只有目錄確實不存在時才可 Clone；既有目錄一律不覆寫。
+        if (Test-Path -LiteralPath $path) {
+            $existing = Get-ManagedRepositoryStatus -RepositoryPath $path
+            if ($existing.State -eq 'Error') {
+                Write-Host "🛡️  $folder：$($existing.Detail)；既有目錄受保護，未覆寫或 Clone。" -ForegroundColor Yellow
+            }
+            continue
+        }
+
+        if ([string]::IsNullOrWhiteSpace($repositoryName)) {
+            Write-Host "❌ $folder：專案清冊缺少 GitHub Repository 名稱，未 Clone。" -ForegroundColor Red
+            continue
+        }
+
+        $remoteUrl = "https://github.com/$githubOwner/$repositoryName.git"
+        Write-Host "⏳ 正在 Clone：$folder" -ForegroundColor Yellow
+        & git clone --origin origin $remoteUrl $path
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "✅ $folder：Clone 完成" -ForegroundColor Green
+        } else {
+            Write-Host "❌ $folder：Clone 失敗；保留現有檔案供人工檢查，未自動刪除。" -ForegroundColor Red
+        }
+    }
+}
+
 function Invoke-DeployAgentConfiguration {
     $syncScript = Join-Path $homeRepo 'scripts\sync_codex.ps1'
     if (-not (Test-Path -LiteralPath $syncScript -PathType Leaf)) { Write-Host '❌ 找不到 Agent 設定部署腳本。' -ForegroundColor Red; return }
@@ -155,7 +189,7 @@ function Invoke-DeployAgentConfiguration {
 $isQuick = ($Action -eq 'QuickScan')
 $current = Get-WorkspaceStatus -QuickScan:$isQuick
 switch ($Action) {
-    'Auto' { Invoke-PullAll $current; Invoke-DeployAgentConfiguration; Invoke-PushExistingCommits (Get-WorkspaceStatus); break }
+    'Auto' { Invoke-CloneMissingRepositories; $current = Get-WorkspaceStatus; Invoke-PullAll $current; Invoke-PushExistingCommits (Get-WorkspaceStatus); break }
     'Pull' { Invoke-PullAll $current; break }
     'Push' { Invoke-PushExistingCommits $current; break }
     'SyncAI' { Invoke-DeployAgentConfiguration; break }

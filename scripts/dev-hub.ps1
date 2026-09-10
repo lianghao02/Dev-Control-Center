@@ -72,7 +72,7 @@ function Show-DevHubMenu {
     Write-Host '=========================================' -ForegroundColor Cyan
     Write-Host ''
     Write-Host '[1] 快速檢查所有專案'
-    Write-Host '[2] 安全同步所有專案'
+    Write-Host '[2] 安全同步所有專案（缺少時 Clone）'
     Write-Host '[3] 建置桌面應用程式'
     Write-Host '[4] 檢查 / 同步 Agent 設定'
     Write-Host '[5] 開發環境檢查'
