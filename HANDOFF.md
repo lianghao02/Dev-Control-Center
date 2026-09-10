@@ -1,7 +1,13 @@
 # HANDOFF
 
 ## 目前狀態
-可交付 (Production Ready - v1.6.0 維護修正)
+Stable / Maintenance（CLI/BAT-first、GUI-optional）
+
+## 2026-09-10 架構調整
+- 新增 `0_開發中樞.bat` 與 `scripts/dev-hub.ps1`，以終端選單作為日常主入口；原 1～3 BAT 與 GUI 入口均保留。
+- GUI 改為開啟即顯示「尚未掃描」，不再由 `ContentRendered` 自動啟動 Level 1；Level 1／2／3 皆維持手動操作。
+- Git 本機狀態掃描改為直接呼叫 `git.exe`；已於 PowerShell 7 與 Windows PowerShell 5.1 驗證安全分類，並保留非致命 stderr 的安全處理。
+- PowerShell 7 的唯讀 Level 1／QuickScan 限制為最多 4 條平行工作；Windows PowerShell 5.1 維持序列 fallback。
 
 ## 2026-09-09 維護修正
 - Level 1 改為背景 Job，首次畫面 Render 後啟動；14 專案掃描完成後才由 UI 執行緒更新畫面。
@@ -9,8 +15,8 @@
 - Git 狀態改以 porcelain v2 單次查詢取得分支、上游與 ahead/behind；實測掃描 160.953 秒降至 40.301 秒。
 
 ## 本輪目標
-Dev-Control-Center v1.6「日常操作中心化」：
-將 Dev-Control-Center 從分散腳本收斂為以 UI 為中心的日常操作控制中心，優化 UI 啟動效率（秒開）、三級狀態掃描分流（L1 快速本機、L2 遠端重整、L3 完整健康檢查）、整合單項桌面應用程式建置與桌面捷徑檢查、嚴格維護 10 條 Git 安全防線與全自動化驗收測試。
+Dev-Control-Center 採 CLI/BAT-first、GUI-optional：
+日常操作由 `0_開發中樞.bat` 與 PowerShell 終端選單承擔；GUI 僅提供視覺總覽與手動進階操作。核心同步、安全防線、建置、環境與 Agent 邏輯仍集中於既有 PowerShell 腳本。
 
 ## 已完成
 1. **UI 啟動最佳化 (秒開)**：
@@ -39,7 +45,7 @@ Dev-Control-Center v1.6「日常操作中心化」：
 - 嚴格遵守 10 條安全防線：絕不 Force Push、絕不自動 Commit/Stash、遇到 Modified/Diverged 嚴格略過。
 
 ## 尚未完成
-- 無
+- 無；本輪完成後不再展開 UI 或掃描最佳化工作，後續僅維護。
 
 ## 驗證結果
 
@@ -68,10 +74,10 @@ Dev-Control-Center v1.6「日常操作中心化」：
 
 ## Git 狀態
 - `00_Dev-Control-Center`：
-  - 目標版本：v1.6.0
+  - 目標版本：v1.7.0
   - 分支：main
   - 遠端：https://github.com/lianghao02/Dev-Control-Center.git
   - 狀態：所有功能修改與測試腳本已就緒，即將提交並推送至遠端。
 
 ## 下一步
-- 日常開發時直接雙擊 `0_控制中心_手帳儀表板.bat` 啟動主控台，享受秒開與一鍵三級掃描體驗。
+- 日常開發時直接雙擊 `0_開發中樞.bat`；需要 Repository 視覺總覽時再由選單開啟 GUI，並手動選擇掃描層級。

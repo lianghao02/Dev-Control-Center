@@ -202,7 +202,9 @@ New-Item -ItemType Directory -Path $tempRoot -Force | Out-Null
     # 12. 測試：啟動 GUI 並完成一次基本操作流程 (任務 6)
     $guiScript = Join-Path $homeRepo 'scripts\gui.ps1'
     $xamlPath = Join-Path $homeRepo 'scripts\gui\MainWindow.xaml'
-    $guiReady = (Test-Path -LiteralPath $guiScript) -and (Test-Path -LiteralPath $xamlPath)
+    $devHubScript = Join-Path $homeRepo 'scripts\dev-hub.ps1'
+    $devHubLauncher = Join-Path $homeRepo '0_開發中樞.bat'
+    $guiReady = (Test-Path -LiteralPath $guiScript) -and (Test-Path -LiteralPath $xamlPath) -and (Test-Path -LiteralPath $devHubScript) -and (Test-Path -LiteralPath $devHubLauncher)
     $guiInitPass = $false
     if ($guiReady) {
         # 測試 XAML 解析與視窗實例化
@@ -221,12 +223,18 @@ New-Item -ItemType Directory -Path $tempRoot -Force | Out-Null
             $hasRemoteBtn = ($null -ne $testWindow.FindName('BtnRemoteRefresh'))
             $hasFullBtn = ($null -ne $testWindow.FindName('BtnFullCheck'))
             $hasShortcutBtn = ($null -ne $testWindow.FindName('BtnCheckShortcuts'))
-            if ($hasGrid -and $hasTabs -and $hasBuild -and $hasTools -and $hasAgent -and $hasQuickBtn -and $hasRemoteBtn -and $hasFullBtn -and $hasShortcutBtn) {
+            $guiSource = Get-Content -LiteralPath $guiScript -Raw -Encoding UTF8
+            $hubSource = Get-Content -LiteralPath $devHubScript -Raw -Encoding UTF8
+            $launcherSource = Get-Content -LiteralPath $devHubLauncher -Raw -Encoding Default
+            $hasManualOnlyGuiScan = ($guiSource -notmatch '\$window\.Add_ContentRendered') -and ($guiSource -match '\$btnQuickScan\.Add_Click')
+            $hasCliHub = ($hubSource -match "'QuickScan'") -and ($hubSource -match "'SafeSync'") -and ($hubSource -match "'Gui'")
+            $hasThinLauncher = ($launcherSource -match 'scripts\\dev-hub\.ps1') -and ($launcherSource -match 'where\.exe pwsh\.exe')
+            if ($hasGrid -and $hasTabs -and $hasBuild -and $hasTools -and $hasAgent -and $hasQuickBtn -and $hasRemoteBtn -and $hasFullBtn -and $hasShortcutBtn -and $hasManualOnlyGuiScan -and $hasCliHub -and $hasThinLauncher) {
                 $guiInitPass = $true
             }
         }
     }
-    Report-Test "10. 啟動 GUI 並完成一次基本操作流程" $guiInitPass "XAML 解析正常，14 個專案總覽、同步、建置、環境、Agent 及 v1.6 三級掃描控制項完整載入"
+    Report-Test "10. CLI 主入口與選用 GUI 載入測試" $guiInitPass "XAML、終端選單與薄 BAT 啟動器完整；GUI 保留手動三級掃描且不會自動掃描"
 
 }
 

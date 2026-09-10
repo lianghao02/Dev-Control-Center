@@ -43,12 +43,47 @@ function Get-WorkspaceStatus([switch]$QuickScan) {
     Write-Host "📁 【工作目錄】$devRoot" -ForegroundColor Gray
     Write-Host '-----------------------------------------------------------------' -ForegroundColor Cyan
     $results = New-Object 'System.Collections.Generic.List[object]'
-    $index = 0
-    foreach ($repository in $repositories) {
-        $index++
-        $name = [string]$repository.folder
-        $path = Join-Path $devRoot $name
-        $status = Get-ManagedRepositoryStatus -RepositoryPath $path
+    # 快速掃描只讀取各 Repository 的本機狀態；在 PowerShell 7 可安全限制為 4 條平行工作，
+    # Windows PowerShell 5.1 則維持序列流程，確保全新 Windows 電腦可直接使用。
+    $canUseParallelQuickScan = $QuickScan -and $PSVersionTable.PSVersion.Major -ge 7
+    if ($canUseParallelQuickScan) {
+        $bootstrapPath = Join-Path $PSScriptRoot 'lib\bootstrap.ps1'
+        $gitStatusPath = Join-Path $PSScriptRoot 'lib\git-status.ps1'
+        $parallelInput = for ($i = 0; $i -lt $repositories.Count; $i++) {
+            [PSCustomObject]@{ Index = $i + 1; Repository = $repositories[$i] }
+        }
+        $parallelResults = @($parallelInput | ForEach-Object -Parallel {
+                . $using:bootstrapPath
+                . $using:gitStatusPath
+                $entry = $_
+                $repository = $entry.Repository
+                $index = $entry.Index
+                $name = [string]$repository.folder
+                $path = Join-Path $using:devRoot $name
+                $status = Get-ManagedRepositoryStatus -RepositoryPath $path
+                [PSCustomObject]@{
+                    Index = $index
+                    Name = $name
+                    Version = Get-RepositoryVersion -RepoPath $path
+                    Status = $status
+                }
+            } -ThrottleLimit 4)
+
+        foreach ($entry in ($parallelResults | Sort-Object Index)) {
+            $status = $entry.Status
+            $status | Add-Member -NotePropertyName Index -NotePropertyValue $entry.Index -Force
+            $status | Add-Member -NotePropertyName Name -NotePropertyValue $entry.Name -Force
+            $status | Add-Member -NotePropertyName Version -NotePropertyValue $entry.Version -Force
+            $results.Add($status)
+            Write-ProjectState $status
+        }
+    } else {
+        $index = 0
+        foreach ($repository in $repositories) {
+            $index++
+            $name = [string]$repository.folder
+            $path = Join-Path $devRoot $name
+            $status = Get-ManagedRepositoryStatus -RepositoryPath $path
         if (-not $QuickScan -and $status.State -notin @('Missing', 'Error', 'Unknown', 'Conflict')) {
             $safePath = $path.Replace('\', '/')
             $null = @(git -c "safe.directory=$safePath" -C $path fetch origin --prune --quiet 2>$null)
@@ -64,6 +99,7 @@ function Get-WorkspaceStatus([switch]$QuickScan) {
         $status | Add-Member -NotePropertyName Version -NotePropertyValue $repoVer -Force
         $results.Add($status)
         Write-ProjectState $status
+        }
     }
     Write-Host '-----------------------------------------------------------------' -ForegroundColor Cyan
     $summary = $results | Group-Object State | ForEach-Object { "{0}: {1}" -f $_.Name, $_.Count }

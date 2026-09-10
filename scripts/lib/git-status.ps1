@@ -28,9 +28,18 @@
     $safePath = $RepositoryPath.Replace('\', '/')
     # porcelain v2 的 branch 標頭同時提供分支、上游與領先／落後資訊，
     # 避免每個 Repository 額外啟動 branch、rev-parse、rev-list 三個 Git 程序。
-    $gitCommand = "git -c ""safe.directory=$safePath"" -C ""$RepositoryPath"" status --porcelain=v2 --branch 2>NUL"
-    $gitOutput = @(cmd.exe /d /c $gitCommand)
-    if ($LASTEXITCODE -ne 0) {
+    # 直接呼叫 git.exe，避免 PowerShell → cmd.exe → git.exe 的額外中介層。
+    # Windows PowerShell 5.1 會將 Git 的非致命 stderr 警告升格為錯誤記錄；
+    # 此處只以 Git 結束代碼判定成功與否，避免單一版本庫警告中斷整批掃描。
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $gitOutput = @(& git -c "safe.directory=$safePath" -C $RepositoryPath status --porcelain=v2 --branch 2>$null)
+        $gitExitCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
+    if ($gitExitCode -ne 0) {
         $result.State = 'Unknown'
         $result.Detail = '無法讀取工作目錄狀態 (無法確認)'
         return [PSCustomObject]$result

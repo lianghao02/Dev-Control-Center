@@ -1,7 +1,7 @@
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="📓 LiangHao 開發手帳 🌸 Dev Control Center v1.6"
+    Title="📓 LiangHao 開發手帳 🌸 Dev Control Center v1.7"
     Height="820" Width="1180"
     MinHeight="700" MinWidth="980"
     WindowStartupLocation="CenterScreen"
@@ -203,7 +203,7 @@
                     </Border>
                     <TextBlock Text="LiangHao 開發手帳" FontSize="20" FontWeight="Bold" Foreground="#2D3748" VerticalAlignment="Center" Margin="0,0,10,0" />
                     <Border Background="#F4EFEA" BorderBrush="#D5C7B2" BorderThickness="1" CornerRadius="12" Padding="8,2" VerticalAlignment="Center">
-                        <TextBlock Text="🌸 Dev Control Center v1.6" FontSize="12" FontWeight="SemiBold" Foreground="#7A624E" />
+                        <TextBlock Text="🌸 Dev Control Center v1.7" FontSize="12" FontWeight="SemiBold" Foreground="#7A624E" />
                     </Border>
                     <TextBlock Text="｜ 70% 管理中樞 + 30% 手帳裝飾" FontSize="12" Foreground="#A0AEC0" VerticalAlignment="Center" Margin="10,0,0,0" />
                 </StackPanel>

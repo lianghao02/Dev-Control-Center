@@ -105,7 +105,6 @@ $global:CurrentFilter = 'All'
 $global:CurrentSearch = ''
 $global:Level1ScanJob = $null
 $global:Level1ScanTimer = $null
-$script:InitialScanStarted = $false  # 防止 ContentRendered 重複觸發 Level 1
 
 $global:LogFilePath = Join-Path $homeRepo 'logs\dev-control-center.log'
 $logDir = Split-Path -Parent $global:LogFilePath
@@ -1220,7 +1219,7 @@ $btnCopyLog.Add_Click({
     }
 })
 
-# 視窗載入初始化：先完成 Shell 資料，掃描交由首次畫面 Render 後的背景工作。
+# 視窗載入初始化：只建立 Shell 資料；掃描一律由使用者手動觸發。
 $window.Add_Loaded({
     # 1. 立即載入桌面應用程式清單與 Agent 設定
     Load-DesktopAppsList
@@ -1228,14 +1227,8 @@ $window.Add_Loaded({
 
     # 2. 初始狀態列與工具鏈摘要預設值 (避免啟動時執行外部 CLI 阻塞)
     $txtEnvSummary.Text = "Git: 就緒 ｜ PS: $(if (Get-Command 'pwsh.exe' -ErrorAction SilentlyContinue) {'pwsh 7'} else {'PS 5.1'}) ｜ .NET: 8.0"
-
-})
-
-$window.Add_ContentRendered({
-    # 防止 ContentRendered 重複觸發（視窗 resize、Tab 切換等可能重新觸發）
-    if ($script:InitialScanStarted) { return }
-    $script:InitialScanStarted = $true
-    Start-Level1BackgroundScan
+    $txtFooterStatus.Text = '💡 準備就緒。尚未掃描；請依需要點擊「快速掃描」、「遠端重整」或「完整檢查」。'
+    Write-GuiLog '介面已就緒；尚未執行 Repository 掃描。'
 })
 
 # 視窗關閉時清理背景 Job 與 Timer，避免殘留資源

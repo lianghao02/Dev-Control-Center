@@ -1,6 +1,6 @@
 # LiangHao Dev Control Center (開發控制中心)
 
-本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.3、共用 Agent Skills、14 個開發 Repository 清單，以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.6.0**。
+本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.3、共用 Agent Skills、14 個開發 Repository 清單，以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.7.0**。
 
 > 🌐 **公開專案展示入口**：所有作品集、Demo 與 GitHub Pages 頁面已獨立遷移至 [lianghao02/Project-Hub](https://github.com/lianghao02/Project-Hub)（展示站：[https://lianghao02.github.io/Project-Hub/](https://lianghao02.github.io/Project-Hub/)）。中央控制中心專注於環境與治理，不再兼任展示網站。
 
@@ -17,20 +17,22 @@
 - **用途**：集中管理專案清單、Git 同步、Codex／Antigravity 規則，以及仍採 Python 的專案可攜環境。
 - **必要軟體**：Windows 10/11、Git for Windows；建議使用 PowerShell 7，未安裝時各入口會自動退回 Windows PowerShell 5.1。管理功能本身不要求先安裝 Python。
 - **下載**：`git clone https://github.com/lianghao02/Dev-Control-Center.git 00_Dev-Control-Center`。
-- **主要入口**：一般使用者直接雙擊根目錄的 `0_` 手帳儀表板或 `1_`～`3_` 旗艦批次檔；進階使用者可執行 `scripts/` 下對應 PowerShell 腳本。
+- **主要入口**：一般使用者直接雙擊 `0_開發中樞.bat` 進入終端選單；`1_`～`3_` 保留為直接快捷入口，`0_控制中心_手帳儀表板.bat` 則保留為選用 GUI 儀表板。進階使用者可執行 `scripts/` 下對應 PowerShell 腳本。
 - **網路需求**：Clone、Pull、Push 與首次下載 Python 可攜核心時需要網路；若 `downloads/` 已有安裝母檔，Python 環境可離線建置。
 - **打包方式**：本專案是管理腳本集合，不需編譯或安裝；備份時保留完整資料夾即可。
 
 ## 雙擊快捷捷徑 (One-Click Flagship Batch Tools)
 
-在 `00_Dev-Control-Center` 根目錄提供精煉的 **4 大旗艦批次中樞**，全數採用 UTF-8 with BOM 防亂碼架構：
+在 `00_Dev-Control-Center` 根目錄提供精煉的批次入口；BAT 只負責定位 PowerShell 與啟動腳本，Git、建置、環境與 Agent 邏輯皆集中於 PowerShell：
 
-0. 📔 **`0_控制中心_手帳儀表板.bat`** (v1.6.0 全新旗艦 GUI)：
-   - **啟動最佳化 (秒開)**：移除阻塞性檢測，啟動即刻呈現手帳 Shell，背景非同步執行快速本機掃描。
-   - 採用**日系手帳雜貨風格（Japanese Techo / Zakka）**之 WPF 現代圖形介面（70% 專業管理效率 + 30% 手帳美學）。
-   - **三級狀態掃描機制**：支援 Level 1 快速本機掃描（秒級無網）、Level 2 遠端重整（含 safe fetch）、Level 3 系統完整健康檢查（Git + 工具鏈 + Agent + 建置 + 桌面捷徑）。
-   - 整合 **5 大管理分頁**：專案總覽 (14 Repo)、安全 Git 同步、桌面程式建置、開發環境管理、Codex / Antigravity 管理。
-   - 具備 10 條嚴格安全防線：絕不 Force Push、絕不自動 Commit/Stash、非快轉或分歧/衝突嚴格略過。
+0. 🧭 **`0_開發中樞.bat`**（日常主入口）：
+   - 開啟 `scripts\dev-hub.ps1` 終端選單，可快速檢查、執行安全同步、建置、檢查／同步 Agent、檢查環境或開啟 GUI。
+   - 優先使用 PowerShell 7，未安裝時自動退回 Windows PowerShell 5.1；以 BAT 自身位置推導路徑，不依賴固定磁碟代號或目前工作目錄。
+   - PowerShell 7 的唯讀快速掃描採最多 4 條平行工作；Windows PowerShell 5.1 維持序列掃描，兩者均使用相同安全狀態分類。
+
+0. 📔 **`0_控制中心_手帳儀表板.bat`**（選用 GUI）：
+   - 啟動後立即顯示儀表板，預設維持「尚未掃描」；使用者可按 Level 1／2／3 按鈕才執行所需檢查。
+   - 保留 Repository 視覺總覽、同步、桌面建置、Agent、環境與日誌等進階操作。
 
 1. 🌟 **`1_全專案智慧同步中樞.bat`** (日常開發主力)：
    - 雙擊即時掃描 14 個專案之本機與雲端狀態。
