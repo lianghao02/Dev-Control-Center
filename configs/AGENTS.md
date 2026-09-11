@@ -1,6 +1,6 @@
-# 📜 全域開發憲法 (Global Development Constitution) v8.3
+﻿# 📜 全域開發憲法 (Global Development Constitution) v8.4
 
-> **版本歷程**：v8.2 → v8.3 (正式版：強化多 Agent 工作連續性、安全中斷與交接斷點機制、最小必要驗證、Review 範圍限制與 Source of Truth 邊界)
+> **版本歷程**：v8.3 → v8.4 (正式版：新增環境可攜性、環境相關硬編碼控制與 Fresh Environment 發布驗證)
 > **核心定位**：所有 Codex 與 Antigravity 開發工作階段皆須遵循的核心行為準則；與當前任務無關的工程條款不強制套用。
 
 ---
@@ -76,6 +76,16 @@
   - **BAT 僅作薄啟動器（Thin Launcher）**：BAT 僅負責固定工作目錄、尋找合適之 PowerShell 執行檔、以無干擾參數啟動對應 `.ps1`、必要時暫停 (`pause`)；所有邏輯運算、外部命令呼叫與錯誤捕捉均置於 PowerShell。
   - **編碼防禦**：涉及中文路徑、Console、文字檔案、外部程式（Git、Python、dotnet）輸入輸出時，嚴禁單純依賴系統預設 Code Page，腳本開頭應統一設定 UTF-8 編碼環境。
   - **路徑規範**：PowerShell 內部路徑計算一律優先使用 `$PSScriptRoot` 與 `Join-Path`，嚴禁寫死使用者個人路徑。
+- **環境可攜性與環境相關硬編碼控制**：
+  - **目標**：在合理條件下，專案應能從開發環境移至新電腦、不同使用者帳號、不同磁碟或不同安裝位置後正常運作；不將開發機偶然存在的設定當作產品需求。
+  - **不得預設固定開發環境**：除非專案規格明確限定，程式、腳本、Build、啟動器與設定不得硬編碼固定磁碟代號、使用者名稱、Repository 絕對路徑、Desktop／Downloads／OneDrive 路徑、Python／虛擬環境／Node／Java／.NET SDK 個人安裝位置、輸出磁碟、測試機專用路徑或暫存測試資料位置。測試使用的真實路徑不得寫入正式程式邏輯。
+  - **路徑選擇優先序**：優先使用程式或 Repository 自身位置、相對路徑、使用者選擇的路徑、集中設定、環境變數與 OS 標準資料夾 API。Windows BAT 優先用 %~dp0，PowerShell 優先用 $PSScriptRoot，Python 優先用 Path(__file__)，並正確處理中文、空白與引號路徑；不得假設目前 working directory 或 Repository 所在磁碟。
+  - **Runtime 自我偵測**：依賴 Python、.venv、Node.js、Java、.NET、FFmpeg、Browser Driver 或其他 Runtime 時，啟動器應先使用專案自帶 runtime／virtual environment；不存在時再偵測系統環境；仍不可用時提供明確的缺失項目與處置訊息。不得因開發機已安裝工具而假設其他電腦具有相同環境。
+  - **Fresh Checkout 可執行性**：採用 src／package layout 的 Python 專案，不得依賴開發機殘留的 PYTHONPATH、editable install 或 IDE 設定。必須明確選擇正式策略：啟動器正確加入 src、安裝流程執行 package install，或交付 Portable／packaged executable。
+  - **設定單一來源**：版本、輸出／快取／工作目錄、API endpoint、可執行檔、模型與 Browser 路徑等會變動且多處使用的資訊，應有單一來源，不得散落於程式、Build 腳本與文件各自維護；但少量真正不隨環境變動的常數不必為此建立設定框架。
+  - **Hard-code 的合理邊界**：協定固定值、檔案格式規格、產品名稱、固定演算法門檻、已確認安全限制、UI 固定文案與環境無關常數可以直接定義。需要避免的是「換電腦、帳號或資料夾就可能改變」的環境相關 Hard-code，而非所有常數。
+  - **Fresh Environment 發布驗證**：需要發布或跨電腦使用的專案，Release Gate 應依實際風險確認：Repository 換位置、非原開發磁碟、不同 Windows 使用者名稱、含中文或空白的路徑均可啟動；不依賴 IDE 專屬設定、未記錄的全域套件或殘留環境變數；Portable 版本不要求額外安裝開發環境；Runtime／Dependency 缺失時有明確提示。僅在固定伺服器或固定設備使用的專案，得依實際需求調整，不強制跨環境驗證。
+  - **Agent 修改檢查**：新增或修改 BAT、PowerShell、Build Script、Installer、Portable、檔案路徑、Runtime 偵測或外部執行檔時，必須主動檢查「這段是否只在目前開發機成立？」；若是，優先改為環境無關設計，但不得藉此進行與任務無關的大型重構。
 - **Repository 潔淨防線**：
   - **版本庫保存邊界**：Git 僅保存正式原始碼、必要測試、設定範例與核心文件。依語言嚴格設定 `.gitignore`，禁止長期提交依賴包（`.venv`, `node_modules`）、編譯輸出（`bin`, `obj`, `dist`, `build`）、快取與日誌（`cache`, `log`, `temp`）、本機設定檔與非必要大型測試資產。
   - **拒絕備份污染**：Git 本身即為版本歷史庫，禁止在儲存庫中長期保留 `old/`, `backup/`, `final/`, `dist-old/`, `legacy-v1/` 等冗餘備份目錄，僅在有回歸對比或相容必要時保留明確標註之過渡檔案。

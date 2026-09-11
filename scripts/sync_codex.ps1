@@ -1,4 +1,4 @@
-# UTF-8 Compatibility
+﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [switch]$CheckOnly,
@@ -60,7 +60,7 @@ function Get-BackupDirectory([string]$Target) {
     return Join-Path $codexHome (Join-Path (Join-Path 'bridge-backups' $backupSession) $targetLabel)
 }
 
-function Sync-ManagedItem([string]$Source, [string]$Target, [hashtable]$Old, [hashtable]$New, [string]$Content = $null) {
+function Sync-ManagedItem([string]$Source, [string]$Target, [hashtable]$Old, [hashtable]$New, [object]$Content = $null) {
     if ($null -eq $Content -and -not (Test-Path -LiteralPath $Source)) { throw "Source does not exist: $Source" }
     $sourceHash = if ($null -eq $Content) { Get-TreeHash $Source } else { Get-TextHash $Content }
     $targetHash = if (Test-Path -LiteralPath $Target) { Get-TreeHash $Target } else { $null }
