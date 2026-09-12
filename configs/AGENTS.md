@@ -270,6 +270,5 @@
 | PDF、Word、Excel、PowerPoint 等本機文件轉為分析用 Markdown | `document-to-markdown` |
 | 建立、重構或驗證新的 Skill 本身 | `skill-creator` |
 | UI／UX 審查、操作流程梳理、介面改善建議、資訊層級診斷、元件狀態檢查 | `product-design` |
-| 搜尋成熟產品之 UI／UX 實際案例、使用者旅程流程或設計參考 | `mobbin` |
 | **使用者明確指定** `caveman` / 極簡 / 省 Token 模式時 | `caveman` |
 

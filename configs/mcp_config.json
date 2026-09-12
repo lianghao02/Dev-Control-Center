@@ -17,9 +17,6 @@
         "mcp-server-sqlite-npx",
         "__HOME_REPO__/cases.db"
       ]
-    },
-    "Mobbin": {
-      "serverUrl": "https://api.mobbin.com/mcp"
     }
   }
 }

@@ -3,10 +3,10 @@
 ## 目前狀態
 Stable / Maintenance（CLI/BAT-first、GUI-optional）
 
-## 2026-09-12 技能與 MCP 納管更新
-- 將 `product-design` 與 `mobbin` 技能納入 `00_Dev-Control-Center/configs/skills/`，並在 `configs/skills-manifest.json` 登記為共用 (shared) 技能。
-- 將 `Mobbin` MCP Server (`https://api.mobbin.com/mcp`) 納入 `configs/mcp_config.json` 集中管理。
-- 更新 `configs/AGENTS.md` 之 Skill 載入與路由規則表。
+## 2026-09-12 技能納管更新（保留 Product Design，移除 Mobbin）
+- 依使用者決策，將需付費之 `Mobbin` MCP Server 與技能全面自控制中心及本機環境卸載。
+- 保留完全免費之 `product-design` 技能至 `00_Dev-Control-Center/configs/skills/`，並在 `configs/skills-manifest.json` 登記為共用 (shared) 技能。
+- 更新 `configs/AGENTS.md` 之 Skill 路由規則表（保留 `product-design`）。
 - 透過 `scripts/sync_codex.ps1` 正式部署並同步至 Codex (`~/.agents/skills/`) 與 Antigravity (`~/.gemini/config/skills/`)。
 
 ## 2026-09-10 架構調整
