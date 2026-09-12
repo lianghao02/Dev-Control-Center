@@ -3,6 +3,12 @@
 ## 目前狀態
 Stable / Maintenance（CLI/BAT-first、GUI-optional）
 
+## 2026-09-12 技能與 MCP 納管更新
+- 將 `product-design` 與 `mobbin` 技能納入 `00_Dev-Control-Center/configs/skills/`，並在 `configs/skills-manifest.json` 登記為共用 (shared) 技能。
+- 將 `Mobbin` MCP Server (`https://api.mobbin.com/mcp`) 納入 `configs/mcp_config.json` 集中管理。
+- 更新 `configs/AGENTS.md` 之 Skill 載入與路由規則表。
+- 透過 `scripts/sync_codex.ps1` 正式部署並同步至 Codex (`~/.agents/skills/`) 與 Antigravity (`~/.gemini/config/skills/`)。
+
 ## 2026-09-10 架構調整
 - 新增 `0_開發中樞.bat` 與 `scripts/dev-hub.ps1`，以終端選單作為日常主入口；原 1～3 BAT 與 GUI 入口均保留。
 - GUI 改為開啟即顯示「尚未掃描」，不再由 `ContentRendered` 自動啟動 Level 1；Level 1／2／3 皆維持手動操作。

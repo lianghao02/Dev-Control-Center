@@ -1,4 +1,4 @@
-﻿# 📜 全域開發憲法 (Global Development Constitution) v8.4
+# 📜 全域開發憲法 (Global Development Constitution) v8.4
 
 > **版本歷程**：v8.3 → v8.4 (正式版：新增環境可攜性、環境相關硬編碼控制與 Fresh Environment 發布驗證)
 > **核心定位**：所有 Codex 與 Antigravity 開發工作階段皆須遵循的核心行為準則；與當前任務無關的工程條款不強制套用。
@@ -269,5 +269,7 @@
 | Playwright 瀏覽器自動化測試、UI 視覺驗證 | `webapp-testing` |
 | PDF、Word、Excel、PowerPoint 等本機文件轉為分析用 Markdown | `document-to-markdown` |
 | 建立、重構或驗證新的 Skill 本身 | `skill-creator` |
+| UI／UX 審查、操作流程梳理、介面改善建議、資訊層級診斷、元件狀態檢查 | `product-design` |
+| 搜尋成熟產品之 UI／UX 實際案例、使用者旅程流程或設計參考 | `mobbin` |
 | **使用者明確指定** `caveman` / 極簡 / 省 Token 模式時 | `caveman` |
 
