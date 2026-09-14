@@ -147,24 +147,43 @@ $t7Pass = ($hasRepoName -and $hasBranch -and $hasCommit -and $hasSkillVersion -a
 Report-Check "7. 跨 Agent Handoff 標準元資料驗證" $t7Pass "示範 Handoff 具備 Repo/Branch/Commit/SkillVersion/TaskType 五大關鍵標識"
 
 # 測試 8: 平台原生自動載入目錄與 Hash 一致性校驗
-$codexSkillDir = Join-Path $env:USERPROFILE '.agents\skills\lianghao-development'
-$antiSkillDir = Join-Path $env:USERPROFILE '.gemini\config\skills\lianghao-development'
-$codexSkillFile = Join-Path $codexSkillDir 'SKILL.md'
-$antiSkillFile = Join-Path $antiSkillDir 'SKILL.md'
+# 測試 8: 平台原生自動載入目錄與 Hash 一致性校驗 (四大共用 Skill)
+$allSharedSkills = @(
+    'lianghao-development',
+    'taiwan-office-automation',
+    'safe-data-processing',
+    'windows-tool-ux'
+)
+$allSkillsPass = $true
+$skillsCheckedCount = 0
 
-$t8Pass = $false
-if ((Test-Path -LiteralPath $codexSkillFile) -and (Test-Path -LiteralPath $antiSkillFile)) {
-    $cVer = (Get-Content -LiteralPath (Join-Path $canonicalSkill 'VERSION') -Raw).Trim()
-    $codexVer = (Get-Content -LiteralPath (Join-Path $codexSkillDir 'VERSION') -Raw).Trim()
-    $antiVer = (Get-Content -LiteralPath (Join-Path $antiSkillDir 'VERSION') -Raw).Trim()
+foreach ($sk in $allSharedSkills) {
+    $canDir = Join-Path $homeRepo "skills\$sk"
+    $cSkillDir = Join-Path $env:USERPROFILE ".agents\skills\$sk"
+    $aSkillDir = Join-Path $env:USERPROFILE ".gemini\config\skills\$sk"
+    $cFile = Join-Path $cSkillDir 'SKILL.md'
+    $aFile = Join-Path $aSkillDir 'SKILL.md'
     
-    $cHash = (Get-FileHash -LiteralPath (Join-Path $canonicalSkill 'SKILL.md') -Algorithm SHA256).Hash
-    $codexHash = (Get-FileHash -LiteralPath $codexSkillFile -Algorithm SHA256).Hash
-    $antiHash = (Get-FileHash -LiteralPath $antiSkillFile -Algorithm SHA256).Hash
+    if ((Test-Path -LiteralPath $cFile) -and (Test-Path -LiteralPath $aFile)) {
+        $cVer = (Get-Content -LiteralPath (Join-Path $canDir 'VERSION') -Raw).Trim()
+        $codexVer = (Get-Content -LiteralPath (Join-Path $cSkillDir 'VERSION') -Raw).Trim()
+        $antiVer = (Get-Content -LiteralPath (Join-Path $aSkillDir 'VERSION') -Raw).Trim()
 
-    $t8Pass = ($cVer -eq '1.0.0' -and $codexVer -eq '1.0.0' -and $antiVer -eq '1.0.0' -and $cHash -eq $codexHash -and $cHash -eq $antiHash)
+        $canHash = (Get-FileHash -LiteralPath (Join-Path $canDir 'SKILL.md') -Algorithm SHA256).Hash
+        $codexHash = (Get-FileHash -LiteralPath $cFile -Algorithm SHA256).Hash
+        $antiHash = (Get-FileHash -LiteralPath $aFile -Algorithm SHA256).Hash
+
+        if ($cVer -eq '1.0.0' -and $codexVer -eq '1.0.0' -and $antiVer -eq '1.0.0' -and $canHash -eq $codexHash -and $canHash -eq $antiHash) {
+            $skillsCheckedCount++
+        } else {
+            $allSkillsPass = $false
+        }
+    } else {
+        $allSkillsPass = $false
+    }
 }
-Report-Check "8. 雙平台原生 Skill 目錄存在性與版本一致性" $t8Pass "Codex 與 Antigravity 皆具備 lianghao-development，且 SKILL.md/VERSION 與 Canonical 完全一致"
+$t8Pass = ($allSkillsPass -and $skillsCheckedCount -eq 4)
+Report-Check "8. 雙平台原生 Skill 目錄存在性與版本一致性" $t8Pass "四大共用 Skill 皆完整部署至 Codex 與 Antigravity，且 VERSION/Hash 完全一致"
 
 Write-Host "-----------------------------------------------------------------" -ForegroundColor Cyan
 Write-Host "測試結果統計：通過 $passCount / 失敗 $failCount (共 $($passCount + $failCount) 項)" -ForegroundColor $(if ($failCount -eq 0) { 'Green' } else { 'Red' })

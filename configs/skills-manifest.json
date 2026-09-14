@@ -11,7 +11,10 @@
     "project-planning",
     "project-readiness-check",
     "release-notes",
-    "webapp-testing"
+    "safe-data-processing",
+    "taiwan-office-automation",
+    "webapp-testing",
+    "windows-tool-ux"
   ],
   "codexOnly": [],
   "antigravityOnly": [
