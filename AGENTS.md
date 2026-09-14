@@ -31,3 +31,13 @@
     powershell -ExecutionPolicy Bypass -File scripts\sync_codex.ps1 -CheckOnly
     ```
   - 確認差異無誤後，始得以 `-Execute` 正式同步部署至本機各 Agent 環境。
+
+---
+
+## 4. 共用 Skill 引用與動態解析 (Discovery Rule)
+- 本專案維護全生態系標準規範 Skill：`skills/lianghao-development`（Canonical Source，v1.0.0）。
+- ChatGPT、Antigravity 與 Codex 執行 AUDIT、EVALUATE、FIX、IMPROVE、RELEASE 或跨 Agent HANDOFF 時，遵循以下 Discovery 順序取得共用規範：
+  1. 環境變數 `LIANGHAO_SKILL_HOME`
+  2. 使用者本機設定檔 `%USERPROFILE%\.lianghao\config.json`
+  3. 鄰近工作區自動探索（`scripts/skill-resolver.ps1`）
+- 本專案作為 Canonical Source，禁止於其他專案複寫或拷貝完整 Skill 內容。

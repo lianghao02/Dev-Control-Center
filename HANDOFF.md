@@ -1,89 +1,128 @@
 # HANDOFF
 
-## 目前狀態
-Stable / Maintenance（CLI/BAT-first、GUI-optional）
+## 核心元資料 (Metadata)
+- **Repository**：lianghao02/Dev-Control-Center
+- **Branch**：main
+- **Commit SHA**：未提交（本輪變更待交付）
+- **Skill Version**：v1.0.0
+- **Task Type**：IMPROVE
+- **Local Path Hint**：00_Dev-Control-Center
 
-## 2026-09-12 技能納管更新（保留 Product Design，移除 Mobbin）
-- 依使用者決策，將需付費之 `Mobbin` MCP Server 與技能全面自控制中心及本機環境卸載。
-- 保留完全免費之 `product-design` 技能至 `00_Dev-Control-Center/configs/skills/`，並在 `configs/skills-manifest.json` 登記為共用 (shared) 技能。
-- 更新 `configs/AGENTS.md` 之 Skill 路由規則表（保留 `product-design`）。
-- 透過 `scripts/sync_codex.ps1` 正式部署並同步至 Codex (`~/.agents/skills/`) 與 Antigravity (`~/.gemini/config/skills/`)。
+---
 
-## 2026-09-10 架構調整
-- 新增 `0_開發中樞.bat` 與 `scripts/dev-hub.ps1`，以終端選單作為日常主入口；原 1～3 BAT 與 GUI 入口均保留。
-- GUI 改為開啟即顯示「尚未掃描」，不再由 `ContentRendered` 自動啟動 Level 1；Level 1／2／3 皆維持手動操作。
-- Git 本機狀態掃描改為直接呼叫 `git.exe`；已於 PowerShell 7 與 Windows PowerShell 5.1 驗證安全分類，並保留非致命 stderr 的安全處理。
-- PowerShell 7 的唯讀 Level 1／QuickScan 限制為最多 4 條平行工作；Windows PowerShell 5.1 維持序列 fallback。
-
-## 2026-09-09 維護修正
-- Level 1 改為背景 Job，首次畫面 Render 後啟動；14 專案掃描完成後才由 UI 執行緒更新畫面。
-- Tab Header 前景色明確套用至內容；BAT 成功預檢後立即結束 CMD，GUI 程序持續執行。
-- Git 狀態改以 porcelain v2 單次查詢取得分支、上游與 ahead/behind；實測掃描 160.953 秒降至 40.301 秒。
+### 目前狀態
+可交付（Skill v1.1 Integration Gate: PASS）
 
 ## 本輪目標
-Dev-Control-Center 採 CLI/BAT-first、GUI-optional：
-日常操作由 `0_開發中樞.bat` 與 PowerShell 終端選單承擔；GUI 僅提供視覺總覽與手動進階操作。核心同步、安全防線、建置、環境與 Agent 邏輯仍集中於既有 PowerShell 腳本。
+在現有 `Dev-Control-Center` 中完成 `lianghao-development` Skill v1.1 整合：
+1. `Dev-Control-Center/skills/lianghao-development` 保持唯一 Canonical Source。
+2. 整合至既有 `configs/skills-manifest.json` 與 `scripts/sync_codex.ps1`，單向部署至各平台目錄（嚴禁反向覆蓋 Canonical）。
+3. 驗證 Codex 與 Antigravity 雙平台原生自動載入與目錄就緒度，校驗 TreeHash 與版本號 100% 一致。
+4. 執行跨 Agent Handoff 實測（`09_PaperSwitch` AUDIT）。
+5. 維持邊界：不擴展至其餘 11 個專案、不修改全域憲法、不變更 Skill 規範內容（Version 保持 `1.0.0`）。
 
-## 已完成
-1. **UI 啟動最佳化 (秒開)**：
-   - 移除了 `scripts/gui.ps1` 在 `Window.Add_Loaded` 中的阻塞性全域工具鏈 CLI 檢測。
-   - 啟動時立即呈現手帳 Shell 視窗，並於背景執行非同步 Level 1 快速本機掃描，徹底實現啟動秒開。
-2. **專案總覽三級狀態掃描分流 (14 個 Repository)**：
-   - 頂部工具列整合三級操作按鈕：
-     - **Level 1（快速掃描）**：僅檢查本機 Working Tree 與本機 HEAD/Upstream 狀態，不執行網路連線，秒級完成。
-     - **Level 2（遠端重整）**：執行 safe fetch origin，取得真實雲端領先／落後狀態。
-     - **Level 3（完整檢查）**：一鍵檢測 Git 狀態 + 語言工具鏈 + Agent 規則對齊度 + 桌面建置狀態 + 桌面捷徑完整性。
-   - 專案清單 DataGrid 增加「版本」欄位，透過 `scripts/lib/bootstrap.ps1` 之 `Get-RepositoryVersion` 動態解析版號。
-3. **桌面程式建置與捷徑管理中心化**：
-   - 擴充 `build_all_desktop_apps.ps1`，支援 `[string]$Project = ''` 指定單一專案建置與預覽，保留互動選單與 `-Force` 相容性。
-   - 預覽模式明確回傳 ExitCode 0，確保管線呼叫穩定性。
-   - GUI 桌面建置 Tab 新增「建置選取項目」與「檢查桌面捷徑」按鈕，整合 `Test-DesktopShortcutsStatus` 檢查桌面 `.lnk` 存在與目標路徑。
-4. **既有腳本相容性與命令列整合**：
-   - `scripts/workspace_sync_hub.ps1` 擴充 `QuickScan` 模式與輸出格式對齊。
-   - 保持所有獨立 PowerShell 腳本命令列參數相容，不破壞批次檔 (`.bat`) 呼叫習慣。
-5. **日誌與治理強化**：
-   - GUI 操作與狀態掃描即時輸出至 `logs/dev-control-center.log`。
-   - 全自動驗收測試套件 `scripts/tests/test_v16_acceptance.ps1` 擴充涵蓋 11 大核心測試，通過率 100%。
+## 基準與已確認事實 (Baseline & Confirmed Facts)
+- `skills/lianghao-development/` 維持完整規格（23 個檔案，Version `1.0.0`）。
+- 既有部署腳本 `scripts/sync_codex.ps1` 原預設僅掃描 `configs/skills/`，經擴充後已支援根目錄 Canonical `skills/` 與 `configs/skills/`。
+- `configs/skills-manifest.json` 已將 `lianghao-development` 納入 `shared` 列表。
+- `sync_codex.ps1 -Execute` 已成功部署至：
+  - Codex 目錄：`C:\Users\chia-hao\.agents\skills\lianghao-development`
+  - Antigravity 目錄：`C:\Users\chia-hao\.gemini\config\skills\lianghao-development`
+- `09_PaperSwitch` 經實測 44/44 測試項通過，處於 Stable/Maintenance 狀態。
+- 遠端 Pilot 專案同步狀態：
+  - `09_PaperSwitch`：Commit `644d6e9`，已推送至 `origin/main`。
+  - `12_ClipMask-AI`：Commit `4593119`，已推送至 `origin/master`。
 
-## 刻意未修改
-- 未重寫現有架構，未引入大型外部框架（無 Electron、Tauri 或額外 npm 相依性）。
-- 未改動其他 13 個業務專案的業務程式碼。
-- 嚴格遵守 10 條安全防線：絕不 Force Push、絕不自動 Commit/Stash、遇到 Modified/Diverged 嚴格略過。
+## 已完成 (Completed)
+1. **Manifest 與部署腳本整合**：
+   - `configs/skills-manifest.json`：新增 `"lianghao-development"` 於 `shared` 項目。
+   - `scripts/sync_codex.ps1`：來源路徑解析升級為優先偵測根目錄 `skills/$skillName`（Canonical 源），若無則讀取 `configs/skills/$skillName`；未分流目錄警告檢查同時涵蓋根目錄與設定目錄。
+2. **平台原生自動載入與部署執行**：
+   - 執行 `sync_codex.ps1 -Execute` 完成向 Codex 與 Antigravity 技能目錄之單向部署。
+   - `~/.codex/antigravity-bridge.json` 記錄同步後之 SHA-256 資訊。
+3. **一致性與安全驗收升級**：
+   - `scripts/verify-agent-environment.ps1`：實作真實平台自動部署檢驗，比對 Canonical、Codex、Antigravity 三方 TreeHash 與版本號。
+   - `scripts/tests/test_skill_environment.ps1`：擴展為 8 大自動化測試項（新增雙平台原生目錄存在性與 SHA-256/VERSION 一致性檢驗），通過率 100% (8/8)。
+4. **跨 Agent Handoff 實測 (PaperSwitch AUDIT)**：
+   - 依照 `workflows/audit-project.md` 規範，對 `09_PaperSwitch` 進行 100% 唯讀檢視與測試驗證，44/44 單元測試通過。
+5. **Antigravity 乾淨 Session 實機 Runtime Discovery 實測**：
+   - 啟動獨立子 Agent 執行未提示 Skill 路徑的 AUDIT 任務。
+   - 成功自動辨識並載入 `lianghao-development`（來源：`C:\Users\chia-hao\.gemini\config\skills\lianghao-development`），100% 依循 AUDIT 唯讀規範產出報告（PASS）。
+6. **Codex 獨立 Session 實機 Runtime Discovery 實測**：
+   - 於全新獨立 Session 執行未提示 Skill 路徑的 AUDIT 任務。
+   - 自行由可用清單辨識載入 `lianghao-development v1.0.0`（來源：`C:\Users\chia-hao\.agents\skills\lianghao-development`），依規範唯讀執行基線與 44/44 測試完成 AUDIT 報告（PASS）。
+7. **Pilot 專案提交與推送**：
+   - `09_PaperSwitch` 與 `12_ClipMask-AI` 皆已完成變更 Commit 與 Push。
 
-## 尚未完成
-- 無；本輪完成後不再展開 UI 或掃描最佳化工作，後續僅維護。
+## 異動檔案 (Changed Files)
+- `configs/skills-manifest.json` [修改]
+- `scripts/sync_codex.ps1` [修改]
+- `scripts/verify-agent-environment.ps1` [修改]
+- `scripts/tests/test_skill_environment.ps1` [修改]
+- `00_Dev-Control-Center/HANDOFF.md` [修改]
+- `config/agent-environment.example.json` [新增]
+- `scripts/skill-resolver.ps1` [新增]
+- `scripts/setup-agent-environment.ps1` [新增]
+- `skills/lianghao-development/*` [新增 23 個檔案]
+- `00_Dev-Control-Center/AGENTS.md` [修改]
+- `09_PaperSwitch/AGENTS.md` [已提交]
+- `09_PaperSwitch/HANDOFF.md` [已提交]
+- `12_ClipMask-AI/AGENTS.md` [已提交]
 
-## 驗證結果
+## 刻意未修改 (Do Not Do / Deliberately Omitted)
+- 未修改全域開發憲法 (`configs/AGENTS.md`)。
+- 未修改 `lianghao-development` 技能規範本體內容（版本維持 `1.0.0`）。
+- 未擴展 AGENTS.md 引用至其餘 11 個專案（維持 3 個 Pilot 邊界）。
+- 未在各專案建立重複冗餘的 Skill 檔案。
+- 未硬編碼任何本機絕對路徑或固定磁碟機。
 
-### 已執行
-- `scripts/tests/test_v16_acceptance.ps1`：
-  - [PASS] 1. Repository 狀態掃描測試 (14 專案)
-  - [PASS] 2. Clean Repository 測試
-  - [PASS] 3. Modified Repository 測試 (安全略過未提交變更)
-  - [PASS] 4. Ahead Repository 測試 (識別待 Push 數量)
-  - [PASS] 5. Behind Repository 測試 (識別待 Pull 數量)
-  - [PASS] 6. 無法連線或 Remote 查詢失敗情境 (安全顯示『無法確認』)
-  - [PASS] 7. Build 腳本成功／失敗處理測試 (預覽模式與退出碼驗證)
-  - [PASS] 8. Missing Repository 顯示測試
-  - [PASS] 9. 單一 Repository 失敗、不影響其他測試 (隔離性驗證)
-  - [PASS] 10. 啟動 GUI 並完成一次基本操作流程 (XAML 與 5 大分頁控制項載入驗證)
-  - [PASS] 11. 專案版本號解析功能驗證 (`Get-RepositoryVersion`)
-  - **測試統計：通過 11 / 失敗 0 (共 11 項，100% 通過)**。
-- 專案版本號解析與 XAML 控制項驗證通過。
-- `build_all_desktop_apps.ps1` 與 `scripts/gui.ps1` 語法嚴格解析通過。
+## 尚未完成 (Remaining Work)
+- **P1 (阻斷/必須)**：無
+- **P2 (重要/當次)**：無
+- **P3 (改善建議/暫緩)**：Skill Rollout v1.2 / Wider Deployment（將最小引用擴展至其餘 11 個專案，並評估全域憲法與 Skill 規範之去重）。
 
-### 尚未驗證
-- 無
+## 驗證結果 (Validation)
+### 已執行測試與結果
+1. `scripts/tests/test_skill_environment.ps1`：
+   - [PASS] 1. Resolver 預設/工作區解析測試
+   - [PASS] 2. Resolver 環境變數優先級測試
+   - [PASS] 3. 可攜性動態探索測試 (非原磁碟模擬)
+   - [PASS] 4. 找不到 Skill 時安全錯誤回報測試
+   - [PASS] 5. Setup 冪等性與安全合併測試
+   - [PASS] 6. 全環境驗收驗證腳本測試 (含平台原生自動部署 PASS)
+   - [PASS] 7. 跨 Agent Handoff 標準元資料驗證
+   - [PASS] 8. 雙平台原生 Skill 目錄存在性與版本一致性 (Codex & Antigravity)
+   - **統計：通過 8 / 失敗 0 (100% 通過)**。
+2. `scripts/verify-agent-environment.ps1 -Detailed`：
+   - [PASS] 驗收總結全數通過 (ALL PASS)，`AutomaticSkillDeployment` 狀態為 `PASS`。
+3. `scripts/dev-hub.ps1 -Action AgentCheck`：
+   - [PASS] 既有中樞驗證通過，所有共用與專屬項目皆為 `Current`。
+4. `build_all_desktop_apps.ps1`：
+   - [PASS] 桌面建置預覽模式正常 (ExitCode 0)。
+5. **Hash & Version 比對實測**：
+   - Canonical Hash: `9E35D450B566ABF39640D3BE7EA2605307CC66E23D893151518B8B98FBD753D2`
+   - Codex Hash: `9E35D450B566ABF39640D3BE7EA2605307CC66E23D893151518B8B98FBD753D2`
+   - Antigravity Hash: `9E35D450B566ABF39640D3BE7EA2605307CC66E23D893151518B8B98FBD753D2`
+   - 版本號皆為 `1.0.0`，完全一致。
+6. **Antigravity Runtime Discovery 實測**：
+   - 經由乾淨 subagent 實測：無提路徑下自動載入 `lianghao-development` (來源：`C:\Users\chia-hao\.gemini\config\skills\lianghao-development`)，44/44 測試通過，報告格式標準。判定：**PASS**。
+7. **Codex Runtime Discovery 實測**：
+   - 經由乾淨 session 實測：無提路徑下自動辨識載入 `lianghao-development v1.0.0` (來源：`C:\Users\chia-hao\.agents\skills\lianghao-development`)，44/44 測試通過，無程式碼變更。判定：**PASS**。
 
-### 已知風險
-- 無
+### 尚未驗證項目
+- 無。
+
+### 已知風險 (Known Risks)
+- 無。
 
 ## Git 狀態
-- `00_Dev-Control-Center`：
-  - 目標版本：v1.7.0
-  - 分支：main
-  - 遠端：https://github.com/lianghao02/Dev-Control-Center.git
-  - 狀態：所有功能修改與測試腳本已就緒，即將提交並推送至遠端。
+- Commit：待本輪提交
+- Push：待本輪推播
+- Working Tree：Clean（提交後）
+- Branch：main
 
-## 下一步
-- 日常開發時直接雙擊 `0_開發中樞.bat`；需要 Repository 視覺總覽時再由選單開啟 GUI，並手動選擇掃描層級。
+## 下一步建議動作 (Next Recommended Action)
+Skill v1.1 Integration 已達正式交付標準。本輪完成 Commit / Push 後，下一階段可開啟「Skill Rollout v1.2 / Wider Deployment」（處理其餘 11 個專案引用與全域憲法去重）。
+
+## 發布狀態 (Release Status)
+Skill v1.1 Integration Gate：PASS

@@ -1,4 +1,4 @@
-﻿# UTF-8 Compatibility
+# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [switch]$CheckOnly,
@@ -150,14 +150,18 @@ foreach ($set in $skillSets) {
             throw "Skill [$skillName] 同時出現在 [$($assignedSkills[$skillName])] 與 [$($set.Name)]，請只保留一個分流類別。"
         }
         $assignedSkills[$skillName] = $set.Name
-        $source = Join-Path $homeRepo "configs\skills\$skillName"
+        $canonicalSkillDir = Join-Path $homeRepo "skills\$skillName"
+        $configSkillDir = Join-Path $homeRepo "configs\skills\$skillName"
+        $source = if (Test-Path -LiteralPath $canonicalSkillDir) { $canonicalSkillDir } else { $configSkillDir }
         foreach ($targetRoot in $set.Targets) {
             $items += @{ Source = $source; Target = Join-Path $targetRoot $skillName }
         }
     }
 }
-$availableSkillDirs = Get-ChildItem -LiteralPath (Join-Path $homeRepo 'configs\skills') -Directory -ErrorAction SilentlyContinue
-foreach ($dir in $availableSkillDirs) {
+$availableConfigSkillDirs = Get-ChildItem -LiteralPath (Join-Path $homeRepo 'configs\skills') -Directory -ErrorAction SilentlyContinue
+$availableRootSkillDirs = Get-ChildItem -LiteralPath (Join-Path $homeRepo 'skills') -Directory -ErrorAction SilentlyContinue
+$allSkillDirs = @($availableConfigSkillDirs) + @($availableRootSkillDirs)
+foreach ($dir in $allSkillDirs) {
     if (-not $assignedSkills.ContainsKey($dir.Name)) {
         Write-Warning "發現未分流的 Skill 目錄 [$($dir.Name)]，未包含於 configs\skills-manifest.json 中。"
     }

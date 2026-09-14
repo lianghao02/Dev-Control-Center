@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "本機 Agent 環境設定範例，正式檔請放於 %USERPROFILE%\\.lianghao\\config.json（不入 Git）",
+  "skillHome": "<absolute-path-to>/Dev-Control-Center/skills/lianghao-development",
+  "controlCenterPath": "<absolute-path-to>/Dev-Control-Center",
+  "workspaceRoots": [
+    "<absolute-path-to>/Workspace1",
+    "<absolute-path-to>/Workspace2"
+  ],
+  "agentPreferences": {
+    "defaultTaskType": "AUDIT",
+    "strictHandoff": true
+  }
+}
