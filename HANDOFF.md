@@ -3,7 +3,7 @@
 ## 核心元資料 (Metadata)
 - **Repository**：lianghao02/Dev-Control-Center
 - **Branch**：main
-- **Commit SHA**：未提交（待檢核）
+- **Commit SHA**：67bf0cc
 - **Skill Version**：v1.0.0
 - **Task Type**：FEAT / SKILL-PACK-V2
 - **Local Path Hint**：00_Dev-Control-Center
