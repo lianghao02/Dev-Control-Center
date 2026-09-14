@@ -1,5 +1,7 @@
 # HANDOFF
 
+> **Governance Convergence v1（2026-09-14）**：已完成工作區盤點與四類專案接手抽樣；`04_Photo-Report-Generator` 已提交 `13645e8`、`09_PaperSwitch` 已提交 `d8637c2`，皆只含過期 HANDOFF／PLAN 狀態更新。`.gemini/config/mcp_config.json` Pending 已分類為既存、受管但不屬本輪的外部基線項目；`07_auto-learning-bot` 有既存業務修改，已完整跳過。
+
 ## 核心元資料 (Metadata)
 - **Repository**：lianghao02/Dev-Control-Center
 - **Branch**：main
