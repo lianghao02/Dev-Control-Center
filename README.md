@@ -1,6 +1,6 @@
 # LiangHao Dev Control Center (開發控制中心)
 
-本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.3、共用 Agent Skills、14 個開發 Repository 清單，以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.7.0**。
+本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.5、LiangHao 四大核心共用技能庫（Shared Skill Pack v2）、14 個開發 Repository 清單，以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.8.0**。
 
 > 🌐 **公開專案展示入口**：所有作品集、Demo 與 GitHub Pages 頁面已獨立遷移至 [lianghao02/Project-Hub](https://github.com/lianghao02/Project-Hub)（展示站：[https://lianghao02.github.io/Project-Hub/](https://lianghao02.github.io/Project-Hub/)）。中央控制中心專注於環境與治理，不再兼任展示網站。
 
@@ -26,7 +26,10 @@
 在 `00_Dev-Control-Center` 根目錄提供精煉的批次入口；BAT 只負責定位 PowerShell 與啟動腳本，Git、建置、環境與 Agent 邏輯皆集中於 PowerShell：
 
 0. 🧭 **`0_開發中樞.bat`**（日常主入口）：
-   - 開啟 `scripts\dev-hub.ps1` 終端選單，可快速檢查、執行安全同步、建置、檢查／同步 Agent、檢查環境或開啟 GUI。
+   - 開啟 `scripts\dev-hub.ps1` 終端選單，可快速檢查、執行安全同步、建置、**檢查／同步 Agent 技能庫與憲法**、檢查環境或開啟 GUI。
+   - 選單項目 **`[4] 檢查 / 同步 Agent 設定`** 支援一鍵執行：
+     - `1`：**AgentCheck（唯讀檢查）**，比對本機與雙平台（Codex / Antigravity）的技能目錄與雜湊一致性。
+     - `2`：**AgentSync（正式同步）**，一鍵將全域憲法與 4 大共用 Skill 鏡像推播至雙平台原生設定目錄。
    - 優先使用 PowerShell 7，未安裝時自動退回 Windows PowerShell 5.1；以 BAT 自身位置推導路徑，不依賴固定磁碟代號或目前工作目錄。
    - PowerShell 7 的唯讀快速掃描採最多 4 條平行工作；Windows PowerShell 5.1 維持序列掃描，兩者均使用相同安全狀態分類。
 
@@ -68,37 +71,45 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\0
 
 ## Agent 設定與治理機制
 
-- **全域規則唯一編輯源**：[configs/AGENTS.md](configs/AGENTS.md)（部署至各 Agent 環境之全域開發憲法）
+- **全域規則唯一編輯源**：[configs/AGENTS.md](configs/AGENTS.md)（部署至各 Agent 環境之全域開發憲法 v8.5）
+- **共用技能庫唯一編輯源**：`skills/`（Canonical 來源目錄，嚴禁反向覆蓋）
+- **分流部署定義檔**：[configs/skills-manifest.json](configs/skills-manifest.json)（定義雙平台共用與專用技能）
 - **跨專案改善事項總表**：[IMPROVEMENTS.md](IMPROVEMENTS.md)（所有專案已確認改善與待辦唯一彙整表）
 - **當前交接狀態斷點**：[HANDOFF.md](HANDOFF.md)（本專案之工作交接與中斷紀錄）
 
-`scripts/sync_codex.ps1` 會同步：
+### LiangHao 四大核心共用技能庫 (Shared Skill Pack v2)
 
-- 全域憲法至 `%USERPROFILE%\.codex\AGENTS.md`
-- 全域憲法至 `%USERPROFILE%\.gemini\config\AGENTS.md`
-- Codex 共用／專用 Skills 至 `%USERPROFILE%\.agents\skills`
-- Antigravity 共用／專用 Skills 至 `%USERPROFILE%\.gemini\config\skills`
+本開發生態系統採用模組化 Skill 架構，提供判斷框架與安全預設，所有技能均為 Stable 維護狀態：
 
-`configs\skills` 是唯一維護來源，`configs\skills-manifest.json` 決定每個 Skill 的分流：`shared` 會同步至兩端、`codexOnly` 只同步 Codex、`antigravityOnly` 只同步 Antigravity。Codex 內建已有 `skill-creator`，因此自訂版本維持 Antigravity 專用，避免同名 Skill 衝突。`%USERPROFILE%\.codex\skills` 的個人獨立 Skill 與 `.system` 系統 Skill 均不會由同步腳本覆寫。
+1. **`lianghao-development` (v1.0.0)**：跨 Agent 軟體工程與專案治理標準（AUDIT、EVALUATE、FIX、IMPROVE、RELEASE、HANDOFF 與發布門檻）。
+2. **`taiwan-office-automation` (v1.0.0)**：臺灣公務行政與 Office/PDF 自動化（民國日期、Excel 長帳號/前導零防破壞、Word/PDF 雙軌擷取、公文文風）。
+3. **`safe-data-processing` (v1.0.0)**：使用者原始資產安全處理（Inspect-First 盤點、Copy 優先、Dry Run 模擬預覽、來源模式驗收、隔離審查概念）。
+4. **`windows-tool-ux` (v1.0.0)**：Windows 桌面工具與使用者體驗（Win10/11 雙相容、Portable 免安裝架構、零假死防凍結設計、實測導向非同步）。
 
-目前的核心能力已完成去重：
+### 雙平台原生目錄與單向同步機制
 
-- `project-planning`：合併 Brainstorming 與 Planning with Files，只在大型或跨階段工作啟用。
-- `webapp-testing`：沿用既有 Playwright 自動化測試，不另裝同功能 Skill。
-- `document-to-markdown`：使用 Microsoft MarkItDown 做文件分析前處理；正式文件編輯仍交由格式專屬工具。
-- `skill-creator`：Codex 使用系統原生版本，Antigravity 使用中央來源的自訂版本。
-- `project-readiness-check`：Git 狀態、測試、Web 實測、差異與敏感資料的交付前檢查，會同步至 Codex 與 Antigravity。
+`scripts/sync_codex.ps1` 執行時，會將中央設定單向鏡像部署至雙平台原生目錄：
 
-單獨檢查或同步 Agent 設定：
+- **全域憲法** ➜ `%USERPROFILE%\.codex\AGENTS.md` 與 `%USERPROFILE%\.gemini\config\AGENTS.md`
+- **Codex 技能目錄** ➜ `%USERPROFILE%\.agents\skills\<skill-name>`
+- **Antigravity 技能目錄** ➜ `%USERPROFILE%\.gemini\config\skills\<skill-name>`
+
+外圍輔助技能亦由 `configs/skills-manifest.json` 統一管理分流（如 `project-readiness-check`、`webapp-testing`、`document-to-markdown` 等 `shared` 技能，以及 Antigravity 專用的 `skill-creator`）。`%USERPROFILE%\.codex\skills` 的個人獨立 Skill 與系統原生 Skill 均不會被覆寫。
+
+### 單獨檢查或同步指令
 
 ```powershell
-# 唯讀檢查
+# 唯讀檢查（比對本機與雙平台目錄狀態與 Hash）
 .\scripts\sync_codex.ps1 -CheckOnly
+# 或透過 dev-hub 執行
+.\scripts\dev-hub.ps1 -Action AgentCheck
 
-# 正式同步（不覆蓋已修改或未受管理的個人設定）
+# 正式同步（將全域憲法與所有共用 Skill 推播至雙平台）
 .\scripts\sync_codex.ps1 -Execute
+# 或透過 dev-hub 執行
+.\scripts\dev-hub.ps1 -Action AgentSync
 
-# 僅在已確認要覆蓋目標設定時才使用 Force
+# 僅在強制覆蓋目標設定時才使用 Force
 .\scripts\sync_codex.ps1 -Execute -Force
 ```
 
