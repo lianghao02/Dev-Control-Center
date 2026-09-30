@@ -15,6 +15,7 @@
     { "folder": "11_Calendar-Card-App", "repository": "Calendar-Card-App" },
     { "folder": "12_ClipMask-AI", "repository": "ClipMask-AI" },
     { "folder": "13_Project-Hub", "repository": "Project-Hub" },
-    { "folder": "14_Google-Photos-Takeout-Organizer", "repository": "14_Google-Photos-Takeout-Organizer" }
+    { "folder": "14_Google-Photos-Takeout-Organizer", "repository": "14_Google-Photos-Takeout-Organizer" },
+    { "folder": "15_chainflow-inspector", "repository": "chainflow-inspector" }
   ]
 }

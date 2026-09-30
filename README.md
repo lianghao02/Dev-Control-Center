@@ -1,6 +1,6 @@
 # LiangHao Dev Control Center (開發控制中心)
 
-本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.5、LiangHao 四大核心共用技能庫（Shared Skill Pack v2）、14 個開發 Repository 清單，以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.8.0**。
+本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.5、LiangHao 四大核心共用技能庫（Shared Skill Pack v2）、15 個開發 Repository 清單，以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.8.0**。
 
 > 🌐 **公開專案展示入口**：所有作品集、Demo 與 GitHub Pages 頁面已獨立遷移至 [lianghao02/Project-Hub](https://github.com/lianghao02/Project-Hub)（展示站：[https://lianghao02.github.io/Project-Hub/](https://lianghao02.github.io/Project-Hub/)）。中央控制中心專注於環境與治理，不再兼任展示網站。
 
@@ -10,7 +10,7 @@
 - `03_Police-Image-Toolkit`、`06_System-Optimizer-Tool` 與 `09_PaperSwitch` 已完成 C#／.NET 8／WPF 遷移；舊版分別封存於 `legacy_web/` 與 `legacy-python/`，供回歸比對與備援。
 - `04_Photo-Report-Generator` 已為純前端 SPA，並不依賴 VBA 或 Microsoft Office；其餘專案尚未進行 Rust、Tauri 或 TypeScript 遷移。
 - 專案入口網站已獨立為 `13_Project-Hub`，採純靜態 Web 與 GitHub Pages 託管。
-- 最新納入相片管理工具 `14_Google-Photos-Takeout-Organizer`，總計管理 14 個 Repository。
+- 最新納入資金流向與交易所鑑識工具 `15_chainflow-inspector`，總計管理 15 個 Repository。
 
 ## 下載、需求與執行入口
 
@@ -38,7 +38,7 @@
    - 保留 Repository 視覺總覽、同步、桌面建置、Agent、環境與日誌等進階操作。
 
 1. 🌟 **`1_全專案智慧同步中樞.bat`** (日常開發主力)：
-   - 雙擊即時掃描 14 個專案之本機與雲端狀態。
+   - 雙擊即時掃描 15 個專案之本機與雲端狀態。
    - **`[1] ⚡ 智慧全自動同步`**：只拉取工作目錄乾淨的版本庫，分發 AI 設定後只推送既有提交；未提交修改一律保留並提示逐案檢視。
    - 支援 `main` 與 `master`，並提供 `[2]` 僅拉取更新、`[3]` 僅推送既有提交、`[4]` 僅分發 AI 憲法與 Skills。
 
@@ -67,7 +67,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\0
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\00_Dev-Control-Center\scripts\sync_projects.ps1' -Execute
 ```
 
-腳本會依 [development-repositories.json](development-repositories.json) 處理 14 個 Repository。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
+腳本會依 [development-repositories.json](development-repositories.json) 處理 15 個 Repository。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
 
 ## Agent 設定與治理機制
 
