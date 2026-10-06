@@ -963,7 +963,7 @@ function Test-DesktopShortcutsStatus {
     $appConfigs = @(
         @{ Name = '01_AG-MONITOR-Smart-Video-Screening'; Exe = '01_AG-MONITOR-Smart-Video-Screening\dist\AG-MONITOR-v4.0.0\AG-MONITOR.exe'; Lnk = 'AG-MONITOR 智慧影像快篩系統.lnk' },
         @{ Name = '03_Police-Image-Toolkit'; Exe = '03_Police-Image-Toolkit\dist\PoliceImageToolkit.exe'; Lnk = 'PoliceImageToolkit.lnk' },
-        @{ Name = '06_System-Optimizer-Tool'; Exe = '06_System-Optimizer-Tool\dotnet-src\publish\standalone\SystemOptimizer.App.exe'; Lnk = 'SystemOptimizer.lnk' },
+        @{ Name = '06_System-Optimizer-Tool'; Exe = '06_System-Optimizer-Tool\dist\standalone\SystemOptimizer.App.exe'; Lnk = 'SystemOptimizer.lnk' },
         @{ Name = '09_PaperSwitch'; Exe = '09_PaperSwitch\dist\publish\PaperSwitch.exe'; Lnk = 'PaperSwitch.lnk' }
     )
 

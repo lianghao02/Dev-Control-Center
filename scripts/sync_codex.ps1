@@ -1,10 +1,11 @@
-# UTF-8 Compatibility
+﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [switch]$CheckOnly,
     [switch]$Force,
     [switch]$PruneBackups,
-    [switch]$Execute
+    [switch]$Execute,
+    [switch]$SkipMcpConfig
 )
 
 $ErrorActionPreference = 'Stop'
@@ -102,7 +103,14 @@ function Sync-ManagedItem([string]$Source, [string]$Target, [hashtable]$Old, [ha
         $backup = Get-BackupDirectory $Target
         New-Item -ItemType Directory -Path $backup -Force | Out-Null
         Copy-Item -LiteralPath $Target -Destination $backup -Recurse -Force
-        Remove-Item -LiteralPath $Target -Recurse -Force
+        $fullTarget = [IO.Path]::GetFullPath($Target)
+        $allowedFiles = @((Join-Path $codexHome 'AGENTS.md'), (Join-Path $antigravityHome 'AGENTS.md'), (Join-Path $antigravityHome 'mcp_config.json'))
+        $safeSkillTarget = $false
+        foreach ($allowedRoot in @($codexSkillRoot,$antigravitySkillRoot)) {
+            if ($fullTarget.StartsWith([IO.Path]::GetFullPath($allowedRoot).TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase)) { $safeSkillTarget = $true }
+        }
+        if ($fullTarget -notin $allowedFiles -and -not $safeSkillTarget) { throw "拒絕移除未受管路徑：$fullTarget" }
+        Remove-Item -LiteralPath $fullTarget -Recurse -Force
     }
     if ($null -eq $Content) {
         Copy-Item -LiteralPath $Source -Destination $Target -Recurse -Force
@@ -118,6 +126,8 @@ if (Test-Path -LiteralPath $manifestPath) {
     foreach ($item in $saved.items) { $old[[string]$item.target] = [string]$item.hash }
 }
 $new = @{}
+# 選擇性同步仍保留其他既有受管項目的雜湊。
+foreach ($target in $old.Keys) { $new[$target] = $old[$target] }
 if (-not (Test-Path -LiteralPath $skillManifestPath -PathType Leaf)) {
     throw "找不到 Skill 分流清單：$skillManifestPath"
 }
@@ -127,7 +137,7 @@ $items = @(
     @{ Source = Join-Path $homeRepo 'configs\AGENTS.md'; Target = Join-Path $antigravityHome 'AGENTS.md' }
 )
 $mcpConfigSrc = Join-Path $homeRepo 'configs\mcp_config.json'
-if (Test-Path -LiteralPath $mcpConfigSrc -PathType Leaf) {
+if (-not $SkipMcpConfig -and (Test-Path -LiteralPath $mcpConfigSrc -PathType Leaf)) {
     $mcpConfigContent = Get-Content -LiteralPath $mcpConfigSrc -Raw -Encoding UTF8
     if ($mcpConfigContent -notmatch '__HOME_REPO__') {
         throw "MCP 設定缺少 __HOME_REPO__ 路徑權杖：$mcpConfigSrc"
@@ -150,9 +160,7 @@ foreach ($set in $skillSets) {
             throw "Skill [$skillName] 同時出現在 [$($assignedSkills[$skillName])] 與 [$($set.Name)]，請只保留一個分流類別。"
         }
         $assignedSkills[$skillName] = $set.Name
-        $canonicalSkillDir = Join-Path $homeRepo "skills\$skillName"
-        $configSkillDir = Join-Path $homeRepo "configs\skills\$skillName"
-        $source = if (Test-Path -LiteralPath $canonicalSkillDir) { $canonicalSkillDir } else { $configSkillDir }
+        $source = Join-Path $homeRepo "configs\skills\$skillName"
         foreach ($targetRoot in $set.Targets) {
             $items += @{ Source = $source; Target = Join-Path $targetRoot $skillName }
         }

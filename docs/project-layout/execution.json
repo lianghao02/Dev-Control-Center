@@ -1,0 +1,602 @@
+[
+  {
+    "action": "move",
+    "source": "00_Dev-Control-Center/config/agent-environment.example.json",
+    "destination": "00_Dev-Control-Center/configs/agent-environment.example.json",
+    "files": 1,
+    "bytes": 543,
+    "status": "completed",
+    "time": "2026-10-05T20:57:11.3814821+08:00"
+  },
+  {
+    "action": "move",
+    "source": "06_System-Optimizer-Tool/dotnet-src/publish",
+    "destination": "06_System-Optimizer-Tool/dist",
+    "files": 11,
+    "bytes": 145137605,
+    "status": "completed",
+    "time": "2026-10-05T20:57:13.1675469+08:00"
+  },
+  {
+    "action": "move",
+    "source": "12_ClipMask-AI/ACCEPTANCE_RECORD.md",
+    "destination": "12_ClipMask-AI/docs/ACCEPTANCE_RECORD.md",
+    "files": 1,
+    "bytes": 2070,
+    "status": "completed",
+    "time": "2026-10-05T20:57:13.1865297+08:00"
+  },
+  {
+    "action": "move",
+    "source": "14_Google-Photos-Takeout-Organizer/匯出資料夾邏輯.txt",
+    "destination": "14_Google-Photos-Takeout-Organizer/docs/匯出資料夾邏輯.txt",
+    "files": 1,
+    "bytes": 1154,
+    "status": "completed",
+    "time": "2026-10-05T20:57:13.2122482+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "00_Dev-Control-Center/dist/synthetic-acceptance",
+    "destination": null,
+    "files": 186,
+    "bytes": 3033184,
+    "status": "completed",
+    "time": "2026-10-05T20:57:15.4930331+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "04_Photo-Report-Generator/test_photos",
+    "destination": null,
+    "files": 4,
+    "bytes": 39551,
+    "status": "completed",
+    "time": "2026-10-05T20:57:15.5456372+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "12_ClipMask-AI/build",
+    "destination": null,
+    "files": 23,
+    "bytes": 25792560,
+    "status": "completed",
+    "time": "2026-10-05T20:57:15.9470650+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dist/PaperSwitch-v4.1.2-Standalone.exe",
+    "destination": null,
+    "files": 1,
+    "bytes": 79077497,
+    "status": "completed",
+    "time": "2026-10-05T20:57:16.3770738+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dist/PaperSwitch-v4.2.0-Standalone.exe",
+    "destination": null,
+    "files": 1,
+    "bytes": 79078488,
+    "status": "completed",
+    "time": "2026-10-05T20:57:16.8167700+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dist/PaperSwitch-v4.2.1-Standalone.exe",
+    "destination": null,
+    "files": 1,
+    "bytes": 79078808,
+    "status": "completed",
+    "time": "2026-10-05T20:57:17.2380764+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dist/release_assets/PaperSwitch-v4.0.0-Standalone.exe",
+    "destination": null,
+    "files": 1,
+    "bytes": 78968938,
+    "status": "completed",
+    "time": "2026-10-05T20:57:17.6682470+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dist/release_assets/PaperSwitch-v4.1.0-Standalone.exe",
+    "destination": null,
+    "files": 1,
+    "bytes": 79068082,
+    "status": "completed",
+    "time": "2026-10-05T20:57:18.1034884+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dist/release_assets/PaperSwitch-v4.1.0-FrameworkDependent.zip",
+    "destination": null,
+    "files": 1,
+    "bytes": 7823791,
+    "status": "completed",
+    "time": "2026-10-05T20:57:18.1699521+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dist/SHA256SUMS.txt",
+    "destination": null,
+    "files": 1,
+    "bytes": 101,
+    "status": "completed",
+    "time": "2026-10-05T20:57:18.1873795+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "DesktopFramesPlus/dist/DesktopFramesPlus-v2.8.1-zh-TW.zip",
+    "destination": null,
+    "files": 1,
+    "bytes": 13317365,
+    "status": "completed",
+    "time": "2026-10-05T20:57:18.2751113+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "DesktopFramesPlus/dist/DesktopFramesPlus-v2.9.0-zh-TW.zip",
+    "destination": null,
+    "files": 1,
+    "bytes": 13348637,
+    "status": "completed",
+    "time": "2026-10-05T20:57:18.3610627+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "01_AG-MONITOR-Smart-Video-Screening/__pycache__",
+    "destination": null,
+    "files": 1,
+    "bytes": 119343,
+    "status": "completed",
+    "time": "2026-10-05T20:57:18.4072913+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "01_AG-MONITOR-Smart-Video-Screening/tests/__pycache__",
+    "destination": null,
+    "files": 2,
+    "bytes": 17381,
+    "status": "completed",
+    "time": "2026-10-05T20:57:18.4626528+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "05_tw-formal-writing/scripts/__pycache__",
+    "destination": null,
+    "files": 2,
+    "bytes": 16555,
+    "status": "completed",
+    "time": "2026-10-05T20:57:18.5219214+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "06_System-Optimizer-Tool/dotnet-src/src/SystemOptimizer.App/bin/Debug",
+    "destination": null,
+    "files": 8,
+    "bytes": 465123,
+    "status": "completed",
+    "time": "2026-10-05T20:57:18.6732083+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "06_System-Optimizer-Tool/dotnet-src/src/SystemOptimizer.App/obj/Debug",
+    "destination": null,
+    "files": 68,
+    "bytes": 639107,
+    "status": "completed",
+    "time": "2026-10-05T20:57:19.0710299+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "06_System-Optimizer-Tool/dotnet-src/src/SystemOptimizer.Core/bin/Debug",
+    "destination": null,
+    "files": 3,
+    "bytes": 85635,
+    "status": "completed",
+    "time": "2026-10-05T20:57:19.1895359+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "06_System-Optimizer-Tool/dotnet-src/src/SystemOptimizer.Core/obj/Debug",
+    "destination": null,
+    "files": 13,
+    "bytes": 136065,
+    "status": "completed",
+    "time": "2026-10-05T20:57:19.3735909+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "06_System-Optimizer-Tool/dotnet-src/tests/SystemOptimizer.Tests/bin/Debug",
+    "destination": null,
+    "files": 90,
+    "bytes": 4692131,
+    "status": "completed",
+    "time": "2026-10-05T20:57:20.0381486+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "06_System-Optimizer-Tool/dotnet-src/tests/SystemOptimizer.Tests/obj/Debug",
+    "destination": null,
+    "files": 16,
+    "bytes": 149003,
+    "status": "completed",
+    "time": "2026-10-05T20:57:20.2324719+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "07_auto-learning-bot/.pytest_cache",
+    "destination": null,
+    "files": 4,
+    "bytes": 5763,
+    "status": "completed",
+    "time": "2026-10-05T20:57:20.3015452+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "07_auto-learning-bot/__pycache__",
+    "destination": null,
+    "files": 5,
+    "bytes": 580866,
+    "status": "completed",
+    "time": "2026-10-05T20:57:20.3582045+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "07_auto-learning-bot/models/__pycache__",
+    "destination": null,
+    "files": 2,
+    "bytes": 5122,
+    "status": "completed",
+    "time": "2026-10-05T20:57:20.4143844+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "07_auto-learning-bot/scripts/__pycache__",
+    "destination": null,
+    "files": 1,
+    "bytes": 18713,
+    "status": "completed",
+    "time": "2026-10-05T20:57:20.4672393+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "07_auto-learning-bot/tests/__pycache__",
+    "destination": null,
+    "files": 26,
+    "bytes": 161449,
+    "status": "completed",
+    "time": "2026-10-05T20:57:20.5953715+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "07_auto-learning-bot/utils/__pycache__",
+    "destination": null,
+    "files": 8,
+    "bytes": 85195,
+    "status": "completed",
+    "time": "2026-10-05T20:57:20.6869324+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dotnet-src/src/PaperSwitch/bin/Debug",
+    "destination": null,
+    "files": 0,
+    "bytes": 0,
+    "status": "completed",
+    "time": "2026-10-05T20:57:20.8553659+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dotnet-src/src/PaperSwitch/obj/Debug",
+    "destination": null,
+    "files": 59,
+    "bytes": 303567,
+    "status": "completed",
+    "time": "2026-10-05T20:57:21.3167381+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dotnet-src/tests/PaperSwitch.Tests/TestResults",
+    "destination": null,
+    "files": 1,
+    "bytes": 131815669,
+    "status": "completed",
+    "time": "2026-10-05T20:57:22.4331682+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dotnet-src/tests/PaperSwitch.Tests/bin/Debug",
+    "destination": null,
+    "files": 0,
+    "bytes": 0,
+    "status": "completed",
+    "time": "2026-10-05T20:57:22.9545513+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "09_PaperSwitch/dotnet-src/tests/PaperSwitch.Tests/obj/Debug",
+    "destination": null,
+    "files": 4,
+    "bytes": 43833,
+    "status": "completed",
+    "time": "2026-10-05T20:57:23.1444444+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "10_Smart-Photo-Organizer/.pytest_cache",
+    "destination": null,
+    "files": 4,
+    "bytes": 15371,
+    "status": "completed",
+    "time": "2026-10-05T20:57:23.2221656+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "10_Smart-Photo-Organizer/__pycache__",
+    "destination": null,
+    "files": 99,
+    "bytes": 2406186,
+    "status": "completed",
+    "time": "2026-10-05T20:57:23.5628137+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "10_Smart-Photo-Organizer/src/__pycache__",
+    "destination": null,
+    "files": 15,
+    "bytes": 360627,
+    "status": "completed",
+    "time": "2026-10-05T20:57:23.6549459+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "10_Smart-Photo-Organizer/src/smart_photo_organizer/__pycache__",
+    "destination": null,
+    "files": 16,
+    "bytes": 315556,
+    "status": "completed",
+    "time": "2026-10-05T20:57:23.7762273+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "10_Smart-Photo-Organizer/tests/__pycache__",
+    "destination": null,
+    "files": 52,
+    "bytes": 916047,
+    "status": "completed",
+    "time": "2026-10-05T20:57:23.9834502+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "12_ClipMask-AI/.pytest_cache",
+    "destination": null,
+    "files": 5,
+    "bytes": 4583,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.0543104+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "12_ClipMask-AI/clipmask/__pycache__",
+    "destination": null,
+    "files": 1,
+    "bytes": 188,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.1044989+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "12_ClipMask-AI/clipmask/ai/__pycache__",
+    "destination": null,
+    "files": 4,
+    "bytes": 26502,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.1793016+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "12_ClipMask-AI/clipmask/export/__pycache__",
+    "destination": null,
+    "files": 2,
+    "bytes": 12557,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.2531542+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "12_ClipMask-AI/clipmask/gui/__pycache__",
+    "destination": null,
+    "files": 5,
+    "bytes": 183290,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.3292404+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "12_ClipMask-AI/clipmask/media/__pycache__",
+    "destination": null,
+    "files": 2,
+    "bytes": 14675,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.3976841+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "12_ClipMask-AI/clipmask/models/__pycache__",
+    "destination": null,
+    "files": 2,
+    "bytes": 7130,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.4659318+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "12_ClipMask-AI/clipmask/track/__pycache__",
+    "destination": null,
+    "files": 4,
+    "bytes": 13847,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.5432540+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "12_ClipMask-AI/tests/__pycache__",
+    "destination": null,
+    "files": 11,
+    "bytes": 175710,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.6237068+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "14_Google-Photos-Takeout-Organizer/.pytest_cache",
+    "destination": null,
+    "files": 5,
+    "bytes": 1883,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.6948651+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "14_Google-Photos-Takeout-Organizer/src/google_photos_takeout_organizer/__pycache__",
+    "destination": null,
+    "files": 17,
+    "bytes": 143867,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.8258421+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "14_Google-Photos-Takeout-Organizer/tests/__pycache__",
+    "destination": null,
+    "files": 2,
+    "bytes": 108890,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.8822505+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "15_chainflow-inspector/.pytest_cache",
+    "destination": null,
+    "files": 5,
+    "bytes": 14862,
+    "status": "completed",
+    "time": "2026-10-05T20:57:24.9618131+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "15_chainflow-inspector/__pycache__",
+    "destination": null,
+    "files": 3,
+    "bytes": 5381,
+    "status": "completed",
+    "time": "2026-10-05T20:57:25.0081729+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "15_chainflow-inspector/chain_fund_tracer/__pycache__",
+    "destination": null,
+    "files": 60,
+    "bytes": 1690407,
+    "status": "completed",
+    "time": "2026-10-05T20:57:25.2395257+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "15_chainflow-inspector/tests/__pycache__",
+    "destination": null,
+    "files": 47,
+    "bytes": 840935,
+    "status": "completed",
+    "time": "2026-10-05T20:57:25.4348666+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "DesktopFramesPlus/Code/Desktop Frames/obj/Debug",
+    "destination": null,
+    "files": 3,
+    "bytes": 11750,
+    "status": "completed",
+    "time": "2026-10-05T20:57:25.5717334+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "DesktopFramesPlus/tools/panel-tests/bin/Debug",
+    "destination": null,
+    "files": 23,
+    "bytes": 17590375,
+    "status": "completed",
+    "time": "2026-10-05T20:57:26.0324103+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "DesktopFramesPlus/tools/panel-tests/obj/Debug",
+    "destination": null,
+    "files": 16,
+    "bytes": 214239,
+    "status": "completed",
+    "time": "2026-10-05T20:57:26.1984699+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "DesktopFramesPlus/tools/sandbox/bin/Debug",
+    "destination": null,
+    "files": 7,
+    "bytes": 288292,
+    "status": "completed",
+    "time": "2026-10-05T20:57:26.3211568+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "DesktopFramesPlus/tools/sandbox/obj/Debug",
+    "destination": null,
+    "files": 19,
+    "bytes": 280087,
+    "status": "completed",
+    "time": "2026-10-05T20:57:26.5057782+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "00_Dev-Control-Center/objects",
+    "destination": null,
+    "files": 0,
+    "bytes": 0,
+    "status": "completed",
+    "time": "2026-10-05T20:57:26.5590181+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "00_Dev-Control-Center/refs",
+    "destination": null,
+    "files": 0,
+    "bytes": 0,
+    "status": "completed",
+    "time": "2026-10-05T20:57:26.6215586+08:00"
+  },
+  {
+    "action": "remove",
+    "source": "00_Dev-Control-Center/skills",
+    "destination": null,
+    "files": 0,
+    "bytes": 0,
+    "status": "completed",
+    "time": "2026-10-05T20:57:26.6571422+08:00"
+  },
+  {
+    "action": "remove-empty",
+    "source": "00_Dev-Control-Center/config",
+    "files": 0,
+    "bytes": 0,
+    "status": "completed"
+  },
+  {
+    "action": "remove-synthetic-history",
+    "source": "15_chainflow-inspector/history",
+    "files": 38,
+    "bytes": 161319,
+    "retained": 12,
+    "status": "completed"
+  }
+]

@@ -43,3 +43,5 @@ description: Windows 桌面與公務工具產品設計與 UX 體驗技能庫。�
 - **範例庫（`examples/`）**：
   - `good-startup.md`：非同步背景初始化與即時可互動代碼範例。
   - `blocking-ui.md`：常見主執行緒阻塞錯誤與修正對比。
+
+開發用 .venv 通過測試不等於 Portable 發布驗證完成；免安裝能力須另於未安裝全域 Python 的環境驗證 Tcl/Tk、Qt、WebView2、DLL 及資源路徑。既有可用發布包應保留。

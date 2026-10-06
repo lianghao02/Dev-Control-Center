@@ -1,4 +1,4 @@
-# UTF-8 Compatibility
+﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param()
 
@@ -15,7 +15,7 @@ $homeRepo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $resolverScript = Join-Path $homeRepo 'scripts\skill-resolver.ps1'
 $setupScript = Join-Path $homeRepo 'scripts\setup-agent-environment.ps1'
 $verifyScript = Join-Path $homeRepo 'scripts\verify-agent-environment.ps1'
-$canonicalSkill = Join-Path $homeRepo 'skills\lianghao-development'
+$canonicalSkill = Join-Path $homeRepo 'configs\skills\lianghao-development'
 
 $passCount = 0
 $failCount = 0
@@ -58,7 +58,7 @@ try {
 # 測試 3: Resolver - 模擬可攜性路徑 (Portable Path 模擬：非原磁碟/非固定路徑)
 $portableWorkspace = Join-Path ([IO.Path]::GetTempPath()) ("portable-ws-" + [Guid]::NewGuid().ToString('N'))
 $portableDevCenter = Join-Path $portableWorkspace '00_Dev-Control-Center'
-$portableSkill = Join-Path $portableDevCenter 'skills\lianghao-development'
+$portableSkill = Join-Path $portableDevCenter 'configs\skills\lianghao-development'
 $portableRepo = Join-Path $portableWorkspace '09_PaperSwitch'
 $portableScripts = Join-Path $portableDevCenter 'scripts'
 New-Item -ItemType Directory -Path $portableSkill, $portableRepo, $portableScripts -Force | Out-Null
@@ -70,7 +70,7 @@ try {
     $env:LIANGHAO_SKILL_HOME = $null
     # 從外部專案 09_PaperSwitch 出發，指定 TargetRepository，測試探索
     $res3 = & (Join-Path $portableDevCenter 'scripts\skill-resolver.ps1') -TargetRepository $portableRepo -IgnoreUserConfig -Detailed
-    $t3Pass = ($res3.Status -eq 'FOUND' -and $res3.SkillHome -eq [IO.Path]::GetFullPath($portableSkill))
+    $t3Pass = ($res3.Status -eq 'FOUND' -and $res3.SkillHome -eq [IO.Path]::GetFullPath($portableSkill) -and $res3.ControlCenterPath -eq [IO.Path]::GetFullPath($portableDevCenter))
     Report-Check "3. 可攜性動態探索測試 (非原磁碟模擬)" $t3Pass "成功從獨立 Worktree/Repo 鄰近探索到 Skill: $($res3.SkillHome)"
 } finally {
     $env:LIANGHAO_SKILL_HOME = $oldEnv3
@@ -158,7 +158,7 @@ $allSkillsPass = $true
 $skillsCheckedCount = 0
 
 foreach ($sk in $allSharedSkills) {
-    $canDir = Join-Path $homeRepo "skills\$sk"
+    $canDir = Join-Path $homeRepo "configs\skills\$sk"
     $cSkillDir = Join-Path $env:USERPROFILE ".agents\skills\$sk"
     $aSkillDir = Join-Path $env:USERPROFILE ".gemini\config\skills\$sk"
     $cFile = Join-Path $cSkillDir 'SKILL.md'

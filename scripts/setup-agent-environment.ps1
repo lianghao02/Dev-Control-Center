@@ -1,4 +1,4 @@
-# UTF-8 Compatibility
+﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [string]$WorkspaceRoot = '',
@@ -18,11 +18,11 @@ try {
 
 # 透過 $PSScriptRoot 動態鎖定 Dev-Control-Center，絕不依賴目前工作目錄
 $controlCenterPath = Split-Path -Parent $PSScriptRoot
-if (-not (Test-Path -LiteralPath (Join-Path $controlCenterPath 'skills\lianghao-development'))) {
+if (-not (Test-Path -LiteralPath (Join-Path $controlCenterPath 'configs\skills\lianghao-development'))) {
     throw "無法由腳本位置判定控制中心與 Canonical Skill 目錄：$controlCenterPath"
 }
 $controlCenterPath = [IO.Path]::GetFullPath($controlCenterPath)
-$canonicalSkillHome = [IO.Path]::GetFullPath((Join-Path $controlCenterPath 'skills\lianghao-development'))
+$canonicalSkillHome = [IO.Path]::GetFullPath((Join-Path $controlCenterPath 'configs\skills\lianghao-development'))
 
 Write-Host "=================================================================" -ForegroundColor Cyan
 Write-Host "  LiangHao Agent 環境設置 (setup-agent-environment)" -ForegroundColor Cyan
@@ -74,7 +74,7 @@ if (Test-Path -LiteralPath $configFile -PathType Leaf) {
         }
         Write-Host "已繼承既有本機設定 ($configFile)" -ForegroundColor Gray
     } catch {
-        Write-Warning "讀取既有設定檔失敗，將重整覆蓋: $($_.Exception.Message)"
+        throw "讀取既有設定檔失敗，保留原檔，不覆寫：$($_.Exception.Message)"
     }
 }
 

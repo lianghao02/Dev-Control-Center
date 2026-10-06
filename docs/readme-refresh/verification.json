@@ -1,0 +1,132 @@
+{
+  "scope": "2026-10-05 README 文件更新",
+  "passed": true,
+  "repositories": 17,
+  "readmes": 19,
+  "changed_readmes": 19,
+  "protected_files_checked": 1081,
+  "command_paths_checked": 26,
+  "handoffs_checked": 17,
+  "checks": [
+    {
+      "repo": "00_Dev-Control-Center",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 10
+    },
+    {
+      "repo": "01_AG-MONITOR-Smart-Video-Screening",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 5
+    },
+    {
+      "repo": "02_Cell-Tower-Map-Locator",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 1
+    },
+    {
+      "repo": "03_Police-Image-Toolkit",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 2
+    },
+    {
+      "repo": "04_Photo-Report-Generator",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 1
+    },
+    {
+      "repo": "05_tw-formal-writing",
+      "path": "README_EN.md",
+      "changed": true,
+      "local_links_checked": 3
+    },
+    {
+      "repo": "05_tw-formal-writing",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 1
+    },
+    {
+      "repo": "06_System-Optimizer-Tool",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 2
+    },
+    {
+      "repo": "07_auto-learning-bot",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 2
+    },
+    {
+      "repo": "08_Financial-Data-Parser",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 3
+    },
+    {
+      "repo": "09_PaperSwitch",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 3
+    },
+    {
+      "repo": "10_Smart-Photo-Organizer",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 3
+    },
+    {
+      "repo": "11_Calendar-Card-App",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 2
+    },
+    {
+      "repo": "12_ClipMask-AI",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 4
+    },
+    {
+      "repo": "13_Project-Hub",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 3
+    },
+    {
+      "repo": "14_Google-Photos-Takeout-Organizer",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 2
+    },
+    {
+      "repo": "14_Google-Photos-Takeout-Organizer",
+      "path": "README.zh-TW.md",
+      "changed": true,
+      "local_links_checked": 3
+    },
+    {
+      "repo": "15_chainflow-inspector",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 2
+    },
+    {
+      "repo": "DesktopFramesPlus",
+      "path": "README.md",
+      "changed": true,
+      "local_links_checked": 7
+    }
+  ],
+  "failures": [],
+  "inherited_broken_local_links": [],
+  "not_run": [
+    "產品單元／GUI／遠端 API 測試：本輪未修改產品程式",
+    "外部連結可用性及實際下載：本輪未連線查核"
+  ]
+}

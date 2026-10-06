@@ -1,0 +1,10 @@
+{
+  "global_313_packages_unchanged": true,
+  "global_314_packages_unchanged": true,
+  "protected_07_ui.py": true,
+  "protected_07_utils/app_paths.py": true,
+  "10_Smart-Photo-Organizer_venv_not_tracked": true,
+  "12_ClipMask-AI_venv_not_tracked": true,
+  "15_chainflow-inspector_venv_not_tracked": true,
+  "photo_embedded_not_tracked": true
+}

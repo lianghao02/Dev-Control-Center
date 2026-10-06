@@ -1,4 +1,4 @@
-# UTF-8 Compatibility
+﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [string]$TargetRepository = '',
@@ -19,12 +19,18 @@ $resolvedSource = $null
 $resolvedSkillHome = $null
 $resolvedControlCenter = $null
 
+function Get-ControlCenter([string]$SkillHome) {
+    $parent = Split-Path -Parent (Split-Path -Parent $SkillHome)
+    if ((Split-Path -Leaf $parent) -eq 'configs') { $parent = Split-Path -Parent $parent }
+    return $parent
+}
+
 # 1. 優先檢查環境變數 LIANGHAO_SKILL_HOME
 if (-not [string]::IsNullOrWhiteSpace($env:LIANGHAO_SKILL_HOME)) {
     if (Test-Path -LiteralPath $env:LIANGHAO_SKILL_HOME) {
         $resolvedSkillHome = [IO.Path]::GetFullPath($env:LIANGHAO_SKILL_HOME)
         $resolvedSource = 'EnvironmentVariable (LIANGHAO_SKILL_HOME)'
-        $resolvedControlCenter = Split-Path -Parent (Split-Path -Parent $resolvedSkillHome)
+        $resolvedControlCenter = Get-ControlCenter $resolvedSkillHome
     }
 }
 
@@ -40,10 +46,10 @@ if ($null -eq $resolvedSkillHome -and -not $IgnoreUserConfig) {
                 if ($config.PSObject.Properties['controlCenterPath'] -and (Test-Path -LiteralPath $config.controlCenterPath)) {
                     $resolvedControlCenter = [IO.Path]::GetFullPath($config.controlCenterPath)
                 } else {
-                    $resolvedControlCenter = Split-Path -Parent (Split-Path -Parent $resolvedSkillHome)
+                    $resolvedControlCenter = Get-ControlCenter $resolvedSkillHome
                 }
             } elseif ($config.PSObject.Properties['controlCenterPath'] -and (Test-Path -LiteralPath $config.controlCenterPath)) {
-                $candidate = Join-Path $config.controlCenterPath 'skills\lianghao-development'
+                $candidate = Join-Path $config.controlCenterPath 'configs\skills\lianghao-development'
                 if (Test-Path -LiteralPath $candidate) {
                     $resolvedSkillHome = [IO.Path]::GetFullPath($candidate)
                     $resolvedSource = 'UserConfig (%USERPROFILE%\.lianghao\config.json:controlCenterPath)'
@@ -72,6 +78,9 @@ if ($null -eq $resolvedSkillHome) {
         $current = $origin
         while ($null -ne $current -and $current -ne '') {
             $candidates = @(
+                (Join-Path $current 'configs\skills\lianghao-development'),
+                (Join-Path $current '00_Dev-Control-Center\configs\skills\lianghao-development'),
+                (Join-Path $current 'Dev-Control-Center\configs\skills\lianghao-development'),
                 (Join-Path $current 'skills\lianghao-development'),
                 (Join-Path $current '00_Dev-Control-Center\skills\lianghao-development'),
                 (Join-Path $current 'Dev-Control-Center\skills\lianghao-development')
@@ -80,7 +89,7 @@ if ($null -eq $resolvedSkillHome) {
                 if (Test-Path -LiteralPath $c) {
                     $resolvedSkillHome = [IO.Path]::GetFullPath($c)
                     $resolvedSource = "WorkspaceDiscovery ($origin)"
-                    $resolvedControlCenter = Split-Path -Parent (Split-Path -Parent $resolvedSkillHome)
+                    $resolvedControlCenter = Get-ControlCenter $resolvedSkillHome
                     break
                 }
             }

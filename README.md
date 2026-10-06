@@ -4,13 +4,21 @@
 
 > 🌐 **公開專案展示入口**：所有作品集、Demo 與 GitHub Pages 頁面已獨立遷移至 [lianghao02/Project-Hub](https://github.com/lianghao02/Project-Hub)（展示站：[https://lianghao02.github.io/Project-Hub/](https://lianghao02.github.io/Project-Hub/)）。中央控制中心專注於環境與治理，不再兼任展示網站。
 
+## 專案概念與開發原因
+
+開發中樞將多個 Repository 的環境檢查、啟動入口、Git 狀態與 Agent 規範集中管理。開發背景是跨專案切換時，工具版本、操作步驟與交接文件容易分散，造成重複設定或誤操作。
+
+它面向本機維護者，重點是先檢查、顯示差異，再依明確模式執行。全域憲法與共用 Skills 以 `configs/` 為唯一維護來源；對外成果展示交由 Project Hub，不在此混入展示網站功能。管理範圍為 16 個其他專案，連同本中樞共 17 個 Repository。
+
+**典型流程**：查看各專案狀態 → 唯讀環境／設定檢查 → 處理確認過的差異 → 個別專案驗證。
+
 ## 技術架構現況（2026-09-08）
 
 - 工作區主力技術依專案用途分流：AI 鑑識與行政自動化維持 Python、免安裝資料工具維持純 Web、Windows 原生工具採 C#／.NET 8／WPF。
 - `03_Police-Image-Toolkit`、`06_System-Optimizer-Tool` 與 `09_PaperSwitch` 已完成 C#／.NET 8／WPF 遷移；舊版分別封存於 `legacy_web/` 與 `legacy-python/`，供回歸比對與備援。
-- `04_Photo-Report-Generator` 已為純前端 SPA，並不依賴 VBA 或 Microsoft Office；其餘專案尚未進行 Rust、Tauri 或 TypeScript 遷移。
+- `04_Photo-Report-Generator` 採純前端 Web SPA 與 Tauri 2 桌面封裝，不依賴 VBA 或 Microsoft Office；其他專案的技術與遷移邊界以各自 README 為準。
 - 專案入口網站已獨立為 `13_Project-Hub`，採純靜態 Web 與 GitHub Pages 託管。
-- 最新納入資金流向鑑識 `15_chainflow-inspector` 與桌面分區面板 `16_DesktopFramesPlus`，總計管理 16 個 Repository。
+- 最新納入資金流向鑑識 `15_chainflow-inspector` 與桌面分類面板 `DesktopFramesPlus`，總計管理 16 個其他 Repository。
 
 ## 下載、需求與執行入口
 
@@ -47,7 +55,7 @@
    - 嚴格分離「建置」與「發布（Release）」；GUI 與批次檔皆提供安全建置與即時輸出檢視。
 
 3. 🌟 **`3_環境建置與工具安裝.bat`** (環境初始化與維護)：
-   - **`[1]`** 一鍵為 Python 專案（`01`, `07`, `10`, `12`）建置可攜式 Python 3.13 環境（`python_embed`）。
+   - **`[1]`** 一鍵為 Python 專案建置環境：`01`、`07` 維持 embedded；`10`、`12`、`15` 使用 3.13 `.venv`；`14` 僅檢查既有 `.venv`。
    - **`[2]`** 檢測並補齊核心 Git、GitHub CLI、Python 3.13 與 .NET 8；Node.js 為建議元件，Rust、Playwright 與 Tauri 前置元件依實際需求安裝。
 
 成品維持在各專案既有的發布目錄；AG-MONITOR 完整 CPU 可攜包輸出至 `01_AG-MONITOR-Smart-Video-Screening\dist\`。若只想確認路徑與發布腳本是否齊全，可省略 `-Execute` 進行預覽。
@@ -72,7 +80,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\0
 ## Agent 設定與治理機制
 
 - **全域規則唯一編輯源**：[configs/AGENTS.md](configs/AGENTS.md)（部署至各 Agent 環境之全域開發憲法 v8.5）
-- **共用技能庫唯一編輯源**：`skills/`（Canonical 來源目錄，嚴禁反向覆蓋）
+- **共用技能庫唯一編輯源**：`configs/skills/`（Canonical 來源目錄，嚴禁反向覆蓋）
 - **分流部署定義檔**：[configs/skills-manifest.json](configs/skills-manifest.json)（定義雙平台共用與專用技能）
 - **跨專案改善事項總表**：[IMPROVEMENTS.md](IMPROVEMENTS.md)（所有專案已確認改善與待辦唯一彙整表）
 - **當前交接狀態斷點**：[HANDOFF.md](HANDOFF.md)（本專案之工作交接與中斷紀錄）
@@ -139,3 +147,21 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\0
 - 舊工具相容路徑：`C:\Users\<使用者名稱>\Documents\GitHub`
 
 Junction 屬於選用的本機相容設定，不儲存在 Git 中。詳細規範請參閱 [docs/DEVELOPMENT_ENVIRONMENT.md](docs/DEVELOPMENT_ENVIRONMENT.md)。
+
+環境整理與驗證記錄見 [Python 環境修復](docs/python-environment-repair/RESULTS.md)。`setup_all_envs.ps1 -CheckOnly` 為唯讀檢查；`-Force` 僅對 10／12／15 重新套用需求，不刪除環境。`sync_codex.ps1 -CheckOnly -SkipMcpConfig` 可限縮檢查至憲法與 Skills，確認後才使用 `-Execute -SkipMcpConfig`。
+
+## 已知 Bug、限制與疑難排解
+
+以下區分已確認問題、功能限制及待驗證項目；歷史修正不代表舊發行包已自動更新，也不代表本次文件更新重新完成所有功能測試。
+
+| 狀態 | 情境 | 處理方式 |
+|---|---|---|
+| 操作限制 | 工作目錄有未提交修改，或分支出現分歧。 | 先閱讀差異；安全同步不代表可以自動丟棄修改或代為提交。 |
+| 環境限制 | Git、PowerShell 或專案所需 Runtime 缺失。 | 以各工具的檢查模式確認，再處理缺失項目；不要僅為使用中樞而安裝所有選用工具。 |
+| 待驗證 | 個別專案已有功能問題，或不同電腦尚未完成啟動驗證。 | 中樞的檢查通過不等於所有應用程式功能通過；查看各專案 README 與 HANDOFF。 |
+
+歷史修正包含 PowerShell 編碼與 Git 狀態辨識等維護問題，詳見 [CHANGELOG.md](CHANGELOG.md)。目前環境與目錄整理證據分別見 [環境修復報告](docs/python-environment-repair/RESULTS.md)、[目錄整理報告](docs/project-layout/RESULTS.md)。
+
+### 問題回報
+
+請提供使用版本／啟動方式、作業系統與相關環境、重現步驟、預期及實際結果，以及去識別的錯誤訊息或最小樣本。先保留現場與來源資料；不要附真實案件、完整帳號、密碼、Token 或 API Key。版本修正以對應原始碼與發行包為準。

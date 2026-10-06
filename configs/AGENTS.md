@@ -71,6 +71,7 @@
   - 避免硬編碼本機絕對路徑或特定使用者個人目錄，統一使用相對路徑或動態路徑取得機制。
   - Windows 環境相容：文字檔案讀寫應明確指定編碼（預設優先使用無 BOM 的 UTF-8；特定 CSV 或公務系統資料依來源編碼處理）。二進位檔案（圖片、Excel、PDF 等）嚴禁套用文字編碼參數。
   - BAT 僅作薄啟動器（固定目錄並以無干擾參數呼叫 PowerShell）；PowerShell 內部路徑一律優先使用 `$PSScriptRoot` 與 `Join-Path`，詳細規範遵循 `lianghao-development` 之 `references/windows-development.md`。
+- **Python 環境操作**：套件操作必須以已確認的直譯器執行 `-m pip`，不得裸跑 `pip` 或假設 `python` 與 `py` 同版。環境隔離先維持可運作版本，開發虛擬環境與 embedded 發布環境分別驗證；詳細工法見共用 Skill 之 `references/python-environments.md`。
 - **環境可攜性與環境相關硬編碼控制**：
   - **不得預設固定開發環境**：專案、腳本、Build、啟動器與設定不得硬編碼固定磁碟代號、使用者名稱、Repository 絕對路徑或外部工具個人安裝位置。
   - **路徑選擇優先序**：優先使用程式或 Repository 自身位置、相對路徑、使用者選擇的路徑、集中設定、環境變數與 OS 標準資料夾 API。不得假設目前 working directory 或 Repository 所在磁碟。

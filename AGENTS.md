@@ -35,7 +35,7 @@
 ---
 
 ## 4. 共用 Skill 引用與動態解析 (Discovery Rule)
-- 本專案維護全生態系標準規範 Skill：`skills/lianghao-development`（Canonical Source，v1.0.0）。
+- 本專案維護全生態系標準規範 Skill：`configs/skills/lianghao-development`（Canonical Source，v1.0.0）。
 - ChatGPT、Antigravity 與 Codex 執行 AUDIT、EVALUATE、FIX、IMPROVE、RELEASE 或跨 Agent HANDOFF 時，遵循以下 Discovery 順序取得共用規範：
   1. 環境變數 `LIANGHAO_SKILL_HOME`
   2. 使用者本機設定檔 `%USERPROFILE%\.lianghao\config.json`

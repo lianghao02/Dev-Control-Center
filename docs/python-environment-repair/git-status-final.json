@@ -1,0 +1,254 @@
+[
+  {
+    "Project": "00_Dev-Control-Center",
+    "Changes": [
+      " M AGENTS.md",
+      " M HANDOFF.md",
+      " M IMPLEMENTATION_PLAN.md",
+      " M IMPROVEMENTS.md",
+      " M README.md",
+      " M build_all_desktop_apps.ps1",
+      " M config/agent-environment.example.json",
+      " M configs/AGENTS.md",
+      " M scripts/setup-agent-environment.ps1",
+      " M scripts/setup_developer_tools.ps1",
+      " M scripts/setup_environment_hub.ps1",
+      " M scripts/skill-resolver.ps1",
+      " M scripts/sync_codex.ps1",
+      " M scripts/tests/test_skill_environment.ps1",
+      " M setup_all_envs.ps1",
+      " D skills/lianghao-development/SKILL.md",
+      " D skills/lianghao-development/VERSION",
+      " D skills/lianghao-development/checklists/baseline.md",
+      " D skills/lianghao-development/checklists/post-change.md",
+      " D skills/lianghao-development/checklists/release-gate.md",
+      " D skills/lianghao-development/checklists/sensitive-data.md",
+      " D skills/lianghao-development/examples/sample-handoff.md",
+      " D skills/lianghao-development/references/agent-execution.md",
+      " D skills/lianghao-development/references/data-safety.md",
+      " D skills/lianghao-development/references/project-governance.md",
+      " D skills/lianghao-development/references/project-product-assessment.md",
+      " D skills/lianghao-development/references/release-policy.md",
+      " D skills/lianghao-development/references/windows-development.md",
+      " D skills/lianghao-development/templates/agent-task.md",
+      " D skills/lianghao-development/templates/handoff.md",
+      " D skills/lianghao-development/templates/project-scorecard.md",
+      " D skills/lianghao-development/templates/release-report.md",
+      " D skills/lianghao-development/workflows/audit-project.md",
+      " D skills/lianghao-development/workflows/evaluate-project.md",
+      " D skills/lianghao-development/workflows/fix-project.md",
+      " D skills/lianghao-development/workflows/handoff-project.md",
+      " D skills/lianghao-development/workflows/improve-project.md",
+      " D skills/lianghao-development/workflows/release-project.md",
+      " D skills/safe-data-processing/SKILL.md",
+      " D skills/safe-data-processing/VERSION",
+      " D skills/safe-data-processing/checklists/post-operation.md",
+      " D skills/safe-data-processing/checklists/pre-operation.md",
+      " D skills/safe-data-processing/checklists/source-integrity.md",
+      " D skills/safe-data-processing/examples/collision.md",
+      " D skills/safe-data-processing/examples/copy-first.md",
+      " D skills/safe-data-processing/examples/quarantine.md",
+      " D skills/safe-data-processing/references/collision-handling.md",
+      " D skills/safe-data-processing/references/copy-move-delete-policy.md",
+      " D skills/safe-data-processing/references/dry-run-preview.md",
+      " D skills/safe-data-processing/references/duplicate-detection.md",
+      " D skills/safe-data-processing/references/rollback-quarantine.md",
+      " D skills/safe-data-processing/references/source-data-protection.md",
+      " D skills/safe-data-processing/workflows/destructive-operation.md",
+      " D skills/safe-data-processing/workflows/inspect-first.md",
+      " D skills/safe-data-processing/workflows/safe-batch-process.md",
+      " D skills/safe-data-processing/workflows/safe-organize.md",
+      " D skills/taiwan-office-automation/SKILL.md",
+      " D skills/taiwan-office-automation/VERSION",
+      " D skills/taiwan-office-automation/checklists/excel-integrity.md",
+      " D skills/taiwan-office-automation/checklists/formal-document-review.md",
+      " D skills/taiwan-office-automation/checklists/office-output.md",
+      " D skills/taiwan-office-automation/examples/formal-writing.md",
+      " D skills/taiwan-office-automation/examples/long-number-preservation.md",
+      " D skills/taiwan-office-automation/examples/roc-datetime.md",
+      " D skills/taiwan-office-automation/references/excel-data-preservation.md",
+      " D skills/taiwan-office-automation/references/pdf-document-processing.md",
+      " D skills/taiwan-office-automation/references/public-sector-workflows.md",
+      " D skills/taiwan-office-automation/references/roc-date-time.md",
+      " D skills/taiwan-office-automation/references/taiwan-formal-writing.md",
+      " D skills/taiwan-office-automation/references/word-office-automation.md",
+      " D skills/taiwan-office-automation/workflows/generate-office-document.md",
+      " D skills/taiwan-office-automation/workflows/normalize-tabular-data.md",
+      " D skills/taiwan-office-automation/workflows/review-formal-document.md",
+      " D skills/taiwan-office-automation/workflows/transform-pdf-data.md",
+      " D skills/windows-tool-ux/SKILL.md",
+      " D skills/windows-tool-ux/VERSION",
+      " D skills/windows-tool-ux/checklists/desktop-ux.md",
+      " D skills/windows-tool-ux/checklists/portable-release.md",
+      " D skills/windows-tool-ux/checklists/windows-compatibility.md",
+      " D skills/windows-tool-ux/examples/blocking-ui.md",
+      " D skills/windows-tool-ux/examples/good-startup.md",
+      " D skills/windows-tool-ux/references/desktop-ux.md",
+      " D skills/windows-tool-ux/references/long-running-tasks.md",
+      " D skills/windows-tool-ux/references/portable-design.md",
+      " D skills/windows-tool-ux/references/public-office-environment.md",
+      " D skills/windows-tool-ux/references/startup-performance.md",
+      " D skills/windows-tool-ux/references/windows-compatibility.md",
+      " D skills/windows-tool-ux/workflows/review-desktop-ux.md",
+      " D skills/windows-tool-ux/workflows/review-portable-release.md",
+      " D skills/windows-tool-ux/workflows/review-startup.md",
+      "?? configs/skills/lianghao-development/",
+      "?? configs/skills/safe-data-processing/",
+      "?? configs/skills/taiwan-office-automation/",
+      "?? configs/skills/windows-tool-ux/",
+      "?? docs/python-environment-repair/",
+      "?? scripts/tests/test_python_environment_boundaries.py",
+      "?? scripts/tests/verify_python_repair.py"
+    ],
+    "ChangeCount": 97
+  },
+  {
+    "Project": "01_AG-MONITOR-Smart-Video-Screening",
+    "Changes": [
+      " M AGENTS.md",
+      " M README.md",
+      " M portable-requirements.txt",
+      " M requirements.txt",
+      " M scripts/build_portable_release.py",
+      " M setup_and_run.ps1",
+      "?? HANDOFF.md"
+    ],
+    "ChangeCount": 7
+  },
+  {
+    "Project": "02_Cell-Tower-Map-Locator",
+    "Changes": [
+      " M AGENTS.md",
+      " M HANDOFF.md"
+    ],
+    "ChangeCount": 2
+  },
+  {
+    "Project": "03_Police-Image-Toolkit",
+    "Changes": [
+      " M AGENTS.md",
+      " M HANDOFF.md"
+    ],
+    "ChangeCount": 2
+  },
+  {
+    "Project": "04_Photo-Report-Generator",
+    "Changes": [
+      " M AGENTS.md",
+      " M HANDOFF.md"
+    ],
+    "ChangeCount": 2
+  },
+  {
+    "Project": "05_tw-formal-writing",
+    "Changes": [
+      " M .gitignore",
+      " M AGENTS.md",
+      " M README.md",
+      " M parse_pdf.py",
+      "?? HANDOFF.md",
+      "?? requirements-pdf.txt"
+    ],
+    "ChangeCount": 6
+  },
+  {
+    "Project": "06_System-Optimizer-Tool",
+    "Changes": " M AGENTS.md",
+    "ChangeCount": 1
+  },
+  {
+    "Project": "07_auto-learning-bot",
+    "Changes": [
+      " M AGENTS.md",
+      " M HANDOFF.md",
+      " M README.md",
+      " M requirements.txt",
+      " M scripts/auto_update.ps1",
+      " M scripts/build_portable_release.py",
+      " M scripts/run_tests.ps1",
+      " M setup_and_run.ps1",
+      " M ui.py",
+      " M utils/app_paths.py"
+    ],
+    "ChangeCount": 10
+  },
+  {
+    "Project": "08_Financial-Data-Parser",
+    "Changes": " M AGENTS.md",
+    "ChangeCount": 1
+  },
+  {
+    "Project": "09_PaperSwitch",
+    "Changes": [
+      " M AGENTS.md",
+      " M HANDOFF.md"
+    ],
+    "ChangeCount": 2
+  },
+  {
+    "Project": "10_Smart-Photo-Organizer",
+    "Changes": [
+      " M AGENTS.md",
+      " M README.md",
+      " M RUN.bat",
+      " M main.py",
+      " M pyproject.toml",
+      " M requirements.txt",
+      " M scripts/test.ps1",
+      " M setup_and_run.ps1",
+      " M start_silent.vbs",
+      "?? HANDOFF.md",
+      "D  python_embed/：1011 個索引移除，本機內容保留"
+    ],
+    "ChangeCount": 1021
+  },
+  {
+    "Project": "11_Calendar-Card-App",
+    "Changes": " M AGENTS.md",
+    "ChangeCount": 1
+  },
+  {
+    "Project": "12_ClipMask-AI",
+    "Changes": [
+      " M AGENTS.md",
+      " M HANDOFF.md",
+      " M README.md",
+      " M requirements.txt",
+      " M setup_and_run.ps1",
+      " M \"\\345\\225\\237\\345\\213\\225ClipMask-AI.bat\"",
+      "?? requirements-build.txt"
+    ],
+    "ChangeCount": 7
+  },
+  {
+    "Project": "13_Project-Hub",
+    "Changes": null,
+    "ChangeCount": 0
+  },
+  {
+    "Project": "14_Google-Photos-Takeout-Organizer",
+    "Changes": [
+      " M AGENTS.md",
+      " M HANDOFF.md"
+    ],
+    "ChangeCount": 2
+  },
+  {
+    "Project": "15_chainflow-inspector",
+    "Changes": [
+      " M HANDOFF.md",
+      " M README.md",
+      " M app.py",
+      " M requirements.txt",
+      " M run.bat",
+      "?? requirements-build.txt",
+      "?? setup_and_run.ps1"
+    ],
+    "ChangeCount": 7
+  },
+  {
+    "Project": "DesktopFramesPlus",
+    "Changes": null,
+    "ChangeCount": 0
+  }
+]

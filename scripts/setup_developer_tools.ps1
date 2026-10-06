@@ -1,4 +1,4 @@
-# UTF-8 Compatibility
+﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [switch]$CheckOnly,
@@ -220,20 +220,22 @@ if ($cppBuildTools.Installed) {
 Write-Host "  ℹ️  Tauri 建置需 Node.js、Rust／Cargo、C++ Build Tools；執行成品需 WebView2 Runtime。" -ForegroundColor DarkCyan
 
 Write-Host ""
-Write-Host "【三、 三大 Python 專案獨立可攜環境 (python_embed) 檢測】" -ForegroundColor Yellow
-$pyProjects = @('01_AG-MONITOR-Smart-Video-Screening', '07_auto-learning-bot', '10_Smart-Photo-Organizer')
+Write-Host '【三、 Python 專案環境檢測（開發與發布分開）】' -ForegroundColor Yellow
+$pyProjects = @('01_AG-MONITOR-Smart-Video-Screening','07_auto-learning-bot','10_Smart-Photo-Organizer','12_ClipMask-AI','14_Google-Photos-Takeout-Organizer','15_chainflow-inspector')
 $missingPyEnvs = @()
-
 foreach ($p in $pyProjects) {
-    $embedPath = Join-Path $githubRoot "$p\python_embed\python.exe"
-    if (Test-Path -LiteralPath $embedPath) {
-        Write-Host ("  ✅ {0,-26} : python_embed 可攜環境就緒" -f $p) -ForegroundColor Green
-    } else {
-        Write-Host ("  ⚪ {0,-26} : 未建置可攜環境 (雙擊 4_建置所有Python專案環境.bat 可建立)" -f $p) -ForegroundColor Yellow
-        $missingPyEnvs += $p
+    $relative = if ($p -in @('01_AG-MONITOR-Smart-Video-Screening','07_auto-learning-bot')) { 'python_embed\python.exe' } else { '.venv\Scripts\python.exe' }
+    $projectPython = Join-Path (Join-Path $githubRoot $p) $relative
+    if (Test-Path -LiteralPath $projectPython -PathType Leaf) {
+        $versionOutput = & $projectPython -B -s --version 2>&1
+        if ($LASTEXITCODE -eq 0 -and "$versionOutput" -match '^Python 3\.13\.') {
+            Write-Host "$p：$relative，$versionOutput" -ForegroundColor Green
+            continue
+        }
     }
+    Write-Host "$p：環境缺失或版本不符；請執行專案檢查／建置。" -ForegroundColor Yellow
+    $missingPyEnvs += $p
 }
-
 Write-Host ""
 Write-Host "=================================================================" -ForegroundColor Cyan
 

@@ -13,7 +13,7 @@ description: LiangHao 跨 Agent 軟體工程與專案治理標準技能庫。提
    - 嚴禁硬編碼本機固定磁碟或使用者目錄。
    - 所有路徑解析遵循動態解析順序：環境變數 `LIANGHAO_SKILL_HOME` ➜ `%USERPROFILE%\\.lianghao\\config.json` ➜ 鄰近目錄探索。
 2. **單一治理真理源（Single Source of Truth）**：
-   - `Dev-Control-Center/skills/lianghao-development/` 為唯一 Canonical Source。
+   - `Dev-Control-Center/configs/skills/lianghao-development/` 為唯一 Canonical Source。
    - 各 Repository 僅保留專案專屬限制與最小引用，不複製完整 Skill。
 3. **安全操作防線**：
    - 未獲使用者授權，不得 Force Push、`reset --hard` 或抹除未提交修改。
@@ -64,3 +64,5 @@ description: LiangHao 跨 Agent 軟體工程與專案治理標準技能庫。提
 - **標準工作流程（`workflows/`）**：`audit-project.md`、`evaluate-project.md`、`fix-project.md`、`improve-project.md`、`release-project.md`、`handoff-project.md`。
 - **範本庫（`templates/`）**：`agent-task.md`、`handoff.md`、`project-scorecard.md`、`release-report.md`。
 - **檢核清單（`checklists/`）**：`baseline.md`、`post-change.md`、`release-gate.md`、`sensitive-data.md`。
+
+- Python 環境盤點、隔離或啟動器修復時，讀取 `references/python-environments.md`。

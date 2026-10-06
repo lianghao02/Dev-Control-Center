@@ -62,6 +62,7 @@ $policeImageToolkitVersion = Get-ReleaseVersion (Join-Path $root '03_Police-Imag
 $systemOptimizerVersion = Get-ReleaseVersion (Join-Path $root '06_System-Optimizer-Tool\version.txt')
 $paperSwitchVersion = Get-ReleaseVersion (Join-Path $root '09_PaperSwitch\version.txt')
 $photoReportVersion = Get-ReleaseVersion (Join-Path $root '04_Photo-Report-Generator\version.txt')
+$autoLearningVersion = (Get-ReleaseVersion (Join-Path $root '07_auto-learning-bot\version.txt')).ToUpperInvariant()
 
 
 # -----------------------------------------------------------------
@@ -153,12 +154,12 @@ $projects = @(
         Name = '06_System-Optimizer-Tool'
         BuildScript = Join-Path $root '06_System-Optimizer-Tool\dotnet-src\build_release.ps1'
         BuildArguments = @()
-        SourceExe = Join-Path $root '06_System-Optimizer-Tool\dotnet-src\publish\standalone\SystemOptimizer.App.exe'
+        SourceExe = Join-Path $root '06_System-Optimizer-Tool\dist\standalone\SystemOptimizer.App.exe'
         Repo = 'lianghao02/System-Optimizer-Tool'
         Tag = $systemOptimizerVersion
         ReleaseFiles = @(
-            (Join-Path $root "06_System-Optimizer-Tool\dotnet-src\publish\SystemOptimizer-$systemOptimizerVersion-Standalone-x64.exe"),
-            (Join-Path $root "06_System-Optimizer-Tool\dotnet-src\publish\SystemOptimizer-$systemOptimizerVersion-Slim-x64.exe")
+            (Join-Path $root "06_System-Optimizer-Tool\dist\SystemOptimizer-$systemOptimizerVersion-Standalone-x64.exe"),
+            (Join-Path $root "06_System-Optimizer-Tool\dist\SystemOptimizer-$systemOptimizerVersion-Slim-x64.exe")
         )
     },
     [PSCustomObject]@{
@@ -190,15 +191,15 @@ $projects = @(
         DisplayName = '行政效能領航員'
         BuildScript = Join-Path $root '07_auto-learning-bot\scripts\build_portable_release.py'
         BuildArguments = @()
-        SourceExe = Join-Path $root '07_auto-learning-bot\dist\行政效能領航員_V3.2.0_Portable\current\runtime\pythonw.exe'
-        Arguments = '-B "ui.py"'
-        WorkingDirectory = Join-Path $root '07_auto-learning-bot\dist\行政效能領航員_V3.2.0_Portable\current'
-        IconLocation = Join-Path $root '07_auto-learning-bot\dist\行政效能領航員_V3.2.0_Portable\current\icons\app.ico,0'
+        SourceExe = Join-Path $root "07_auto-learning-bot\dist\行政效能領航員_${autoLearningVersion}_Portable\current\runtime\pythonw.exe"
+        Arguments = '-B -s "ui.py"'
+        WorkingDirectory = Join-Path $root "07_auto-learning-bot\dist\行政效能領航員_${autoLearningVersion}_Portable\current"
+        IconLocation = Join-Path $root "07_auto-learning-bot\dist\行政效能領航員_${autoLearningVersion}_Portable\current\icons\app.ico,0"
         Repo = 'lianghao02/auto-learning-bot'
-        Tag = 'V3.2.0'
+        Tag = $autoLearningVersion
         ReleaseFiles = @(
-            (Join-Path $root '07_auto-learning-bot\dist\AdminEfficiencyPilot_V3.2.0_Portable.zip'),
-            (Join-Path $root '07_auto-learning-bot\dist\AdminEfficiencyPilot_V3.2.0_Portable.zip.sha256')
+            (Join-Path $root "07_auto-learning-bot\dist\AdminEfficiencyPilot_${autoLearningVersion}_Portable.zip"),
+            (Join-Path $root "07_auto-learning-bot\dist\AdminEfficiencyPilot_${autoLearningVersion}_Portable.zip.sha256")
         )
     }
 )
@@ -280,9 +281,12 @@ foreach ($project in $selectedProjects) {
         if ($pScript.EndsWith('.py', [System.StringComparison]::OrdinalIgnoreCase)) {
             Push-Location (Join-Path $root $project.Name)
             try {
-                $projectPython = Join-Path (Join-Path $root $project.Name) 'python_embed\python.exe'
-                $pythonCommand = if (Test-Path -LiteralPath $projectPython) { $projectPython } else { 'python.exe' }
-                & $pythonCommand $pScript @($project.BuildArguments)
+                $candidates = @((Join-Path (Join-Path $root $project.Name) '.venv\Scripts\python.exe'), (Join-Path (Join-Path $root $project.Name) 'python_embed\python.exe'))
+                $pythonCommand = $candidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
+                if (-not $pythonCommand) { throw '找不到專案 Python 環境；請先建置，不改用全域 Python。' }
+                & $pythonCommand -B -s -c 'import sys; assert sys.version_info[:2] == (3,13)'
+                if ($LASTEXITCODE -ne 0) { throw '建置環境需要 Python 3.13。' }
+                & $pythonCommand -B -s $pScript @($project.BuildArguments)
             } finally {
                 Pop-Location
             }
@@ -355,7 +359,7 @@ foreach ($project in $selectedProjects) {
 
         # 針對 06 補充複製 Standalone 與 Slim 命名檔案
         if ($project.Name -eq '06_System-Optimizer-Tool') {
-            $pubDir = Join-Path $root '06_System-Optimizer-Tool\dotnet-src\publish'
+            $pubDir = Join-Path $root '06_System-Optimizer-Tool\dist'
             $saSrc = Join-Path $pubDir 'standalone\SystemOptimizer.App.exe'
             $slimSrc = Join-Path $pubDir 'slim\SystemOptimizer.App.exe'
             $saDest = Join-Path $pubDir "SystemOptimizer-$($project.Tag)-Standalone-x64.exe"

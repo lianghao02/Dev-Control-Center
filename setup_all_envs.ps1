@@ -1,94 +1,35 @@
-# UTF-8 Compatibility
-[CmdletBinding()]
-param(
-    [string]$DevelopmentRoot = '',
-    [switch]$Force
-)
-
+﻿[CmdletBinding()]
+param([string]$DevelopmentRoot = '', [switch]$Force, [switch]$CheckOnly)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
-
 . (Join-Path $PSScriptRoot 'scripts\lib\bootstrap.ps1')
-
-if ([string]::IsNullOrWhiteSpace($DevelopmentRoot)) {
-    $parent = Split-Path -Parent $PSScriptRoot
-    if ([string]::IsNullOrWhiteSpace($parent)) {
-        throw '無法從腳本位置判定開發根目錄；請以 -DevelopmentRoot 明確指定。'
-    }
-    $DevelopmentRoot = $parent
-}
-
+if ([string]::IsNullOrWhiteSpace($DevelopmentRoot)) { $DevelopmentRoot = Get-HomeDevelopmentRoot $PSScriptRoot }
 $root = [IO.Path]::GetFullPath($DevelopmentRoot)
-$powerShell7 = Get-Command 'pwsh.exe' -ErrorAction SilentlyContinue | Select-Object -First 1
-$projectPowerShell = if ($powerShell7) { $powerShell7.Source } else { 'powershell.exe' }
-$pyProjects = @(
-    '01_AG-MONITOR-Smart-Video-Screening',
-    '07_auto-learning-bot',
-    '10_Smart-Photo-Organizer',
-    '12_ClipMask-AI'
-)
-
-Write-Host '=================================================================' -ForegroundColor Cyan
-Write-Host '🚀 【批次環境建置】正在為所有 Python 專案建置獨立環境' -ForegroundColor Yellow
-Write-Host "📂 【開發根目錄】$root"
-if ($Force) {
-    Write-Host '⚡ 【模式】強制重建所有環境 (-Force)' -ForegroundColor Magenta
-}
-Write-Host '=================================================================' -ForegroundColor Cyan
-Write-Host ''
-
-$index = 0
-$total = $pyProjects.Count
-
-foreach ($p in $pyProjects) {
-    $index++
-    $pdir = Join-Path $root $p
-    $prefix = "[$index/$total] $p"
-
-    if (-not (Test-Path -LiteralPath $pdir)) {
-        Write-Host "$prefix : ⚠️  專案目錄不存在，已略過" -ForegroundColor Yellow
-        continue
-    }
-
-    $setupScript = Join-Path $pdir 'setup_and_run.ps1'
-    if (-not (Test-Path -LiteralPath $setupScript)) {
-        Write-Host "$prefix : ⚠️  未找到 setup_and_run.ps1，已略過" -ForegroundColor Yellow
-        continue
-    }
-
-    Write-Host "$prefix : ⏳ 正在檢查並建置獨立環境..." -ForegroundColor Green
-    $oldEap = $ErrorActionPreference
-    $ErrorActionPreference = 'Continue'
+$hostExe = Get-HomePowerShell
+$projects = @('01_AG-MONITOR-Smart-Video-Screening','07_auto-learning-bot','10_Smart-Photo-Organizer','12_ClipMask-AI','14_Google-Photos-Takeout-Organizer','15_chainflow-inspector')
+$failed = @()
+foreach ($name in $projects) {
+    $projectDir = Join-Path $root $name
+    $setup = Join-Path $projectDir 'setup_and_run.ps1'
     try {
-        $argList = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $setupScript, '-NoLaunch')
-        if ($Force) {
-            $argList += '-Force'
+        if ($name -eq '14_Google-Photos-Takeout-Organizer') {
+            # 已有完整環境，只驗證；不納入批次重建。
+            $pythonExe = Join-Path $projectDir '.venv\Scripts\python.exe'
+            & $pythonExe -B -s -c 'import sys,site,PySide6,PIL,pillow_heif; assert sys.version_info[:2] == (3,13); assert sys.prefix != sys.base_prefix; assert not site.ENABLE_USER_SITE'
+            if ($LASTEXITCODE -ne 0) { throw '既有 .venv 驗證失敗' }
+            & $pythonExe -B -s -m pip --disable-pip-version-check check
+        } else {
+            $arguments = @('-NoProfile','-ExecutionPolicy','Bypass','-File',$setup)
+            if ($CheckOnly) { $arguments += '-CheckOnly' } else { $arguments += '-NoLaunch' }
+            if ($Force -and -not $CheckOnly -and $name -in @('10_Smart-Photo-Organizer','12_ClipMask-AI','15_chainflow-inspector')) { $arguments += '-Force' }
+            & $hostExe @arguments
         }
-        & $projectPowerShell $argList
-    } finally {
-        $ErrorActionPreference = $oldEap
-    }
-
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "$prefix : ✅ 【就緒】環境已佈置完成" -ForegroundColor Cyan
-    } else {
-        Write-Host "$prefix : ❌ 【失敗】環境建置發生異常" -ForegroundColor Red
-    }
-    Write-Host '-----------------------------------------------------------------' -ForegroundColor Gray
-}
-
-Write-Host ''
-Write-Host '=================================================================' -ForegroundColor Cyan
-Write-Host '📋 【環境完整性健檢報告】' -ForegroundColor Yellow
-Write-Host '=================================================================' -ForegroundColor Cyan
-
-foreach ($p in $pyProjects) {
-    $pdir = Join-Path $root $p
-    $req = Join-Path $pdir 'requirements.txt'
-    if (Test-Path -LiteralPath $req) {
-        Write-Host "  ✅ $p -> requirements.txt 就緒" -ForegroundColor Green
-    } else {
-        Write-Host "  ⚠️ $p -> 未配置 requirements.txt" -ForegroundColor Yellow
+        if ($LASTEXITCODE -ne 0) { throw "結束碼：$LASTEXITCODE" }
+        Write-Host "就緒：$name"
+    } catch {
+        $failed += $name
+        Write-Warning "$name：$($_.Exception.Message)"
     }
 }
-Write-Host '=================================================================' -ForegroundColor Cyan
+if ($failed.Count) { throw "環境檢查未通過：$($failed -join ', ')" }
+Write-Host '六個現行 Python 專案環境檢查完成。'
