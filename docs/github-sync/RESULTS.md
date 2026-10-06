@@ -61,6 +61,66 @@
 
 ## 遠端結果
 
-提交與推送尚待執行；完成後於本節補上實際 SHA、遠端核對及 CI 結果，不能把提交前檢核視為已同步。
+16 個成果提交均已正常推送至既有 origin；以 `git ls-remote` 核對遠端分支 SHA 全數一致。DesktopFramesPlus 原有 3 筆領先提交亦已同步。推送後 15 個工作目錄 Clean，07 僅保留原有兩個修改；05 仍完整保留本機成果，沒有提交或推送。
+
+下表記錄成果提交；中央報告與交接的收尾提交另行正常推送，最新中央 HEAD 以 Git 記錄為準，避免在文件內產生 SHA 自我引用。
+
+| Repository | 分支 | 成果提交 | 遠端核對 | 推送後工作目錄 |
+|---|---|---|---|---|
+| 00_Dev-Control-Center | main | [089ca715](https://github.com/lianghao02/Dev-Control-Center/commit/089ca715964a49f127f5781c094f70c7ebb900b9) | SHA 一致 | Clean |
+| 01_AG-MONITOR-Smart-Video-Screening | main | [e8713b12](https://github.com/lianghao02/AG-MONITOR-Smart-Video-Screening/commit/e8713b12800459fb219f8fcba79a992ad9123be6) | SHA 一致 | Clean |
+| 02_Cell-Tower-Map-Locator | main | [9e58b6e8](https://github.com/lianghao02/Cell-Tower-Map-Locator/commit/9e58b6e84cf9be2332ee2523026b32d6282b054c) | SHA 一致 | Clean |
+| 03_Police-Image-Toolkit | main | [561b5a31](https://github.com/lianghao02/Police-Image-Toolkit/commit/561b5a314ffc49d2eff0101e18a7785f95460c29) | SHA 一致 | Clean |
+| 04_Photo-Report-Generator | main | [720137f5](https://github.com/lianghao02/Photo-Report-Generator/commit/720137f5b32f5e91e6c3a8a5a738c6b021253e16) | SHA 一致 | Clean |
+| 06_System-Optimizer-Tool | main | [3aa7cc27](https://github.com/lianghao02/System-Optimizer-Tool/commit/3aa7cc274bf8b43cc0fede0f864d33a07e646f42) | SHA 一致 | Clean |
+| 07_auto-learning-bot | main | [6d672f9b](https://github.com/lianghao02/auto-learning-bot/commit/6d672f9b04a6b2413cac1d26bff71bd9ef67672a) | SHA 一致 | 保留原有 2 個修改 |
+| 08_Financial-Data-Parser | main | [6232169c](https://github.com/lianghao02/Financial-Data-Parser/commit/6232169c5d5155538e33302c611a249e66f10069) | SHA 一致 | Clean |
+| 09_PaperSwitch | main | [e2f49bf0](https://github.com/lianghao02/PaperSwitch/commit/e2f49bf0d55cd75260dedffd320d3d65831d6ac1) | SHA 一致 | Clean |
+| 10_Smart-Photo-Organizer | main | [605dafd6](https://github.com/lianghao02/Smart-Photo-Organizer/commit/605dafd645c4543d78e5a188131e7a87798751f6) | SHA 一致 | Clean |
+| 11_Calendar-Card-App | main | [316f8c11](https://github.com/lianghao02/Calendar-Card-App/commit/316f8c1114fa71653df15ec4126d68a0cf1635f9) | SHA 一致 | Clean |
+| 12_ClipMask-AI | master | [b334b5fa](https://github.com/lianghao02/ClipMask-AI/commit/b334b5faa01122f04adcdf10f27b0259a29639b5) | SHA 一致 | Clean |
+| 13_Project-Hub | main | [45f9656e](https://github.com/lianghao02/Project-Hub/commit/45f9656e0fef8fd43140ff1863997b14954a6919) | SHA 一致 | Clean |
+| 14_Google-Photos-Takeout-Organizer | main | [16011cde](https://github.com/lianghao02/14_Google-Photos-Takeout-Organizer/commit/16011cde913b8b09978f501461dda5c21ad6e829) | SHA 一致 | Clean |
+| 15_chainflow-inspector | main | [1faa2a26](https://github.com/lianghao02/chainflow-inspector/commit/1faa2a260a6971a37136bece902c44e198eaadae) | SHA 一致 | Clean |
+| DesktopFramesPlus | main | [18986575](https://github.com/lianghao02/DesktopFramesPlus/commit/18986575a1267e34104d39e8e6388a9a71ffe206) | SHA 一致 | Clean |
+
+### 10 的 Linux QA 補修
+
+10 的初始成果提交為 `1a74647e9f668530e1984ea345f2ad78e384008c`。首次 [Linux QA](https://github.com/lianghao02/Smart-Photo-Organizer/actions/runs/37402744083) 執行 148 項，因既有 QuickTime 日期測試固定預期台灣時間，實際 UTC 主機相差 8 小時而失敗（1 失敗、8 略過）；產品按本機時區轉換的行為正確。只修改測試與 AGENTS／HANDOFF，產品 `main.py` SHA-256 不變，沒有更動系統時區或依賴。
+
+追加 `605dafd645c4543d78e5a188131e7a87798751f6` 修正預期值並加入 UTC／UTC+8／UTC−5 三組測試，且校準既有 unittest 入口。本機受影響 18 項：17 通過、1 略過；[最新 Linux QA](https://github.com/lianghao02/Smart-Photo-Organizer/actions/runs/37403422741) 完整 149 項：141 通過、8 略過，多時區測試通過。原始失敗保留於此，不改寫成通過。
+
+收尾工具首次拆解遠端 SHA 的方式有誤，重查直接比較後確認補修已成功推送、SHA 完全一致；這是本機記錄工具問題，未修改產品或採用 force push。
+
+
+
+### GitHub Actions
+
+以下查詢均限定本輪實際提交 SHA；無執行紀錄不代表執行過測試。已觸發工作全部完成，沒有將排隊或進行中列為通過。
+
+| Repository | 工作／紀錄 | 結果 |
+|---|---|---|
+| 00_Dev-Control-Center | 此提交無新 Actions 執行紀錄 | — |
+| 01_AG-MONITOR-Smart-Video-Screening | 此提交無新 Actions 執行紀錄 | — |
+| 02_Cell-Tower-Map-Locator | [pages-build-deployment](https://github.com/lianghao02/Cell-Tower-Map-Locator/actions/runs/37402532624) | success |
+| 03_Police-Image-Toolkit | [pages-build-deployment](https://github.com/lianghao02/Police-Image-Toolkit/actions/runs/37402606700) | success |
+| 04_Photo-Report-Generator | [pages-build-deployment](https://github.com/lianghao02/Photo-Report-Generator/actions/runs/37402607871) | success |
+| 06_System-Optimizer-Tool | 此提交無新 Actions 執行紀錄 | — |
+| 07_auto-learning-bot | 此提交無新 Actions 執行紀錄 | — |
+| 08_Financial-Data-Parser | [pages-build-deployment](https://github.com/lianghao02/Financial-Data-Parser/actions/runs/37402673012) | success |
+| 09_PaperSwitch | [CI 自動化建置與測試](https://github.com/lianghao02/PaperSwitch/actions/runs/37402673829) | success |
+| 09_PaperSwitch | [pages-build-deployment](https://github.com/lianghao02/PaperSwitch/actions/runs/37402672762) | success |
+| 10_Smart-Photo-Organizer | [共用 QA](https://github.com/lianghao02/Smart-Photo-Organizer/actions/runs/37403422741) | success |
+| 10_Smart-Photo-Organizer | [pages-build-deployment](https://github.com/lianghao02/Smart-Photo-Organizer/actions/runs/37403421830) | success |
+| 11_Calendar-Card-App | [pages-build-deployment](https://github.com/lianghao02/Calendar-Card-App/actions/runs/37402742500) | success |
+| 12_ClipMask-AI | 此提交無新 Actions 執行紀錄 | — |
+| 13_Project-Hub | [Deploy GitHub Pages](https://github.com/lianghao02/Project-Hub/actions/runs/37402806401) | success |
+| 14_Google-Photos-Takeout-Organizer | 此提交無新 Actions 執行紀錄 | — |
+| 15_chainflow-inspector | 此提交無新 Actions 執行紀錄 | — |
+| DesktopFramesPlus | 此提交無新 Actions 執行紀錄 | — |
+
+### 保護與交付邊界
+
+05 的 7 個成果檔案、07 的兩個原有修改共 9 個檔案 SHA-256 不變；10 本機 runtime 1,011／1,011 個檔案仍在。沒有 Commit／Push 05，也沒有重新加入依賴包、成品、備份或使用者資料。本輪完成的是原始碼與文件同步，沒有建立正式 Release。
 
 本機細部證據保存於 Git 忽略的 `artifacts/github-sync-2ff41adbcb3a4a1ab091c0a98e67bc77/`；此目錄不隨 Repository 發布。

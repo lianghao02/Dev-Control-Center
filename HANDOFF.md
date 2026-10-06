@@ -20,6 +20,8 @@ DesktopFramesPlus 本機新版已套用並啟動，代表性 Data 面板／便�
 上述 SHA 為修復前已存在的 HEAD。既有功能成果承接原版本，不重做或撤銷；詳細跨專案基準位於控制中心 docs/python-environment-repair/baseline.json。
 
 ## 已完成 (Completed)
+2026-10-06 同步結果：16 個成果提交已推送，遠端 SHA 一致；已觸發 CI 全部完成。05 略過、07 原有兩個修改保留；9 個保護檔案雜湊與 1,011 個 runtime 留存核對通過。完整 SHA／CI 連結見 `docs/github-sync/RESULTS.md`。本交接與報告收尾另以單一 docs 提交同步，不建立 Release。
+
 2026-10-06 GitHub 同步交接：使用者已授權提交與推送前輪成果；本輪只提交已核對範圍。最新 Commit SHA、遠端同步與 CI 結果統一見控制中心 `docs/github-sync/RESULTS.md`，不將提交本身的 SHA 寫入同一份提交。 本輪補正 PowerShell 5.1 中文腳本編碼：僅增加 UTF-8 BOM，原內容位元組不變；29 個相關腳本在 5.1／7 語法檢查均通過，環境 CheckOnly 亦通過。
 
 2026-10-06 IGEF 診斷：確認 GoPatrol 服務與保護驅動正在執行、Office 外掛註冊及有效簽章，依辦公室文件加密限制追蹤；精確規則未確認。補充 PowerShell COM 對照逾時，未產出 PDF，未列成功，僅回收本輪隱藏 Word；Office 殘留 0。校正 README 的 IGEF 說明，產品程式與系統保護未改。詳見 docs/new-build-acceptance/IGEF-DIAGNOSIS.md。
@@ -68,9 +70,9 @@ Win10／其他使用者／無全域 Python 電腦、完整原生介面互動、�
 完整明細與回復方式見控制中心 docs/python-environment-repair/RESULTS.md；不可將新 .venv 的驗證視為舊 Portable 包已修復。
 
 ## Git 狀態
-- Commit：上述 SHA 為提交前基準；最新 SHA 見 `git log -1` 與中央同步報告。
-- Push：實際推送及遠端核對結果見中央 `docs/github-sync/RESULTS.md`。
-- Working Tree：最終狀態見中央同步報告；不含被忽略的環境、成品與使用者資料。
+- Commit：089ca715964a49f127f5781c094f70c7ebb900b9（已同步的成果提交；報告收尾提交的最新 SHA 見 Git HEAD）。
+- Push：16 個成果提交已推送並核對遠端 SHA；報告收尾提交另行同步。
+- Working Tree：成果推送後中央為 Clean；本交接、報告與改善總表三個檔案另行提交。07 原有兩個修改保留、05 略過。
 - Branch：main。
 
 ## 下一步建議動作 (Next Recommended Action)
