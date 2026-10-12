@@ -8,7 +8,7 @@ $ErrorActionPreference = 'Stop'
 $OutputEncoding = [Console]::OutputEncoding
 $center = Split-Path -Parent $PSScriptRoot
 $workspace = Split-Path -Parent $center
-$repo = Join-Path $workspace 'DesktopFramesPlus'
+$repo = Join-Path $workspace '19_DesktopFramesPlus'
 $target = (Resolve-Path -LiteralPath (Join-Path $repo 'dist/DesktopFramesPlus')).Path
 $source = (Resolve-Path -LiteralPath $BinaryDir).Path
 if ($source -eq $target) { throw '來源不可與更新目錄相同。' }
