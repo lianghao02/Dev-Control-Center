@@ -58,7 +58,7 @@ description: LiangHao 跨 Agent 軟體工程與專案治理標準技能庫。提
   - `project-governance.md`：專案治理與文件權威劃分。
   - `agent-execution.md`：Agent 執行邊界、停止條件與防衛準則；第 3 節為 UI／UX 真實案例參考原則。
   - `release-policy.md`：發布標準、語意化版本與驗收規範。
-  - `project-product-assessment.md`：產品評估、痛點分析與開源參照決策。
+  - `project-product-assessment.md`：產品評估、痛點分析與開源參照決策；第 4 節為依需求選用技術設計參考。
   - `windows-development.md`：Windows 開發、動態路徑、編碼防禦與薄 BAT 原則。
   - `data-safety.md`：機敏資料與不可逆操作防護。
 - **標準工作流程（`workflows/`）**：`audit-project.md`、`evaluate-project.md`、`fix-project.md`、`improve-project.md`、`release-project.md`、`handoff-project.md`。
@@ -67,3 +67,4 @@ description: LiangHao 跨 Agent 軟體工程與專案治理標準技能庫。提
 
 - Python 環境盤點、隔離或啟動器修復時，讀取 `references/python-environments.md`。
 - 新介面設計、明確 UI／UX 改善、手機／桌面／響應式調整或主要流程有明確 UX 問題時，讀取 `references/agent-execution.md` 第 3 節；一般非 UI 任務不強制研究案例。
+- 大型新專案、跨模組功能、架構調整或重大資料／API／安全／復原取捨時，依需要讀取 `references/project-product-assessment.md` 第 4 節；一般局部修改不強制外部研究或新增設計文件。

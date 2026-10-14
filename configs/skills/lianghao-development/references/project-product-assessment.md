@@ -21,3 +21,20 @@
 - **Adopt**：直接採用現成成熟工具，專案轉為串接或薄封裝。
 - **Freeze**：功能完整且穩定，進入凍結維護期，不再新增大型特性。
 - **Archive**：價值已完全轉移或被淘汰，進行封存。
+
+## 4. 依需求選用技術設計參考
+
+- **適用範圍**：大型新專案、跨模組功能、架構調整，或涉及資料格式、API 合約、安全與復原的重大取捨時，依尚未解決的問題選用外部參考。一般 Bug、局部修改、測試、Build、Release 與版本管理不強制研究或新增設計文件。
+- **候選來源**：[Design Docs](https://www.designdocs.dev/) 用於尋找真實 Design Docs／RFC，引用時追溯原始專案文件；[Atlassian 設計文件指引](https://www.atlassian.com/work-management/knowledge-sharing/documentation/software-design-document/) 用於必要章節結構。清單不是必查項目，優先採專案既有文件與技術官方文件。
+- **選用補充**：需要文件範本時可參考 [software-doc-templates](https://github.com/Milkeles/software-doc-templates)；需要探索架構模式時可參考 [awesome-software-architecture](https://github.com/mehdihadeli/awesome-software-architecture)，再核對原始資料。範本與精選清單不等於已驗證的實作案例，不因參考大型公司的系統而引入微服務、分散式架構或大型框架。
+
+### 本工作區的選擇重點
+
+| 需求類型 | 優先釐清的設計問題 |
+|---|---|
+| 行政文件、影像與批次資料工具 | 原始資料保護、格式與編碼、預覽／確認、重複與衝突、部分失敗處理及復原 |
+| Windows 桌面與 Portable 工具 | 啟動與相依環境、背景任務與取消、進度回報、高 DPI、無管理者權限及跨電腦使用 |
+| 輕量 Web、手機適配與家庭／個人工具 | 儲存與資料一致性、帳號及權限邊界、跨裝置操作、離線限制；維持足以滿足需求的簡單架構 |
+
+- **最小決策紀錄**：依任務需要，在既有規劃文件、ARCHITECTURE 或 MEMORY 中記錄問題與限制、可行方案、採用理由與代價、受影響的資料／介面邊界及驗證方式；不重複建立文件，也不要求填滿所有範本章節。
+- **可核對性與停止條件**：記錄原始來源網址及借鑑項目，必要時固定版本／Commit；無法存取時如實說明，不虛構研究或繞過限制。足以解決本次決策與驗證需求後停止研究，不因更多範本或新架構延後已通過門檻的交付。
