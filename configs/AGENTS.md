@@ -88,6 +88,7 @@
 - **交付標準**：依任務範圍提供足以直接套用的完整內容；局部修改交付明確可替換區段，較大修改提供完整檔案，避免無法判斷插入位置的碎片。
 - **參數集中管理 (Config-First)**：可調整參數（閾值、路徑等）應集中管理，避免散落的魔術數字。
 - **簡潔性與架構適當性**：優先採用足以滿足需求的最簡單架構，不因專案成長盲目引入大型前端框架。介面優先採用系統字型堆疊與狀態透明設計（清楚指示目前狀態、下一步與失敗原因）。
+- **UI／UX 真實案例參考**：新介面、明確 UI／UX 改善、手機／桌面／響應式調整或主要流程有明確 UX 問題時，依共用 `lianghao-development` 之 `references/agent-execution.md` 第 3 節選擇可核對案例；一般非 UI 任務不強制研究，亦不得因 UI 美化延後已通過門檻的發布。
 - **技術選型以邊界與現場維護成本為準**：
   - 任務領域依效能邊界與維護成本選擇最適工具（AI/MVP 優先 Python；Windows 底層/系統工具優先 C#；海量密集運算優先 Rust；輕量離線工具優先純 Web 並以 Tauri 桌面封裝）。
   - 專案架構與產品評估遵循 `lianghao-development` 之 `references/project-product-assessment.md`。
@@ -164,7 +165,7 @@
 | Playwright 瀏覽器自動化測試、UI 視覺驗證 | `webapp-testing` |
 | PDF、Word、Excel、PowerPoint 等本機文件轉為分析用 Markdown | `document-to-markdown` |
 | 建立、重構或驗證新的 Skill 本身 | `skill-creator` |
-| UI／UX 審查、操作流程梳理、介面改善建議、資訊層級診斷、元件狀態檢查 | `product-design` |
+| 新介面設計、明確 UI／UX 改善、手機／桌面／響應式調整、主要流程 UX 問題、UI／UX 審查、資訊層級與元件狀態檢查 | `product-design`；真實案例參考依 `lianghao-development` 之 `references/agent-execution.md` 第 3 節 |
 | 臺灣公務/行政/金融資料處理、民國日期、長數字防轉型、Office/Word/PDF 套版、正式公文語氣 | `taiwan-office-automation` |
 | 使用者原始資料處理、多媒體整理、批次改名、資料清理、衝突與重複防護 | `safe-data-processing` |
 | Windows 桌面工具開發、Win10/11 相容、免安裝 Portable 架構、零假死啟動、高 DPI 適配 | `windows-tool-ux` |

@@ -89,3 +89,62 @@ Win10／其他使用者／無全域 Python 電腦、完整原生介面互動、�
 使用者已授權所有專案提交／推送及更新事項。4 個產品成果已推送並核對遠端 SHA，14 個產品原已同步；本中樞另提交同步報告、CHANGELOG、改善總表與交接。05 遠端不存在，已本機提交且詢問重建私人儲存庫，尚未獲答案。完整結果以 docs/github-sync/2026-10-12.md 為本輪真理來源。
 
 11 只推 codex/firebase-family，不觸發 main Pages；17 遠端為私人。無本輪 Release、正式站切換或 Apps Script 部署；各案待驗收維持，私人資料與設定不納入 Git。本輪未修改憲法、共用 Skills 或中央部署設定。
+
+## 2026-10-14 UI／UX 真實案例參考規範交接
+
+### 核心元資料 (Metadata)
+- **Repository**：lianghao02/Dev-Control-Center
+- **Branch**：main
+- **Commit SHA**：44a3acea8351a4de38b5efb2de233d45ee29dff6（本輪修改前基準；本輪提交 SHA 以 Git log 為準）
+- **Skill Version**：v1.0.0
+- **Task Type**：IMPROVE
+- **Local Path Hint**：00_Dev-Control-Center
+
+### 目前狀態
+共用規範與必要部署已完成，相關驗證通過；提交與推送狀態以 Git HEAD／origin/main 為準。
+
+### 本輪目標
+將 UI／UX 真實案例參考原則納入既有共用治理，不修改應用程式或發布流程。
+
+### 基準與已確認事實 (Baseline & Confirmed Facts)
+開始時 main 與 origin/main 同步、Working Tree 為 Clean。專案 AGENTS、README、manifest 與同步腳本共同確認 configs/AGENTS.md 與 configs/skills/ 為唯一正式來源；Codex／Antigravity 共用同一來源，透過 scripts/sync_codex.ps1 單向部署。既有 product-design 提供介面設計工法，但沒有本次完整案例來源與真實性規範。
+
+### 已完成 (Completed)
+在既有 agent-execution.md 第 3 節加入適用時機、六個候選來源、選擇方式、來源真實性、存取限制與三類任務邊界；憲法及技能入口只加入引用。先 CheckOnly，再 Execute -SkipMcpConfig，雙平台各更新憲法與 lianghao-development；保留既有備份，其餘項目一致。
+
+### 異動檔案 (Changed Files)
+- configs/AGENTS.md
+- configs/skills/lianghao-development/SKILL.md
+- configs/skills/lianghao-development/references/agent-execution.md
+- HANDOFF.md（追加本輪交接，保留既有內容）
+
+### 刻意未修改 (Do Not Do / Deliberately Omitted)
+各應用程式、個別 Repository AGENTS、前端框架、MCP、Skill 分流清單、Release Gate 與 P1／P2／P3 分級皆未修改；未新增 Skill 或安裝服務。
+
+### 尚未完成 (Remaining Work)
+- **P1 (阻斷/必須)**：本輪無。
+- **P2 (重要/當次)**：本輪無；前輪 Office／IGEF 等未完成事項繼承，未重新驗收。
+- **P3 (改善建議/暫緩)**：候選網站可存取範圍可能變動，後續 UI 任務仍須依實際取得資料提供可核對案例。
+
+### 驗證結果 (Validation)
+#### 已執行測試與結果
+- sync_codex.ps1 -CheckOnly -SkipMcpConfig：部署前僅四項 Pending，無 Modified／Unmanaged；部署後全部 Current。
+- scripts/tests/test_skill_environment.ps1：8 項通過、0 失敗，含動態解析、可攜路徑、安全合併及雙平台 TreeHash 一致性。
+- git diff --check 與差異審查通過；原有規範保留，非 UI 任務不強制研究，美化不延後發布。
+- 候選首頁檢查：Banani、Design Spells、Mobbin 取得內容；Refero 未取得可讀內文，Screenlane 工具存取失敗，UI Sources 導向 screensdesign.com。未據此宣稱完成特定產品案例研究。
+#### 尚未驗證項目
+未測試未來 Agent 在所有 UI 任務中的執行行為；純文件變更不執行應用程式 Build。
+#### 已知風險 (Known Risks)
+外部登入／付費／存取條件可能改變，規範已要求如實回報並以可驗證資料繼續。
+
+### Git 狀態
+- Commit：本輪以 docs 提交；實際 SHA 見 Git log，避免自我引用。
+- Push：依使用者本次授權推送原有 origin/main，結果以遠端 SHA 核對。
+- Working Tree：提交後應為 Clean，最終由 git status 確認。
+- Branch：main。
+
+### 下一步建議動作 (Next Recommended Action)
+後續符合條件的 UI 任務讀取 agent-execution.md 第 3 節；非 UI 任務維持既有流程。
+
+### 發布狀態 (Release Status)
+本輪為治理文件更新，未建立應用程式 Release；既有發布門檻不變。
