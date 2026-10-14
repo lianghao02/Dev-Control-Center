@@ -68,3 +68,4 @@ description: LiangHao 跨 Agent 軟體工程與專案治理標準技能庫。提
 - Python 環境盤點、隔離或啟動器修復時，讀取 `references/python-environments.md`。
 - 新介面設計、明確 UI／UX 改善、手機／桌面／響應式調整或主要流程有明確 UX 問題時，讀取 `references/agent-execution.md` 第 3 節；一般非 UI 任務不強制研究案例。
 - 大型新專案、跨模組功能、架構調整或重大資料／API／安全／復原取捨時，依需要讀取 `references/project-product-assessment.md` 第 4 節；一般局部修改不強制外部研究或新增設計文件。
+- 遊戲架構設計、核心玩法循環、狀態機邏輯、GDD 規格或遊戲介面與 HUD 時，載入並讀取 `game-design` Skill。

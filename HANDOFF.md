@@ -201,3 +201,61 @@ CheckOnly 部署前僅雙平台 lianghao-development Pending，無 Modified／Un
 
 ### 發布狀態 (Release Status)
 治理文件更新，不建立應用程式 Release，既有發布門檻不變。
+
+## 2026-10-14 遊戲架構設計與 UI 專家技能雙平台共用交接
+
+### 核心元資料 (Metadata)
+- **Repository**：lianghao02/Dev-Control-Center
+- **Branch**：main
+- **Commit SHA**：f4dd2823369c2ac557425de46f181c702e986440（本輪基準；成果 SHA 以 Git log 為準）
+- **Skill Version**：v8.5
+- **Task Type**：FEAT
+- **Local Path Hint**：00_Dev-Control-Center
+
+### 目前狀態
+已建立獨立 `game-design` 技能庫，納入雙平台共用分流清單並成功部署至 Codex 與 Antigravity；全域憲法與共用操作參考已完成路由與清單更新。
+
+### 本輪目標
+將遊戲架構設計、核心玩法循環、狀態機邏輯、極端邊界防護與三大遊戲介面資料庫（Interface In Game、Game UI Database、GameUI Net）封裝為獨立 Skill，並讓 Codex 與 Antigravity 雙平台共用。
+
+### 基準與已確認事實 (Baseline & Confirmed Facts)
+開始時工作區為 Clean；沿用 `configs/skills-manifest.json` 與 `sync_codex.ps1` 雙平台分流部署架構，確保無非預期修改。
+
+### 已完成 (Completed)
+1. 建立 `configs/skills/game-design/SKILL.md`：封裝遊戲系統架構、三大遊戲 UI 資料庫引用原則、核心循環、狀態機思維、一/二/三級資訊層級、I/O 規範、極值邊界防護與品質自我檢核表。
+2. 更新 `configs/skills-manifest.json`：將 `game-design` 納入 `shared` 清單，支援 Codex 與 Antigravity 雙平台共用。
+3. 更新 `configs/AGENTS.md`：在第 6 節 Skill 路由表補入遊戲架構設計、狀態機與 HUD 排版情境。
+4. 更新 `configs/skills/lianghao-development`：在 `references/agent-execution.md` 補充遊戲介面與 HUD 參考清單，並在 `SKILL.md` 加入讀取指引。
+5. 執行 `sync_codex.ps1 -Execute`：已成功將新 Skill 與設定檔同步部署至 `~/.agents/skills/game-design` 與 `~/.gemini/config/skills/game-design`，以及雙平台的 `AGENTS.md`。
+
+### 異動檔案 (Changed Files)
+- `configs/skills/game-design/SKILL.md`（新建）
+- `configs/skills-manifest.json`
+- `configs/AGENTS.md`
+- `configs/skills/lianghao-development/SKILL.md`
+- `configs/skills/lianghao-development/references/agent-execution.md`
+- `HANDOFF.md`
+
+### 刻意未修改 (Do Not Do / Deliberately Omitted)
+未直接將遊戲專用名詞與龐大提示詞硬塞入全域憲法本體，避免非遊戲專案 Token 浪費；未變更 MCP 設定或應用程式本體程式碼。
+
+### 尚未完成 (Remaining Work)
+- **P1 (阻斷/必須)**：無。
+- **P2 (重要/當次)**：無。
+- **P3 (改善建議/暫緩)**：未來遊戲相關專案（如 11_TypingLegend）可依需要進一步於專案級 AGENTS.md 宣告特定機制。
+
+### 驗證結果 (Validation)
+#### 已執行測試與結果
+- `sync_codex.ps1 -CheckOnly` 與 `-Execute` 執行無誤。
+- `Test-Path` 實體驗證 `~/.agents/skills/game-design/SKILL.md` (Codex) 與 `~/.gemini/config/skills/game-design/SKILL.md` (Antigravity) 均為 True。
+- `git diff --check` 無多餘空白或編碼問題。
+#### 尚未驗證項目
+- 未實測未來遊戲專案呼叫時的實際互動生成，待相關專案任務實測。
+
+### Git 狀態
+- Commit：本輪以 feat 提交。
+- Push：待交付後依指引推送至遠端。
+- Branch：main。
+
+### 下一步建議動作 (Next Recommended Action)
+在開發打字遊戲（11_TypingLegend）或涉及遊戲機制/介面設計時，直接由 Codex 或 Antigravity 載入 `game-design` Skill。
