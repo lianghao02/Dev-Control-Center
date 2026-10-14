@@ -29,7 +29,7 @@
 | Windows 桌面工具 | 先核對原生操作習慣、鍵盤效率、視窗與高 DPI 行為，並依既有 windows-tool-ux 規範；避免為模仿手機畫面而隱藏常用操作 |
 | 手機／響應式、多步驟或新手引導 | 既有真實案例來源，必要時補充 [Page Flows](https://pageflows.com/) 的連續流程資料；研究觸控、返回、輸入與狀態保留，不憑單張截圖推測完整流程 |
 | 明確要求付費、結帳或商業轉換改善 | 可選用 [GoodUI](https://goodui.org/) 的實驗資料；核對測試情境、指標、樣本與限制，不直接套用他站成效，不為非商業工具新增行銷或付費流程 |
-| 遊戲介面、HUD、系統狀態機與微互動 | 載入 `game-design` Skill；介面分類參考 [Game UI Database](https://gameuidatabase.com/)、動態轉場與微互動參考 [Interface In Game](https://interfaceingame.com/)、手遊排版參考 [GameUI Net](https://gameui.net/)；以核心玩法循環為本，不堆疊無效選單 |
+| 遊戲介面、HUD、系統狀態機與微互動（本機／Web） | 載入 `game-design` Skill；介面分類參考 [Game UI Database](https://gameuidatabase.com/)、動態轉場參考 [Interface In Game](https://interfaceingame.com/)、手遊排版參考 [GameUI Net](https://gameui.net/)；Web 網頁遊戲參考 [Poki](https://developers.poki.com/)、[CrazyGames](https://developer.crazygames.com/) 與 [Itch.io](https://itch.io/games/html5)，遵循 Safe Frame、抽屜式面板、情境 HUD 與首屏 15MB 限制 |
 
 - **資料類型須區分**：真實產品畫面／流程用於觀察既有行為；UI-Patterns 等模式解說用於分析設計理由；文件範本只提供結構；A/B 測試僅支持特定條件下的實驗結果。產品已上線或知名，不代表其設計已證明適合目前專案。
 - **成果以本案驗證為準**：依本次問題比較操作步驟、錯誤防護、資訊可見性、鍵盤／觸控操作或任務完成情況；未量測時不得宣稱效率、轉換率或滿意度提升的數字。

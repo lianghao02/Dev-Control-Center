@@ -169,5 +169,5 @@
 | 臺灣公務/行政/金融資料處理、民國日期、長數字防轉型、Office/Word/PDF 套版、正式公文語氣 | `taiwan-office-automation` |
 | 使用者原始資料處理、多媒體整理、批次改名、資料清理、衝突與重複防護 | `safe-data-processing` |
 | Windows 桌面工具開發、Win10/11 相容、免安裝 Portable 架構、零假死啟動、高 DPI 適配 | `windows-tool-ux` |
-| 遊戲架構設計、核心玩法循環、遊戲系統狀態機、GDD 規格書、遊戲 HUD／UI 排版與微互動 | `game-design` |
+| 遊戲架構設計（本機／Web 網頁遊戲）、核心玩法循環、系統狀態機、GDD 規格書、HUD／抽屜式 UI 排版與微互動 | `game-design` |
 | **使用者明確指定** `caveman` / 極簡 / 省 Token 模式時 | `caveman` |
