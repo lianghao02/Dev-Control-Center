@@ -1,6 +1,6 @@
 # LiangHao Dev Control Center (開發控制中心)
 
-本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.5、16 個預設 Agent 技能庫（15 個雙平台共用 + 1 個 Antigravity 專用，內含 LiangHao 四大核心領域技能庫）、19 個開發 Repository 清單（含本中樞與其他 18 個專案），以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.8.0**。
+本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.5、16 個預設 Agent 技能庫（15 個雙平台共用 + 1 個 Antigravity 專用，內含 LiangHao 四大核心領域技能庫）、18 個開發 Repository 清單（含本中樞與其他 17 個專案），以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.8.0**。
 
 > 🌐 **公開專案展示入口**：所有作品集、Demo 與 GitHub Pages 頁面已獨立遷移至 [lianghao02/Project-Hub](https://github.com/lianghao02/Project-Hub)（展示站：[https://lianghao02.github.io/Project-Hub/](https://lianghao02.github.io/Project-Hub/)）。中央控制中心專注於環境與治理，不再兼任展示網站。
 
@@ -8,7 +8,7 @@
 
 開發中樞將多個 Repository 的環境檢查、啟動入口、Git 狀態與 Agent 規範集中管理。開發背景是跨專案切換時，工具版本、操作步驟與交接文件容易分散，造成重複設定或誤操作。
 
-它面向本機維護者，重點是先檢查、顯示差異，再依明確模式執行。全域憲法與共用 Skills 以 `configs/` 為唯一維護來源；對外成果展示交由 Project Hub，不在此混入展示網站功能。管理範圍為 18 個其他專案，連同本中樞共 19 個 Repository。
+它面向本機維護者，重點是先檢查、顯示差異，再依明確模式執行。全域憲法與共用 Skills 以 `configs/` 為唯一維護來源；對外成果展示交由 Project Hub，不在此混入展示網站功能。管理範圍為 17 個其他專案，連同本中樞共 18 個 Repository。
 
 **典型流程**：查看各專案狀態 → 唯讀環境／設定檢查 → 處理確認過的差異 → 個別專案驗證。
 
@@ -18,7 +18,7 @@
 - `03_Police-Image-Toolkit`、`06_System-Optimizer-Tool`、`09_PaperSwitch` 與 `19_DesktopFramesPlus` 採 C#／.NET 8／WPF；舊版分別封存於 `legacy_web/` 與 `legacy-python/`，供回歸比對與備援。
 - `04_Photo-Report-Generator` 採純前端 Web SPA 與 Tauri 2 桌面封裝，不依賴 VBA 或 Microsoft Office；其他專案的技術與遷移邊界以各自 README 為準。
 - 專案入口網站已獨立為 `13_Project-Hub`，採純靜態 Web 與 GitHub Pages 託管。
-- 涵蓋 `14_Google-Photos-Takeout-Organizer`、`15_chainflow-inspector`、`16_Wuxia-Typing-Legend`、`17_Subscription-Manager`、`18_AromaCraft-Studio` 與 `19_DesktopFramesPlus`，總計管理 19 個 Repository（含本中樞）。
+- 涵蓋 `14_Google-Photos-Takeout-Organizer`、`15_chainflow-inspector`、`16_Wuxia-Typing-Legend`、`17_Subscription-Manager`、`18_AromaCraft-Studio` 與 `19_DesktopFramesPlus`，總計管理 18 個 Repository（含本中樞）。
 
 ## 下載、需求與執行入口
 
@@ -46,7 +46,7 @@
    - 保留 Repository 視覺總覽、同步、桌面建置、Agent、環境與日誌等進階操作。
 
 1. 🌟 **`1_全專案智慧同步中樞.bat`** (日常開發主力)：
-   - 雙擊即時掃描 19 個專案（含本中樞）之本機與雲端狀態。
+   - 雙擊即時掃描 18 個專案（含本中樞）之本機與雲端狀態。
    - **`[1] ⚡ 智慧全自動同步`**：只拉取工作目錄乾淨的版本庫，分發 AI 設定後只推送既有提交；未提交修改一律保留並提示逐案檢視。
    - 支援 `main` 與 `master`，並提供 `[2]` 僅拉取更新、`[3]` 僅推送既有提交、`[4]` 僅分發 AI 憲法與 Skills。
 
@@ -75,7 +75,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\0
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\00_Dev-Control-Center\scripts\sync_projects.ps1' -Execute
 ```
 
-腳本會依 [development-repositories.json](development-repositories.json) 處理 19 個 Repository（含本中樞與其他 18 個專案）。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
+腳本會依 [development-repositories.json](development-repositories.json) 處理 18 個 Repository（含本中樞與其他 17 個專案）。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
 
 ## Agent 設定與治理機制
 
@@ -165,3 +165,9 @@ Junction 屬於選用的本機相容設定，不儲存在 Git 中。詳細規範
 ### 問題回報
 
 請提供使用版本／啟動方式、作業系統與相關環境、重現步驟、預期及實際結果，以及去識別的錯誤訊息或最小樣本。先保留現場與來源資料；不要附真實案件、完整帳號、密碼、Token 或 API Key。版本修正以對應原始碼與發行包為準。
+
+## 目前可管理倉庫與歷史清單（2026-10-16）
+
+`development-repositories.json` 目前記錄 18 個管理目標（含本中樞），均已重新 fetch 並確認目前追蹤分支與遠端提交一致；武俠打字傳以獨立 worktree 的正式 master 核對。00、11、13、14 的既有修正於本輪分別提交並推送，狀態以各倉庫 Git 記錄為準；16 原始資料夾仍保留 beta 分支及交接修改。Google 相簿既有 v1.3.0 下載包不含原始碼修正。
+
+使用者已確認 `10_Smart-Photo-Organizer`、`20_Motes-in-Turmoil` 為已廢棄且從 GitHub 刪除的專案；本機資料夾已移至 Windows 資源回收筒，10 已從同步清單移除，20 原本不在清單內。歷史紀錄保留，後續不再同步或重建這兩個專案。
