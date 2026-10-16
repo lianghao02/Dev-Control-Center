@@ -40,35 +40,24 @@ A question gets a response. A product gets a document.
 
 ---
 
-## 00.2 — Context Intake
+## 00.0 — LiangHao 工作區治理對齊原則（最高優先）
 
-Before generating any design output, ask the user the following four questions. 
-Present them as a numbered list in a single message. Do not answer them yourself. 
-Do not proceed until the user has responded. If any answer is vague or missing, 
-ask one targeted follow-up to resolve it before moving forward.
+本技能與全域開發憲法（`configs/AGENTS.md`）、`lianghao-development` 及 `windows-tool-ux` 搭配使用時，遵循以下優先邊界：
+1. **語言與語氣**：所有產出、分析與介面文案一律使用標準台灣繁體中文。
+2. **需求探索（取代強制阻斷式 4 問）**：能從既有專案架構、程式碼或 `HANDOFF.md` 合理判斷時，直接標註假設並推進；僅在涉及重大架構取捨、不可逆高風險操作或核心目標不明確時，才向使用者提問確認。
+3. **字型與離線優先**：Windows 桌面工具、免安裝 Portable 應用、公務／行政系統優先採用系統字型堆疊（`Segoe UI`, `Microsoft JhengHei UI`, `system-ui`），不強制引入外部 Web Fonts（覆寫下方第 06 節與第 09 節對系統預設字型的限制）。
+4. **狀態與反應門檻依專案規模裁剪**：第 05 節之 8 種元件狀態與固定毫秒門檻適用於完整產品或重度互動介面；小型內部工具與局部修正依 `windows-tool-ux` 實測體感與最小修改原則按需套用，不因視覺美化延後已達門檻之交付。
 
-Use this exact framing:
+---
 
-~~~
-Before I start, I need four quick answers to make sure what I build is grounded in your actual context — not in assumptions.
+## 00.2 — Context Intake (When Essential Context Is Missing)
 
-1. **Who is the primary user?** Describe a specific person with a specific job — 
-   not a persona category. What do they already know, and what do they expect 
-   when they use this?
+When designing a brand-new product or major multi-screen flow from scratch and the core context cannot be inferred from the repository, clarify up to four key dimensions (do not block execution if already clear from project files or user prompt):
 
-2. **What is the one job this interface exists to do?** One verb-object sentence. 
-   ("Review and approve a candidate." "Understand yesterday's revenue.") 
-   If there are three answers, we need to narrow it down.
-
-3. **What is the riskiest moment?** The action that is irreversible, expensive, 
-   or embarrassing if done wrong.
-
-4. **What does success feel like to the user — not to the product?** 
-   Not metrics. The felt experience of getting it right.
-~~~
-
-Only after all four questions are answered should you proceed to Section 01.
-If the user skips a question, flag it and ask again — these are not optional.
+1. **Primary user**: Specific role, domain knowledge, and operating environment.
+2. **Core job**: The single primary verb-object outcome this interface exists to achieve.
+3. **Riskiest moment**: Any irreversible, destructive, or high-consequence action requiring preview/confirmation.
+4. **Success criteria**: The concrete operational state that signals safe completion.
 
 ---
 
@@ -210,7 +199,7 @@ Typography is the primary carrier of hierarchy, brand, and tone. Treat it as the
 
 **Rules:**
 - Use a maximum of two typefaces: one for display/headings, one for body/UI. Never more.
-- If possible avoid the default stack: Inter, Roboto, SF Pro, Arial. These communicate nothing about the product.
+- For Windows desktop apps, offline portable tools, and public-sector/utility systems, prioritize the native system font stack (`Segoe UI`, `Microsoft JhengHei UI`, `system-ui`). For brand-driven consumer web products where web fonts are appropriate, avoid generic unstyled defaults when a distinctive typeface serves the brand.
 - Choose typefaces that are appropriate to the product.
 - Type scale: establish 5–6 sizes maximum. Assign each a role. Never deviate.
 - Line height for body text: 1.5–1.6. For display: 1.0–1.2.

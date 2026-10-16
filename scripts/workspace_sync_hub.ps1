@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [string]$DevelopmentRoot = '',
     [ValidateSet('Menu', 'Auto', 'Pull', 'Push', 'SyncAI', 'Scan', 'QuickScan')]

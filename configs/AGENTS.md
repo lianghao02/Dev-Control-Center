@@ -69,7 +69,7 @@
 - **敏感資訊隔離**：API Key、密碼、Token 嚴禁硬編碼在程式碼或版本庫中。
 - **路徑與環境強健性**：
   - 避免硬編碼本機絕對路徑或特定使用者個人目錄，統一使用相對路徑或動態路徑取得機制。
-  - Windows 環境相容：文字檔案讀寫應明確指定編碼（預設優先使用無 BOM 的 UTF-8；特定 CSV 或公務系統資料依來源編碼處理）。二進位檔案（圖片、Excel、PDF 等）嚴禁套用文字編碼參數。
+  - Windows 環境相容：文字檔案讀寫應明確指定編碼（JSON、Markdown、設定檔與一般原始碼預設優先使用無 BOM 的 UTF-8；含中文字元且需相容 Windows PowerShell 5.1 的 `.ps1` 腳本則須使用含 BOM 的 UTF-8，避免雙位元組解析錯誤；特定 CSV 或公務系統資料依來源編碼處理）。二進位檔案（圖片、Excel、PDF 等）嚴禁套用文字編碼參數。
   - BAT 僅作薄啟動器（固定目錄並以無干擾參數呼叫 PowerShell）；PowerShell 內部路徑一律優先使用 `$PSScriptRoot` 與 `Join-Path`，詳細規範遵循 `lianghao-development` 之 `references/windows-development.md`。
 - **Python 環境操作**：套件操作必須以已確認的直譯器執行 `-m pip`，不得裸跑 `pip` 或假設 `python` 與 `py` 同版。環境隔離先維持可運作版本，開發虛擬環境與 embedded 發布環境分別驗證；詳細工法見共用 Skill 之 `references/python-environments.md`。
 - **環境可攜性與環境相關硬編碼控制**：
@@ -102,7 +102,7 @@
 ### 4.1 核心文件職責劃分與 Source of Truth
 專案治理文件權限與真理來源（Source of Truth）明確劃分如下，彼此不重複保存相同資訊：
 - `00_Dev-Control-Center/configs/AGENTS.md`：**全域工作規則**與開發憲法最高指導。
-- 各 Repository `AGENTS.md`：**專案長期邊界**與不可違反的規則例外（不複製全域憲法）。
+- 各 Repository `AGENTS.md`：**專案長期邊界**與不可違反的規則例外（預設放置於專案根目錄，不複製全域憲法；僅在需區隔平台專屬設定時才額外使用 `.agents/` 或 `.gemini/`）。
 - 各 Repository `HANDOFF.md`：**當前工作交接斷點**（回答上一個 Agent 做到哪裡、Git 狀態與下一步）。
 - `00_Dev-Control-Center/IMPROVEMENTS.md`：**跨專案已確認改善總表**（全域唯一彙整表，各 Repository 不自建）。
 - Git Commit / Diff：**實際修改歷史與驗證證據**（文件不重複保存歷史流水帳）。

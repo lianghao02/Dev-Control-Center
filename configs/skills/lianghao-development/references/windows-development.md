@@ -11,5 +11,5 @@
 
 ## 3. 編碼防衛
 - 腳本開頭一律強制設定 UTF-8 主控台編碼與全域輸出編碼。
-- 文字檔案讀寫一律明確指定無 BOM 的 UTF-8。
+- JSON、Markdown、設定檔與一般原始碼預設明確指定無 BOM 的 UTF-8；含中文字元且需相容 Windows PowerShell 5.1 的 `.ps1` 腳本必須使用含 BOM 的 UTF-8（UTF-8 with BOM），避免 5.1 預設 ANSI/Big5 解析導致雙位元組吞字語法錯誤。
 - 二進位檔案（圖片、模型、音訊、PDF、Excel）嚴禁套用文字編碼參數。

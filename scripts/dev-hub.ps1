@@ -1,4 +1,4 @@
-# UTF-8 Compatibility
+﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [ValidateSet('Menu', 'QuickScan', 'SafeSync', 'Build', 'AgentCheck', 'AgentSync', 'Environment', 'Gui')]

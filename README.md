@@ -1,6 +1,6 @@
 # LiangHao Dev Control Center (開發控制中心)
 
-本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.5、LiangHao 四大核心共用技能庫（Shared Skill Pack v2）、16 個開發 Repository 清單，以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.8.0**。
+本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.5、16 個預設 Agent 技能庫（15 個雙平台共用 + 1 個 Antigravity 專用，內含 LiangHao 四大核心領域技能庫）、19 個開發 Repository 清單（含本中樞與其他 18 個專案），以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.8.0**。
 
 > 🌐 **公開專案展示入口**：所有作品集、Demo 與 GitHub Pages 頁面已獨立遷移至 [lianghao02/Project-Hub](https://github.com/lianghao02/Project-Hub)（展示站：[https://lianghao02.github.io/Project-Hub/](https://lianghao02.github.io/Project-Hub/)）。中央控制中心專注於環境與治理，不再兼任展示網站。
 
@@ -8,17 +8,17 @@
 
 開發中樞將多個 Repository 的環境檢查、啟動入口、Git 狀態與 Agent 規範集中管理。開發背景是跨專案切換時，工具版本、操作步驟與交接文件容易分散，造成重複設定或誤操作。
 
-它面向本機維護者，重點是先檢查、顯示差異，再依明確模式執行。全域憲法與共用 Skills 以 `configs/` 為唯一維護來源；對外成果展示交由 Project Hub，不在此混入展示網站功能。管理範圍為 16 個其他專案，連同本中樞共 17 個 Repository。
+它面向本機維護者，重點是先檢查、顯示差異，再依明確模式執行。全域憲法與共用 Skills 以 `configs/` 為唯一維護來源；對外成果展示交由 Project Hub，不在此混入展示網站功能。管理範圍為 18 個其他專案，連同本中樞共 19 個 Repository。
 
 **典型流程**：查看各專案狀態 → 唯讀環境／設定檢查 → 處理確認過的差異 → 個別專案驗證。
 
-## 技術架構現況（2026-09-08）
+## 技術架構現況（2026-10-16）
 
-- 工作區主力技術依專案用途分流：AI 鑑識與行政自動化維持 Python、免安裝資料工具維持純 Web、Windows 原生工具採 C#／.NET 8／WPF。
-- `03_Police-Image-Toolkit`、`06_System-Optimizer-Tool` 與 `09_PaperSwitch` 已完成 C#／.NET 8／WPF 遷移；舊版分別封存於 `legacy_web/` 與 `legacy-python/`，供回歸比對與備援。
+- 工作區主力技術依專案用途分流：AI 鑑識與行政自動化維持 Python、免安裝資料與互動工具維持純 Web / Node.js、Windows 原生工具採 C#／.NET 8／WPF。
+- `03_Police-Image-Toolkit`、`06_System-Optimizer-Tool`、`09_PaperSwitch` 與 `19_DesktopFramesPlus` 採 C#／.NET 8／WPF；舊版分別封存於 `legacy_web/` 與 `legacy-python/`，供回歸比對與備援。
 - `04_Photo-Report-Generator` 採純前端 Web SPA 與 Tauri 2 桌面封裝，不依賴 VBA 或 Microsoft Office；其他專案的技術與遷移邊界以各自 README 為準。
 - 專案入口網站已獨立為 `13_Project-Hub`，採純靜態 Web 與 GitHub Pages 託管。
-- 最新納入資金流向鑑識 `15_chainflow-inspector` 與桌面分類面板 `DesktopFramesPlus`，總計管理 16 個其他 Repository。
+- 涵蓋 `14_Google-Photos-Takeout-Organizer`、`15_chainflow-inspector`、`16_Wuxia-Typing-Legend`、`17_Subscription-Manager`、`18_AromaCraft-Studio` 與 `19_DesktopFramesPlus`，總計管理 19 個 Repository（含本中樞）。
 
 ## 下載、需求與執行入口
 
@@ -36,8 +36,8 @@
 0. 🧭 **`0_開發中樞.bat`**（日常主入口）：
    - 開啟 `scripts\dev-hub.ps1` 終端選單，可快速檢查、執行安全同步、建置、**檢查／同步 Agent 技能庫與憲法**、檢查環境或開啟 GUI。
    - 選單項目 **`[4] 檢查 / 同步 Agent 設定`** 支援一鍵執行：
-     - `1`：**AgentCheck（唯讀檢查）**，比對本機與雙平台（Codex / Antigravity）的技能目錄與雜湊一致性。
-     - `2`：**AgentSync（正式同步）**，一鍵將全域憲法與 4 大共用 Skill 鏡像推播至雙平台原生設定目錄。
+      - `1`：**AgentCheck（唯讀檢查）**，比對本機與雙平台（Codex / Antigravity）的技能目錄與雜湊一致性。
+      - `2`：**AgentSync（正式同步）**，一鍵將全域憲法與 16 個預設 Skills（15 個雙平台共用 + 1 個 Antigravity 專用）鏡像推播至雙平台原生設定目錄。
    - 優先使用 PowerShell 7，未安裝時自動退回 Windows PowerShell 5.1；以 BAT 自身位置推導路徑，不依賴固定磁碟代號或目前工作目錄。
    - PowerShell 7 的唯讀快速掃描採最多 4 條平行工作；Windows PowerShell 5.1 維持序列掃描，兩者均使用相同安全狀態分類。
 
@@ -46,12 +46,12 @@
    - 保留 Repository 視覺總覽、同步、桌面建置、Agent、環境與日誌等進階操作。
 
 1. 🌟 **`1_全專案智慧同步中樞.bat`** (日常開發主力)：
-   - 雙擊即時掃描 16 個專案之本機與雲端狀態。
+   - 雙擊即時掃描 19 個專案（含本中樞）之本機與雲端狀態。
    - **`[1] ⚡ 智慧全自動同步`**：只拉取工作目錄乾淨的版本庫，分發 AI 設定後只推送既有提交；未提交修改一律保留並提示逐案檢視。
    - 支援 `main` 與 `master`，並提供 `[2]` 僅拉取更新、`[3]` 僅推送既有提交、`[4]` 僅分發 AI 憲法與 Skills。
 
 2. 🌟 **`2_建置所有桌面應用程式.bat`** (版本建置主力)：
-   - 一鍵集中編譯 6 個桌面／可攜式應用程式（`01`, `03`, `04`, `06`, `07`, `09`）。
+   - 一鍵集中編譯桌面／可攜式應用程式（`01`, `03`, `04`, `06`, `07`, `09` 及選用之 `19` 套用腳本）。
    - 嚴格分離「建置」與「發布（Release）」；GUI 與批次檔皆提供安全建置與即時輸出檢視。
 
 3. 🌟 **`3_環境建置與工具安裝.bat`** (環境初始化與維護)：
@@ -75,19 +75,19 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\0
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\00_Dev-Control-Center\scripts\sync_projects.ps1' -Execute
 ```
 
-腳本會依 [development-repositories.json](development-repositories.json) 處理 16 個 Repository。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
+腳本會依 [development-repositories.json](development-repositories.json) 處理 19 個 Repository（含本中樞與其他 18 個專案）。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
 
 ## Agent 設定與治理機制
 
 - **全域規則唯一編輯源**：[configs/AGENTS.md](configs/AGENTS.md)（部署至各 Agent 環境之全域開發憲法 v8.5）
-- **共用技能庫唯一編輯源**：`configs/skills/`（Canonical 來源目錄，嚴禁反向覆蓋）
-- **分流部署定義檔**：[configs/skills-manifest.json](configs/skills-manifest.json)（定義雙平台共用與專用技能）
+- **共用技能庫唯一編輯源**：`configs/skills/`（Canonical 來源目錄，共 16 個預設 Skills，嚴禁反向覆蓋）
+- **分流部署定義檔**：[configs/skills-manifest.json](configs/skills-manifest.json)（定義 15 個雙平台共用與 1 個 Antigravity 專用技能）
 - **跨專案改善事項總表**：[IMPROVEMENTS.md](IMPROVEMENTS.md)（所有專案已確認改善與待辦唯一彙整表）
 - **當前交接狀態斷點**：[HANDOFF.md](HANDOFF.md)（本專案之工作交接與中斷紀錄）
 
-### LiangHao 四大核心共用技能庫 (Shared Skill Pack v2)
+### LiangHao 16 個預設技能庫與四大核心基準套件 (Shared Skill Pack v2)
 
-本開發生態系統採用模組化 Skill 架構，提供判斷框架與安全預設，所有技能均為 Stable 維護狀態：
+本開發生態系統採用模組化 Skill 架構（預設共 16 個 Skills），其中包含四大核心領域基準套件（均含獨立 `VERSION`、`references/`、`workflows/`、`checklists/`）：
 
 1. **`lianghao-development` (v1.0.0)**：跨 Agent 軟體工程與專案治理標準（AUDIT、EVALUATE、FIX、IMPROVE、RELEASE、HANDOFF 與發布門檻）。
 2. **`taiwan-office-automation` (v1.0.0)**：臺灣公務行政與 Office/PDF 自動化（民國日期、Excel 長帳號/前導零防破壞、Word/PDF 雙軌擷取、公文文風）。
@@ -99,10 +99,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\0
 `scripts/sync_codex.ps1` 執行時，會將中央設定單向鏡像部署至雙平台原生目錄：
 
 - **全域憲法** ➜ `%USERPROFILE%\.codex\AGENTS.md` 與 `%USERPROFILE%\.gemini\config\AGENTS.md`
-- **Codex 技能目錄** ➜ `%USERPROFILE%\.agents\skills\<skill-name>`
-- **Antigravity 技能目錄** ➜ `%USERPROFILE%\.gemini\config\skills\<skill-name>`
+- **Codex 技能目錄（15 個共用 Skills）** ➜ `%USERPROFILE%\.agents\skills\<skill-name>`
+- **Antigravity 技能目錄（15 個共用 + 1 個專用 `skill-creator`，共 16 個 Skills）** ➜ `%USERPROFILE%\.gemini\config\skills\<skill-name>`
 
-外圍輔助技能亦由 `configs/skills-manifest.json` 統一管理分流（如 `project-readiness-check`、`webapp-testing`、`document-to-markdown` 等 `shared` 技能，以及 Antigravity 專用的 `skill-creator`）。`%USERPROFILE%\.codex\skills` 的個人獨立 Skill 與系統原生 Skill 均不會被覆寫。
+其餘 11 個雙平台共用技能（`accesslint`、`addyosmani-perf`、`caveman`、`document-to-markdown`、`game-design`、`github-workflow`、`product-design`、`project-planning`、`project-readiness-check`、`release-notes`、`webapp-testing`）與 Antigravity 專用的 `skill-creator` 皆由 `configs/skills-manifest.json` 統一管理分流。`%USERPROFILE%\.codex\skills` 的個人獨立 Skill 與系統原生 Skill 均不會被覆寫。
 
 ### 單獨檢查或同步指令
 

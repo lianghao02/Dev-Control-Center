@@ -5,7 +5,7 @@
 ## 共用範圍
 
 - 正式程式、測試、`scripts/`、`docs/` 與 GitHub Actions 在同一個 Repository 中維護。
-- Codex 指引放在 `.agents/`；Antigravity 指引放在 `.gemini/`。兩者不得互相複製或由同步工具覆寫。
+- 各專案長期邊界預設維護於專案根目錄 `AGENTS.md`；若需平台專屬補充指引，Codex 放在 `.agents/`、Antigravity 放在 `.gemini/`，兩者不得互相複製或由同步工具覆寫。
 - Agent 指引只說明角色與操作入口；可重複執行的驗證流程一律實作在 Repository 的 `scripts/`。
 - `.venv`、`python_embed`、快取、登入狀態與未提交修改屬於工作區本機資料，不共用也不提交。
 

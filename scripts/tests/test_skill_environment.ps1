@@ -42,7 +42,7 @@ Report-Check "1. Resolver 預設/工作區解析測試" $t1Pass "成功解析 Sk
 # 測試 2: Resolver - 環境變數優先級覆寫測試
 $fakeTempRoot = Join-Path ([IO.Path]::GetTempPath()) ("fake-skill-" + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $fakeTempRoot -Force | Out-Null
-Set-Content -Path (Join-Path $fakeTempRoot 'VERSION') -Value '9.9.9' -Encoding utf8NoBOM
+[IO.File]::WriteAllText((Join-Path $fakeTempRoot 'VERSION'), '9.9.9', [Text.UTF8Encoding]::new($false))
 
 $oldEnv = $env:LIANGHAO_SKILL_HOME
 try {
@@ -62,7 +62,7 @@ $portableSkill = Join-Path $portableDevCenter 'configs\skills\lianghao-developme
 $portableRepo = Join-Path $portableWorkspace '09_PaperSwitch'
 $portableScripts = Join-Path $portableDevCenter 'scripts'
 New-Item -ItemType Directory -Path $portableSkill, $portableRepo, $portableScripts -Force | Out-Null
-Set-Content -Path (Join-Path $portableSkill 'VERSION') -Value '1.0.0' -Encoding utf8NoBOM
+[IO.File]::WriteAllText((Join-Path $portableSkill 'VERSION'), '1.0.0', [Text.UTF8Encoding]::new($false))
 Copy-Item -LiteralPath $resolverScript -Destination (Join-Path $portableScripts 'skill-resolver.ps1') -Force
 
 $oldEnv3 = $env:LIANGHAO_SKILL_HOME
@@ -109,10 +109,11 @@ try {
     $testConfigFile = Join-Path $tempConfigDir 'config.json'
     $testWorkspace = Join-Path $tempConfigDir 'workspace'
     New-Item -ItemType Directory -Path $testWorkspace -Force | Out-Null
-    [ordered]@{
+    $initJson = ([ordered]@{
         customSetting = 'keep-me'
         agentPreferences = [ordered]@{ customPreference = 'keep-me' }
-    } | ConvertTo-Json -Depth 3 | Set-Content -LiteralPath $testConfigFile -Encoding utf8NoBOM
+    } | ConvertTo-Json -Depth 3)
+    [IO.File]::WriteAllText($testConfigFile, $initJson, [Text.UTF8Encoding]::new($false))
 
     # 執行 setup
     & $setupScript -WorkspaceRoot $testWorkspace -ConfigPath $testConfigFile | Out-Null

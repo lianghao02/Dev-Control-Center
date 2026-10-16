@@ -1,4 +1,4 @@
-# UTF-8 Compatibility
+﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param(
     [switch]$Detailed
@@ -63,6 +63,7 @@ if ($report.ResolverPass) {
         'references\release-policy.md',
         'references\project-product-assessment.md',
         'references\windows-development.md',
+        'references\python-environments.md',
         'references\data-safety.md',
         'workflows\audit-project.md',
         'workflows\evaluate-project.md',

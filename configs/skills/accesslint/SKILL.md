@@ -28,49 +28,30 @@ description: >
 
 ---
 
-## 掃描實作範例（整合 axe-core）
+## 掃描工具與離線防禦原則（對齊 `webapp-testing` 與 `data-safety`）
 
-可透過網路 CDN 或離線本機載入 `axe.min.js` 執行掃描：
+- **工具優先序**：優先使用內建 Browser 工具或專案既有的 Node.js Playwright 測試環境；**不得為單次無障礙掃描臨時執行 `pip install playwright` 或改動專案相依套件**（僅在專案本身已具備受管之 Python Playwright 環境時才使用 Python 腳本）。
+- **離線與隱私防線**：涉及公務、警政、個資或離線環境之專案，一律使用本機離線 `axe.min.js` 注入，嚴禁未經授權載入外部 CDN。
 
-```python
-from playwright.sync_api import sync_playwright
+### 掃描實作範例（本機離線 `axe.min.js` 優先）
 
-def scan_accessibility(url: str, local_axe_path: str = None) -> dict:
-    """
-    掃描指定 URL 的 WCAG 無障礙問題。
-    支援線上 CDN 或本機離線 axe.min.js。
-    """
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
-        page = browser.new_page()
-        page.goto(url)
-        page.wait_for_load_state("networkidle")
-
-        # 注入 axe-core 引擎 (優先本機離線，備選 CDN)
-        if local_axe_path:
-            page.add_script_tag(path=local_axe_path)
-        else:
-            page.add_script_tag(url="https://cdn.jsdelivr.net/npm/axe-core/axe.min.js")
-
-        # 執行掃描
-        results = page.evaluate("""
-            async () => {
-                const res = await axe.run();
-                return {
-                    violations: res.violations.map(v => ({
-                        id: v.id,
-                        impact: v.impact,
-                        description: v.description,
-                        helpUrl: v.helpUrl,
-                        nodes: v.nodes.length
-                    })),
-                    passes: res.passes.length
-                };
-            }
-        """)
-
-        browser.close()
-        return results
+```javascript
+// Node.js Playwright 既有環境範例（優先載入本機 axe.min.js）
+await page.goto(url, { waitUntil: 'domcontentloaded' });
+await page.addScriptTag({ path: localAxePath }); // 公務/離線專案強制使用本機路徑
+const results = await page.evaluate(async () => {
+  const res = await window.axe.run();
+  return {
+    violations: res.violations.map(v => ({
+      id: v.id,
+      impact: v.impact,
+      description: v.description,
+      helpUrl: v.helpUrl,
+      nodes: v.nodes.length
+    })),
+    passes: res.passes.length
+  };
+});
 ```
 
 ---

@@ -260,3 +260,80 @@ CheckOnly 部署前僅雙平台 lianghao-development Pending，無 Modified／Un
 
 ### 下一步建議動作 (Next Recommended Action)
 在開發打字遊戲（11_TypingLegend）、Web 網頁遊戲或涉及遊戲機制/介面設計時，直接由 Codex 或 Antigravity 載入 `game-design` Skill。
+
+## 2026-10-16 全域憲法與 Skills 規則衝突消弭及周邊文件更新交接
+
+### 核心元資料 (Metadata)
+- **Repository**：lianghao02/Dev-Control-Center
+- **Branch**：main
+- **Commit SHA**：ad5860ded7d6c53722ee3bfbd540fbcb1d4ea98c（本輪修改前基準；最新以 Git log 為準）
+- **Skill Version**：v1.0.0
+- **Task Type**：IMPROVE
+- **Local Path Hint**：00_Dev-Control-Center
+
+### 目前狀態
+可交付（全域憲法、共用 Skills 衝突條文修正、PowerShell 5.1 UTF-8 BOM 補齊、雙平台同步部署與 19 專案／16 預設技能文件更新皆已完成並通過實測驗證）。
+
+### 本輪目標
+檢查並消除全域開發憲法（`configs/AGENTS.md`）與各個 Skills／周邊治理文件之間的規則衝突、大陸用語殘留與硬編碼路徑，並將 `README.md`、`docs/CODEX_SETUP.md`、`docs/PROJECT_ARCHITECTURE_GUIDE.md` 同步更新為 19 個專案與 16 個預設技能。
+
+### 基準與已確認事實 (Baseline & Confirmed Facts)
+開始時 `main` 與 `origin/main` 同步（`ad5860ded7d6c53722ee3bfbd540fbcb1d4ea98c`），Working Tree 為 Clean。
+
+### 已完成 (Completed)
+1. **消除 UTF-8 BOM 規則與 PowerShell 5.1 實測衝突**：
+   - 更新 `configs/AGENTS.md` 與 `configs/skills/lianghao-development/references/windows-development.md`：明確區分 JSON／Markdown／設定檔／一般原始碼預設使用無 BOM 的 UTF-8，而含中文字元且需相容 Windows PowerShell 5.1 的 `.ps1` 腳本須使用 UTF-8 with BOM。
+   - 為 6 個缺少 UTF-8 BOM 的含中文 `.ps1` 腳本（`dev-hub.ps1`、`push_projects.ps1`、`sync_projects.ps1`、`verify-agent-environment.ps1`、`workspace_sync_hub.ps1`、`test_git_status.ps1`）補齊 UTF-8 BOM，並修正 `test_skill_environment.ps1` 在 PS 5.1 不支援 `-Encoding utf8NoBOM` 的問題。
+2. **消除 Skills 間條文衝突與硬編碼路徑**：
+   - `product-design/SKILL.md`：新增 `00.0 — LiangHao 工作區治理對齊原則`，對齊台灣繁體中文、Windows／離線工具優先採用系統字型堆疊（`Segoe UI`, `Microsoft JhengHei UI`, `system-ui`）、非阻斷式需求探索與依專案規模裁剪狀態門檻。
+   - `game-design/SKILL.md`：修正第 4.5 節，次要細節預設合理假設推進，惟核心目標或平台不明時仍向使用者簡明確認。
+   - `accesslint/SKILL.md`：對齊 `webapp-testing` 與 `data-safety.md`，優先使用既有瀏覽器測試與本機離線 `axe.min.js`，禁止臨時 `pip install playwright` 或於公務離線專案注入外部 CDN。
+   - `skill-creator/SKILL.md`：移除硬編碼 `D:\Development\GitHub` 與舊使用者路徑，改用相對路徑與 `%USERPROFILE%`。
+   - `lianghao-development`：修正 `release-policy.md` 大陸用語「文檔」為「文件」，並於 `SKILL.md` 與 `verify-agent-environment.ps1` 補入 `references/python-environments.md`。
+3. **周邊治理文件更新（19 個專案、16 個預設 Skills）**：
+   - 更新 `README.md`、`docs/CODEX_SETUP.md`、`docs/PROJECT_ARCHITECTURE_GUIDE.md` 與 `docs/DEVELOPMENT_RULES.md`。
+4. **雙平台同步部署**：執行 `sync_codex.ps1 -Execute -SkipMcpConfig`，將更新後之 `AGENTS.md` 與 Skills 同步至 Codex 與 Antigravity。
+
+### 異動檔案 (Changed Files)
+- `configs/AGENTS.md`
+- `configs/skills/accesslint/SKILL.md`
+- `configs/skills/game-design/SKILL.md`
+- `configs/skills/lianghao-development/SKILL.md`
+- `configs/skills/lianghao-development/references/release-policy.md`
+- `configs/skills/lianghao-development/references/windows-development.md`
+- `configs/skills/product-design/SKILL.md`
+- `configs/skills/skill-creator/SKILL.md`
+- `README.md`
+- `docs/CODEX_SETUP.md`
+- `docs/DEVELOPMENT_RULES.md`
+- `docs/PROJECT_ARCHITECTURE_GUIDE.md`
+- `scripts/dev-hub.ps1`、`scripts/push_projects.ps1`、`scripts/sync_projects.ps1`、`scripts/verify-agent-environment.ps1`、`scripts/workspace_sync_hub.ps1`、`scripts/tests/test_git_status.ps1`、`scripts/tests/test_skill_environment.ps1`
+- `HANDOFF.md`
+
+### 刻意未修改 (Do Not Do / Deliberately Omitted)
+未修改各業務專案程式碼、MCP 設定或 `configs/skills-manifest.json` 分流結構。
+
+### 尚未完成 (Remaining Work)
+- **P1 (阻斷/必須)**：無。
+- **P2 (重要/當次)**：無（前輪 09 IGEF 等跨專案事項繼承）。
+- **P3 (改善建議/暫緩)**：Antigravity 外掛目錄 `%USERPROFILE%\.gemini\config\plugins\product-design` 與 `%USERPROFILE%\.gemini\config\skills\product-design` 重複載入同名 Skill，若日後不需外掛版可於 Antigravity 外掛管理停用。
+
+### 驗證結果 (Validation)
+#### 已執行測試與結果
+- Windows PowerShell 5.1 全專案 23 個 `.ps1` 腳本 AST 語法檢查：23／23 通過（0 錯誤）。
+- `scripts/sync_codex.ps1 -Execute -SkipMcpConfig` 與 `-CheckOnly`：34 項受管項目全數 `Current`。
+- `scripts/verify-agent-environment.ps1`（PS 5.1 實測）：全數通過（ALL PASS，含 24 項 Canonical 結構與雙平台 TreeHash 一致）。
+- `scripts/tests/test_skill_environment.ps1`（PS 5.1 實測）：8／8 測試全數通過。
+- `git diff --check`：無空白或格式錯誤。
+
+### Git 狀態
+- Commit：尚未提交（待使用者指示是否 commit / push）。
+- Push：否。
+- Working Tree：Modified（僅限上述本輪治理文件與腳本 BOM 修正）。
+- Branch：main。
+
+### 下一步建議動作 (Next Recommended Action)
+確認差異無誤後，可依需求提交（建議 Commit 訊息：`docs: 消除全域憲法與技能規則衝突並更新 19 專案與 16 技能文件`）。
+
+### 發布狀態 (Release Status)
+治理文件與測試腳本相容性更新，不涉及應用程式正式版發布。

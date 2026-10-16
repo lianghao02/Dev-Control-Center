@@ -60,6 +60,7 @@ description: LiangHao 跨 Agent 軟體工程與專案治理標準技能庫。提
   - `release-policy.md`：發布標準、語意化版本與驗收規範。
   - `project-product-assessment.md`：產品評估、痛點分析與開源參照決策；第 4 節為依需求選用技術設計參考。
   - `windows-development.md`：Windows 開發、動態路徑、編碼防禦與薄 BAT 原則。
+  - `python-environments.md`：Python 環境盤點、`.venv` 與 embedded 隔離及啟動器修復規範。
   - `data-safety.md`：機敏資料與不可逆操作防護。
 - **標準工作流程（`workflows/`）**：`audit-project.md`、`evaluate-project.md`、`fix-project.md`、`improve-project.md`、`release-project.md`、`handoff-project.md`。
 - **範本庫（`templates/`）**：`agent-task.md`、`handoff.md`、`project-scorecard.md`、`release-report.md`。
