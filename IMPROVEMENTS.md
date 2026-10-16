@@ -81,8 +81,8 @@
 - **說明**：核心架構穩定，目前無待處理之重大阻斷問題，維持維護狀態。
 
 ### 10_Smart-Photo-Organizer
-- **目前狀態**：暫緩（Stable / Maintenance）
-- **已修復（2026-10-06）**：正式 WinShellReader 的初始化、讀寫與程序回收已受控；正式後端的資料夾／ZIP 重跑及故障注入通過。原始 180 秒現場的精確 COM 根因無法還原，不宣稱系統 Shell 永不逾時；現在會返回失敗並回收程序。詳見 `docs/remaining-fixes/RESULTS.md`，歷史事實仍保存於合成驗收報告。
+- **目前狀態**：已封存廢置（Archived / Deprecated）
+- **說明**：專案核心演算法（Live Photo 成對綁定、全域階段式 Sidecar 配對、CP437 轉碼修復、Zip Bomb 防禦與五層日期保底）已全數移植至 `14_Google-Photos-Takeout-Organizer`（v1.3.0）。GitHub 遠端儲存庫已正式封存（`isArchived: true`），本機工作目錄已安全清理。
 
 ### chain-fund-tracer (chainflow-inspector)
 - **目前狀態**：活躍（Active / v1.4.2）
