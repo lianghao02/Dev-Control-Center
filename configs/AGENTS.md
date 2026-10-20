@@ -88,7 +88,8 @@
 - **交付標準**：依任務範圍提供足以直接套用的完整內容；局部修改交付明確可替換區段，較大修改提供完整檔案，避免無法判斷插入位置的碎片。
 - **參數集中管理 (Config-First)**：可調整參數（閾值、路徑等）應集中管理，避免散落的魔術數字。
 - **簡潔性與架構適當性**：優先採用足以滿足需求的最簡單架構，不因專案成長盲目引入大型前端框架。介面優先採用系統字型堆疊與狀態透明設計（清楚指示目前狀態、下一步與失敗原因）。
-- **UI／UX 真實案例參考**：新介面、明確 UI／UX 改善、手機／桌面／響應式調整或主要流程有明確 UX 問題時，依共用 `lianghao-development` 之 `references/agent-execution.md` 第 3 節選擇可核對案例；一般非 UI 任務不強制研究，亦不得因 UI 美化延後已通過門檻的發布。
+- **引導式需求探索與產品決策**：當使用者要求規劃產品、探索適合方向、透過問卷引導、重新評估既有專案，或表示尚未確定設計細節時，進入預設唯讀之產品探索模式（讀取現況 ➜ 動態訪談 ➜ 主動分析與比較 ➜ 產出決策摘要），詳細規範遵循 `lianghao-development` 之 `references/project-product-assessment.md` 第 5 節。若需求已明確或直接要求修改、製作、測試、發布，不強制啟動問卷。
+- **UI／UX 自主風格探索、真實案例參考與遊戲風格工具 UI 選型**：新介面、明確 UI／UX 改善、視覺改版、遊戲風格工具 UI 選型、UI 概念預覽圖、手機／桌面／響應式調整或主要流程有明確 UX 問題時，依共用 `lianghao-development` 之 `references/agent-execution.md` 第 3、4 節與 `product-design`／`game-design` 進行用途分析、2～3 個可查證案例／風格比較與選型。避免制式 AI 介面，不將 Q 版設為預設；遊戲風格工具 UI 須區分「遊戲類型」與「美術風格」、保留工具軟體本質，且預覽圖與實作分離。一般非 UI 任務不強制研究，亦不得因非必要美術改善延後已通過門檻的發布。
 - **技術選型以邊界與現場維護成本為準**：
   - 任務領域依效能邊界與維護成本選擇最適工具（AI/MVP 優先 Python；Windows 底層/系統工具優先 C#；海量密集運算優先 Rust；輕量離線工具優先純 Web 並以 Tauri 桌面封裝）。
   - 專案架構與產品評估遵循 `lianghao-development` 之 `references/project-product-assessment.md`。
@@ -155,19 +156,19 @@
 
 | 觸發情境 | 載入 Skill |
 |---------|------------|
-| 通用軟體工程任務（唯讀審查 AUDIT、專案評估 EVALUATE、修復 FIX、優化 IMPROVE、發布 RELEASE、交接 HANDOFF） | `lianghao-development` |
+| 通用軟體工程任務（唯讀審查 AUDIT、專案評估與引導式需求探索／產品決策 EVALUATE、修復 FIX、優化 IMPROVE、發布 RELEASE、交接 HANDOFF） | `lianghao-development` |
 | GitHub 搜尋、upstream 同步、PR、Release CI/CD、外部 Repo 引用 | `github-workflow` |
 | 撰寫版本發布說明 (Release Note)、更新 `CHANGELOG.md` | `release-notes` |
 | Web 前端 Core Web Vitals 效能量測與針對性優化 | `addyosmani-perf` |
 | 公務/對外系統之 WCAG 無障礙合規需求或明確要求無障礙掃描 | `accesslint` |
-| 大型新專案、跨模組功能、架構重構或需要跨工作階段保存進度 | `project-planning` |
+| 大型新專案、跨模組功能、架構重構或需要跨工作階段保存進度（純產品方向探索與動態問卷優先遵循 `lianghao-development` 之 `project-product-assessment.md`） | `project-planning` |
 | 準備交付、提交、推送、建立 PR 前之 Git、測試、Web 實測與敏感資料檢核 | `project-readiness-check` |
 | Playwright 瀏覽器自動化測試、UI 視覺驗證 | `webapp-testing` |
 | PDF、Word、Excel、PowerPoint 等本機文件轉為分析用 Markdown | `document-to-markdown` |
 | 建立、重構或驗證新的 Skill 本身 | `skill-creator` |
-| 新介面設計、明確 UI／UX 改善、手機／桌面／響應式調整、主要流程 UX 問題、UI／UX 審查、資訊層級與元件狀態檢查 | `product-design`；真實案例參考依 `lianghao-development` 之 `references/agent-execution.md` 第 3 節 |
+| 新介面設計、明確 UI／UX 改善、自主風格探索、手機／桌面／響應式調整、主要流程 UX 問題、UI／UX 審查、資訊層級與元件狀態檢查 | `product-design`；真實案例參考與遊戲風格工具 UI 選型依 `lianghao-development` 之 `references/agent-execution.md` 第 3、4 節 |
 | 臺灣公務/行政/金融資料處理、民國日期、長數字防轉型、Office/Word/PDF 套版、正式公文語氣 | `taiwan-office-automation` |
 | 使用者原始資料處理、多媒體整理、批次改名、資料清理、衝突與重複防護 | `safe-data-processing` |
 | Windows 桌面工具開發、Win10/11 相容、免安裝 Portable 架構、零假死啟動、高 DPI 適配 | `windows-tool-ux` |
-| 遊戲架構設計（本機／Web 網頁遊戲）、核心玩法循環、系統狀態機、GDD 規格書、HUD／抽屜式 UI 排版與微互動 | `game-design` |
+| 遊戲架構設計（本機／Web 網頁遊戲）、核心玩法循環、系統狀態機、GDD 規格書、HUD／抽屜式 UI 排版與微互動；工具軟體借鑑遊戲風格 UI 時搭配 `lianghao-development` 之 `references/agent-execution.md` 第 4 節 | `game-design` |
 | **使用者明確指定** `caveman` / 極簡 / 省 Token 模式時 | `caveman` |
