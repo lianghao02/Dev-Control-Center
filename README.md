@@ -26,7 +26,7 @@
 - **必要軟體**：Windows 10/11、Git for Windows；建議使用 PowerShell 7，未安裝時各入口會自動退回 Windows PowerShell 5.1。管理功能本身不要求先安裝 Python。
 - **下載**：`git clone https://github.com/lianghao02/Dev-Control-Center.git 00_Dev-Control-Center`。
 - **唯一入口**：雙擊 `0_開發中樞.bat` 進入終端選單，所有功能都從這裡進入；也可用 `scripts\dev-hub.ps1 -Action <名稱>` 直接執行單一功能。
-- **網路需求**：Clone、Pull、Push 與首次下載 Python 可攜核心時需要網路；若 `downloads/` 已有安裝母檔，Python 環境可離線建置。
+- **網路需求**：Clone、Pull、Push 與首次下載 Python 可攜核心時需要網路；若本機 `downloads/` 已有安裝母檔（僅供本機離線快取，不納入版本控制），Python 環境可離線建置。
 - **打包方式**：本專案是管理腳本集合，不需編譯或安裝；備份時保留完整資料夾即可。
 
 ## 入口與功能對照

@@ -29,7 +29,7 @@ backups/
 bridge-backups/
 python_embed/
 python-embed/
-downloads/*.zip
+downloads/*
 *.db
 *.sqlite
 *.sqlite3
