@@ -1,6 +1,6 @@
 ---
 name: windows-tool-ux
-description: Windows 桌面與公務工具產品設計與 UX 體驗技能庫。專注於 Windows 10/11 雙相容、免安裝 Portable 架構、零假死快速啟動、高 DPI 縮放適配、耗時任務進度可取消性與公務無管理者權限環境相容。
+description: Windows 桌面與公務工具產品設計與 UX 體驗技能庫。專注於 Windows 10/11 雙相容、免安裝 Portable 架構、零假死快速啟動、高 DPI 縮放適配、耗時任務進度可取消性與公務無管理者權限環境相容。開發或審查 WPF、WinForms、Tauri、Electron、PowerShell GUI 等 Windows 桌面工具，處理啟動慢、畫面卡住、高 DPI 模糊或免安裝發行時使用。
 ---
 
 # 🖥️ Windows Tool UX Skill (v1.0.0)

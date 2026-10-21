@@ -162,19 +162,23 @@ foreach ($sk in $allSharedSkills) {
     $canDir = Join-Path $homeRepo "configs\skills\$sk"
     $cSkillDir = Join-Path $env:USERPROFILE ".agents\skills\$sk"
     $aSkillDir = Join-Path $env:USERPROFILE ".gemini\config\skills\$sk"
+    $clSkillDir = Join-Path $env:USERPROFILE ".claude\skills\$sk"
     $cFile = Join-Path $cSkillDir 'SKILL.md'
     $aFile = Join-Path $aSkillDir 'SKILL.md'
-    
-    if ((Test-Path -LiteralPath $cFile) -and (Test-Path -LiteralPath $aFile)) {
+    $clFile = Join-Path $clSkillDir 'SKILL.md'
+
+    if ((Test-Path -LiteralPath $cFile) -and (Test-Path -LiteralPath $aFile) -and (Test-Path -LiteralPath $clFile)) {
         $cVer = (Get-Content -LiteralPath (Join-Path $canDir 'VERSION') -Raw).Trim()
         $codexVer = (Get-Content -LiteralPath (Join-Path $cSkillDir 'VERSION') -Raw).Trim()
         $antiVer = (Get-Content -LiteralPath (Join-Path $aSkillDir 'VERSION') -Raw).Trim()
+        $claudeVer = (Get-Content -LiteralPath (Join-Path $clSkillDir 'VERSION') -Raw).Trim()
 
         $canHash = (Get-FileHash -LiteralPath (Join-Path $canDir 'SKILL.md') -Algorithm SHA256).Hash
         $codexHash = (Get-FileHash -LiteralPath $cFile -Algorithm SHA256).Hash
         $antiHash = (Get-FileHash -LiteralPath $aFile -Algorithm SHA256).Hash
+        $claudeHash = (Get-FileHash -LiteralPath $clFile -Algorithm SHA256).Hash
 
-        if ($cVer -eq '1.0.0' -and $codexVer -eq '1.0.0' -and $antiVer -eq '1.0.0' -and $canHash -eq $codexHash -and $canHash -eq $antiHash) {
+        if ($cVer -eq '1.0.0' -and $codexVer -eq '1.0.0' -and $antiVer -eq '1.0.0' -and $claudeVer -eq '1.0.0' -and $canHash -eq $codexHash -and $canHash -eq $antiHash -and $canHash -eq $claudeHash) {
             $skillsCheckedCount++
         } else {
             $allSkillsPass = $false
@@ -184,7 +188,7 @@ foreach ($sk in $allSharedSkills) {
     }
 }
 $t8Pass = ($allSkillsPass -and $skillsCheckedCount -eq 4)
-Report-Check "8. 雙平台原生 Skill 目錄存在性與版本一致性" $t8Pass "四大共用 Skill 皆完整部署至 Codex 與 Antigravity，且 VERSION/Hash 完全一致"
+Report-Check "8. 原生 Skill 目錄存在性與版本一致性" $t8Pass "四大共用 Skill 皆完整部署至 Codex、Antigravity 與 Claude Code，且 VERSION/Hash 完全一致"
 
 Write-Host "-----------------------------------------------------------------" -ForegroundColor Cyan
 Write-Host "測試結果統計：通過 $passCount / 失敗 $failCount (共 $($passCount + $failCount) 項)" -ForegroundColor $(if ($failCount -eq 0) { 'Green' } else { 'Red' })

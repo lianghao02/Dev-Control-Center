@@ -22,29 +22,37 @@
 
 ## 下載、需求與執行入口
 
-- **用途**：集中管理專案清單、Git 同步、Codex／Antigravity 規則，以及仍採 Python 的專案可攜環境。
+- **用途**：集中管理專案清單、Git 同步、Codex／Antigravity／Claude Code 規則，以及仍採 Python 的專案可攜環境。
 - **必要軟體**：Windows 10/11、Git for Windows；建議使用 PowerShell 7，未安裝時各入口會自動退回 Windows PowerShell 5.1。管理功能本身不要求先安裝 Python。
 - **下載**：`git clone https://github.com/lianghao02/Dev-Control-Center.git 00_Dev-Control-Center`。
-- **主要入口**：一般使用者直接雙擊 `0_開發中樞.bat` 進入終端選單；`1_`～`3_` 保留為直接快捷入口，`0_控制中心_手帳儀表板.bat` 則保留為選用 GUI 儀表板。進階使用者可執行 `scripts/` 下對應 PowerShell 腳本。
+- **唯一入口**：雙擊 `0_開發中樞.bat` 進入終端選單，所有功能都從這裡進入；也可用 `scripts\dev-hub.ps1 -Action <名稱>` 直接執行單一功能。
 - **網路需求**：Clone、Pull、Push 與首次下載 Python 可攜核心時需要網路；若 `downloads/` 已有安裝母檔，Python 環境可離線建置。
 - **打包方式**：本專案是管理腳本集合，不需編譯或安裝；備份時保留完整資料夾即可。
 
-## 雙擊快捷捷徑 (One-Click Flagship Batch Tools)
+## 入口與功能對照
 
-在 `00_Dev-Control-Center` 根目錄提供精煉的批次入口；BAT 只負責定位 PowerShell 與啟動腳本，Git、建置、環境與 Agent 邏輯皆集中於 PowerShell：
+根目錄只保留一個入口 `0_開發中樞.bat`；BAT 只負責定位 PowerShell 並啟動 `scripts\dev-hub.ps1`，Git、建置、環境與 Agent 邏輯皆集中於 PowerShell。
 
-0. 🧭 **`0_開發中樞.bat`**（日常主入口）：
-   - 開啟 `scripts\dev-hub.ps1` 終端選單，可快速檢查、執行安全同步、建置、**檢查／同步 Agent 技能庫與憲法**、檢查環境或開啟 GUI。
+| 選單 | `-Action` | 做什麼 | 實際呼叫 |
+|---|---|---|---|
+| [1] | `QuickScan` | 唯讀快速檢查所有專案的本機 Git 狀態 | `scripts\workspace_sync_hub.ps1 -Action QuickScan` |
+| [2] | `SafeSync` | 補 Clone 缺少的專案 → 安全快轉 → 推送既有提交 | `scripts\workspace_sync_hub.ps1 -Action Auto` |
+| [3] | `Build` | 建置桌面應用程式（不建立 Release） | `build_all_desktop_apps.ps1 -Execute` |
+| [4] | `AgentCheck`／`AgentSync` | 檢查或同步全域憲法與共用 Skills | `scripts\sync_codex.ps1 -CheckOnly`／`-Execute` |
+| [5] | `Environment` | 開發工具鏈與 Python 環境檢查 | `scripts\setup_environment_hub.ps1` |
+
+多專案 Git 同步只由 `scripts\workspace_sync_hub.ps1` 負責。
+
+補充說明：
+
    - 選單項目 **`[4] 檢查 / 同步 Agent 設定`** 支援一鍵執行：
       - `1`：**AgentCheck（唯讀檢查）**，比對本機與雙平台（Codex / Antigravity）的技能目錄與雜湊一致性。
       - `2`：**AgentSync（正式同步）**，一鍵將全域憲法與 16 個預設 Skills（15 個雙平台共用 + 1 個 Antigravity 專用）鏡像推播至雙平台原生設定目錄。
    - 優先使用 PowerShell 7，未安裝時自動退回 Windows PowerShell 5.1；以 BAT 自身位置推導路徑，不依賴固定磁碟代號或目前工作目錄。
    - PowerShell 7 的唯讀快速掃描採最多 4 條平行工作；Windows PowerShell 5.1 維持序列掃描，兩者均使用相同安全狀態分類。
 
-0. 📔 **`0_控制中心_手帳儀表板.bat`**（選用 GUI）：
-   - 啟動後立即顯示儀表板，預設維持「尚未掃描」；使用者可按 Level 1／2／3 按鈕才執行所需檢查。
-   - 保留 Repository 視覺總覽、同步、桌面建置、Agent、環境與日誌等進階操作。
-
+> 2026-10-21 收斂入口：移除 GUI 儀表板（`0_控制中心_手帳儀表板.bat`、`scripts/gui.ps1`、`scripts/gui/MainWindow.xaml`）與重複的同步腳本 `scripts/sync_projects.ps1`、`scripts/push_projects.ps1`。GUI 自行實作了另一份 Git 同步邏輯且專案數寫死，與終端選單重複；需要時可從 Git 歷史取回。
+>
 > 原本的 `1_`～`3_` 三個快捷 BAT 已於 2026-10-21 移除（長期未使用），對應功能都在 `0_開發中樞.bat` 的選單內：
 > - **全專案智慧同步**：掃描全部專案的本機與雲端狀態，只拉取乾淨的版本庫、只推送既有提交，未提交的修改一律保留並提示；支援 `main` 與 `master`。
 > - **建置桌面應用程式**：呼叫各專案既有的建置腳本；嚴格分離「建置」與「發布（Release）」。
@@ -69,15 +77,20 @@ python scripts/check_release_versions.py --online   # 另外比對最新 git tag
 ```powershell
 New-Item -ItemType Directory -Path 'C:\Development\GitHub' -Force
 git clone https://github.com/lianghao02/Dev-Control-Center.git 'C:\Development\GitHub\00_Dev-Control-Center'
+$hub = 'C:\Development\GitHub\00_Dev-Control-Center\scripts\dev-hub.ps1'
 
-# 預覽，不修改檔案
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\00_Dev-Control-Center\scripts\sync_projects.ps1'
+# 唯讀檢查：列出已存在與缺少的專案
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action QuickScan
 
-# 正式複製／更新專案並部署 Codex、Antigravity 規則
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\00_Dev-Control-Center\scripts\sync_projects.ps1' -Execute
+# 補 Clone 缺少的專案並安全同步
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action SafeSync
+
+# 部署 Codex、Antigravity、Claude Code 規則（先檢查差異，再正式同步）
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentCheck
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 ```
 
-腳本會依 [development-repositories.json](development-repositories.json) 處理 18 個 Repository（含本中樞與其他 17 個專案）。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
+同步會依 [development-repositories.json](development-repositories.json) 處理 18 個 Repository（含本中樞與其他 17 個專案），缺少的專案會 Clone 到本中樞的上一層資料夾。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
 
 ## Agent 設定與治理機制
 
@@ -96,13 +109,16 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\Development\GitHub\0
 3. **`safe-data-processing` (v1.0.0)**：使用者原始資產安全處理（Inspect-First 盤點、Copy 優先、Dry Run 模擬預覽、來源模式驗收、隔離審查概念）。
 4. **`windows-tool-ux` (v1.0.0)**：Windows 桌面工具與使用者體驗（Win10/11 雙相容、Portable 免安裝架構、零假死防凍結設計、實測導向非同步）。
 
-### 雙平台原生目錄與單向同步機制
+### 原生目錄與單向同步機制（Codex／Antigravity／Claude Code）
 
-`scripts/sync_codex.ps1` 執行時，會將中央設定單向鏡像部署至雙平台原生目錄：
+`scripts/sync_codex.ps1` 執行時，會將中央設定單向部署至三個 Agent 的原生目錄：
 
-- **全域憲法** ➜ `%USERPROFILE%\.codex\AGENTS.md` 與 `%USERPROFILE%\.gemini\config\AGENTS.md`
+- **全域憲法** ➜ `%USERPROFILE%\.codex\AGENTS.md` 與 `%USERPROFILE%\.gemini\config\AGENTS.md`（複製）；`%USERPROFILE%\.claude\CLAUDE.md`（只含一行 `@<configs/AGENTS.md 絕對路徑>` 匯入，Claude Code 每次啟動即時讀取，憲法修訂後不需重新部署）
 - **Codex 技能目錄（15 個共用 Skills）** ➜ `%USERPROFILE%\.agents\skills\<skill-name>`
 - **Antigravity 技能目錄（15 個共用 + 1 個專用 `skill-creator`，共 16 個 Skills）** ➜ `%USERPROFILE%\.gemini\config\skills\<skill-name>`
+- **Claude Code 技能目錄（15 個共用 Skills）** ➜ `%USERPROFILE%\.claude\skills\<skill-name>`；`skill-creator` 不部署，Claude 已有內建同名技能
+
+使用者層的 `~/.claude/CLAUDE.md` 不受「工作區與專案資料夾不得建立 `CLAUDE.md`」限制；該限制只針對 Repository 內的檔案。
 
 其餘 11 個雙平台共用技能（`accesslint`、`addyosmani-perf`、`caveman`、`document-to-markdown`、`game-design`、`github-workflow`、`product-design`、`project-planning`、`project-readiness-check`、`release-notes`、`webapp-testing`）與 Antigravity 專用的 `skill-creator` 皆由 `configs/skills-manifest.json` 統一管理分流。`%USERPROFILE%\.codex\skills` 的個人獨立 Skill 與系統原生 Skill 均不會被覆寫。
 

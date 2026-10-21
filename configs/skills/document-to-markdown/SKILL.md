@@ -5,7 +5,7 @@ description: 將本機 PDF、Word、Excel、PowerPoint、HTML、CSV、JSON、XML
 
 # 文件轉 Markdown
 
-使用 Microsoft MarkItDown 將異質文件轉成保留標題、清單、表格及連結結構的 Markdown，再交由 Codex 或 Antigravity 分析。
+使用 Microsoft MarkItDown 將異質文件轉成保留標題、清單、表格及連結結構的 Markdown，再交由 Agent 分析。
 
 ## 路由判斷
 

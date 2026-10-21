@@ -116,6 +116,7 @@ if ($report.ResolverPass) {
 # 4. 驗證平台原生自動載入部署與 Hash 一致性
 $codexSkillPath = Join-Path $env:USERPROFILE '.agents\skills\lianghao-development'
 $antiSkillPath = Join-Path $env:USERPROFILE '.gemini\config\skills\lianghao-development'
+$claudeSkillPath = Join-Path $env:USERPROFILE '.claude\skills\lianghao-development'
 
 function Get-TreeHashForVerify([string]$Path) {
     if (-not (Test-Path -LiteralPath $Path)) { return $null }
@@ -132,27 +133,30 @@ function Get-TreeHashForVerify([string]$Path) {
 
 $codexExists = Test-Path -LiteralPath (Join-Path $codexSkillPath 'SKILL.md')
 $antiExists = Test-Path -LiteralPath (Join-Path $antiSkillPath 'SKILL.md')
+$claudeExists = Test-Path -LiteralPath (Join-Path $claudeSkillPath 'SKILL.md')
 
-if ($codexExists -and $antiExists -and $report.ResolverPass) {
+if ($codexExists -and $antiExists -and $claudeExists -and $report.ResolverPass) {
     $canonicalHash = Get-TreeHashForVerify $report.SkillHome
     $codexHash = Get-TreeHashForVerify $codexSkillPath
     $antiHash = Get-TreeHashForVerify $antiSkillPath
+    $claudeHash = Get-TreeHashForVerify $claudeSkillPath
 
     $vCodex = if (Test-Path -LiteralPath (Join-Path $codexSkillPath 'VERSION')) { (Get-Content (Join-Path $codexSkillPath 'VERSION') -Raw).Trim() } else { $null }
     $vAnti = if (Test-Path -LiteralPath (Join-Path $antiSkillPath 'VERSION')) { (Get-Content (Join-Path $antiSkillPath 'VERSION') -Raw).Trim() } else { $null }
+    $vClaude = if (Test-Path -LiteralPath (Join-Path $claudeSkillPath 'VERSION')) { (Get-Content (Join-Path $claudeSkillPath 'VERSION') -Raw).Trim() } else { $null }
 
-    if ($canonicalHash -eq $codexHash -and $canonicalHash -eq $antiHash -and $vCodex -eq $report.Version -and $vAnti -eq $report.Version) {
+    if ($canonicalHash -eq $codexHash -and $canonicalHash -eq $antiHash -and $canonicalHash -eq $claudeHash -and $vCodex -eq $report.Version -and $vAnti -eq $report.Version -and $vClaude -eq $report.Version) {
         $report.AutomaticSkillDeployment = 'PASS'
-        $report.CheckDetails += "[PASS] 平台原生自動部署驗證通過 (Codex & Antigravity 目錄就緒、Version=$($report.Version)、TreeHash 完全一致)"
+        $report.CheckDetails += "[PASS] 平台原生自動部署驗證通過 (Codex、Antigravity 與 Claude Code 目錄就緒、Version=$($report.Version)、TreeHash 完全一致)"
         Write-Host $report.CheckDetails[-1] -ForegroundColor Green
     } else {
         $report.AutomaticSkillDeployment = 'FAIL'
-        $report.CheckDetails += "[FAIL] 平台原生自動部署 Hash 或版本不一致 (Canonical: $canonicalHash, Codex: $codexHash, Anti: $antiHash)"
+        $report.CheckDetails += "[FAIL] 平台原生自動部署 Hash 或版本不一致 (Canonical: $canonicalHash, Codex: $codexHash, Anti: $antiHash, Claude: $claudeHash)"
         Write-Host $report.CheckDetails[-1] -ForegroundColor Red
     }
 } else {
     $report.AutomaticSkillDeployment = 'FAIL'
-    $report.CheckDetails += "[FAIL] 平台原生自動部署目標目錄未就緒 (Codex: $codexExists, Anti: $antiExists)"
+    $report.CheckDetails += "[FAIL] 平台原生自動部署目標目錄未就緒 (Codex: $codexExists, Anti: $antiExists, Claude: $claudeExists)"
     Write-Host $report.CheckDetails[-1] -ForegroundColor Red
 }
 

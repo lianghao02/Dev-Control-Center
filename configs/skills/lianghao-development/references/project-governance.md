@@ -17,6 +17,6 @@
 - `CHANGELOG.md`：標準發布版本日誌。
 - `IMPLEMENTATION_PLAN.md`：中大型工作階段之需求規劃與拆解清單。
 
-## 3. 雙 Agent 與 Worktree 協作邊界
-- Codex 與 Antigravity 共用單一 `HANDOFF.md`，嚴禁建立個人專屬交接檔。
+## 3. 多 Agent 與 Worktree 協作邊界
+- Codex、Antigravity 與 Claude Code 共用單一 `HANDOFF.md`，嚴禁建立個人專屬交接檔。
 - 未經授權不得覆寫對方專屬之內部設定檔目錄。

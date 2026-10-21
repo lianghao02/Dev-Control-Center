@@ -1,5 +1,15 @@
 # 📜 變更歷史 (CHANGELOG)
 
+## 2026-10-21
+
+- **收斂入口**：只保留 `0_開發中樞.bat`／`scripts/dev-hub.ps1` 終端選單；移除 GUI 儀表板（`0_控制中心_手帳儀表板.bat`、`scripts/gui.ps1`、`scripts/gui/MainWindow.xaml`）。
+- **收斂同步腳本**：只保留 `scripts/workspace_sync_hub.ps1`；移除功能重複的 `scripts/sync_projects.ps1`，以及未被任何入口引用、且帶有自動提交參數的 `scripts/push_projects.ps1`。
+- 更新 README 入口對照表與新電腦流程、AGENTS.md 邊界，以及 `scripts/tests/test_v16_acceptance.ps1` 的入口測試。
+- **選單白話化**：`scripts/dev-hub.ps1` 每個選項改用白話描述並加註會不會動到檔案。
+- **加入 Claude Code**：`scripts/sync_codex.ps1` 將 15 個共用 Skills 部署至 `~/.claude/skills/`，並產生 `~/.claude/CLAUDE.md` 以 `@` 匯入 `configs/AGENTS.md`；全域憲法適用對象與交接規範補入 Claude Code；`verify-agent-environment.ps1` 與 `test_skill_environment.ps1` 一併驗證 Claude 目錄。
+- **三平台用語與觸發描述**：憲法 4.2 改為「多 Agent」、第 3 節探索與 UI 兩段縮為摘要並指向 Skill；`webapp-testing`、`project-readiness-check`、`document-to-markdown`、`project-governance.md`、`skill-creator` 改為三平台中性寫法；`lianghao-development`、`safe-data-processing`、`taiwan-office-automation`、`windows-tool-ux` 描述補上中文觸發情境。
+- **文件職責與事實判斷**：憲法 4.1 補入 `MEMORY.md` 定位（歷史參考），衝突順序拆為「規則優先順序」與「現況以 Git／實測為準」，4.3 讀取順序與工作區 `AGENTS.md` 對齊；工作區 `MEMORY.md` 移除已廢止的 `00_home` 與自動 Commit 流程（舊版封存於 `.memory/`）。
+
 ## 2026-10-12
 
 - 完成 20 個工作區專案同步盤點；4 個產品專案成果已推送，14 個產品專案原已同步。

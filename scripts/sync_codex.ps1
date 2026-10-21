@@ -27,6 +27,8 @@ $agentHome = Join-Path $env:USERPROFILE '.agents'
 $codexSkillRoot = Join-Path $agentHome 'skills'
 $antigravityHome = Join-Path $env:USERPROFILE '.gemini\config'
 $antigravitySkillRoot = Join-Path $antigravityHome 'skills'
+$claudeHome = Join-Path $env:USERPROFILE '.claude'
+$claudeSkillRoot = Join-Path $claudeHome 'skills'
 $manifestPath = Join-Path $codexHome 'antigravity-bridge.json'
 $skillManifestPath = Join-Path $homeRepo 'configs\skills-manifest.json'
 
@@ -104,9 +106,9 @@ function Sync-ManagedItem([string]$Source, [string]$Target, [hashtable]$Old, [ha
         New-Item -ItemType Directory -Path $backup -Force | Out-Null
         Copy-Item -LiteralPath $Target -Destination $backup -Recurse -Force
         $fullTarget = [IO.Path]::GetFullPath($Target)
-        $allowedFiles = @((Join-Path $codexHome 'AGENTS.md'), (Join-Path $antigravityHome 'AGENTS.md'), (Join-Path $antigravityHome 'mcp_config.json'))
+        $allowedFiles = @((Join-Path $codexHome 'AGENTS.md'), (Join-Path $antigravityHome 'AGENTS.md'), (Join-Path $antigravityHome 'mcp_config.json'), (Join-Path $claudeHome 'CLAUDE.md'))
         $safeSkillTarget = $false
-        foreach ($allowedRoot in @($codexSkillRoot,$antigravitySkillRoot)) {
+        foreach ($allowedRoot in @($codexSkillRoot,$antigravitySkillRoot,$claudeSkillRoot)) {
             if ($fullTarget.StartsWith([IO.Path]::GetFullPath($allowedRoot).TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase)) { $safeSkillTarget = $true }
         }
         if ($fullTarget -notin $allowedFiles -and -not $safeSkillTarget) { throw "拒絕移除未受管路徑：$fullTarget" }
@@ -136,6 +138,14 @@ $items = @(
     @{ Source = Join-Path $homeRepo 'configs\AGENTS.md'; Target = Join-Path $codexHome 'AGENTS.md' },
     @{ Source = Join-Path $homeRepo 'configs\AGENTS.md'; Target = Join-Path $antigravityHome 'AGENTS.md' }
 )
+# Claude Code 以 @ 匯入語法即時讀取中央憲法，憲法修訂後不需重新部署此檔。
+$constitutionPath = [IO.Path]::GetFullPath((Join-Path $homeRepo 'configs\AGENTS.md')).Replace('\', '/')
+$claudeMdContent = @(
+    '<!-- 由 00_Dev-Control-Center\scripts\sync_codex.ps1 產生；請勿手動修改，全域憲法請改 configs/AGENTS.md -->',
+    "@$constitutionPath",
+    ''
+) -join "`n"
+$items += @{ Source = Join-Path $homeRepo 'configs\AGENTS.md'; Target = Join-Path $claudeHome 'CLAUDE.md'; Content = $claudeMdContent }
 $mcpConfigSrc = Join-Path $homeRepo 'configs\mcp_config.json'
 if (-not $SkipMcpConfig -and (Test-Path -LiteralPath $mcpConfigSrc -PathType Leaf)) {
     $mcpConfigContent = Get-Content -LiteralPath $mcpConfigSrc -Raw -Encoding UTF8
@@ -147,7 +157,7 @@ if (-not $SkipMcpConfig -and (Test-Path -LiteralPath $mcpConfigSrc -PathType Lea
     $items += @{ Source = $mcpConfigSrc; Target = Join-Path $antigravityHome 'mcp_config.json'; Content = $mcpConfigContent }
 }
 $skillSets = @(
-    @{ Name = '共用'; Skills = @($skillManifest.shared); Targets = @($codexSkillRoot, $antigravitySkillRoot) },
+    @{ Name = '共用'; Skills = @($skillManifest.shared); Targets = @($codexSkillRoot, $antigravitySkillRoot, $claudeSkillRoot) },
     @{ Name = 'Codex 專用'; Skills = @($skillManifest.codexOnly); Targets = @($codexSkillRoot) },
     @{ Name = 'Antigravity 專用'; Skills = @($skillManifest.antigravityOnly); Targets = @($antigravitySkillRoot) }
 )
@@ -197,7 +207,7 @@ if (-not $CheckOnly) {
         excluded = @{
             codexStandaloneSkills = '.codex\skills is preserved for individual local Skills and is not overwritten by this shared deployment.'
             codexSystemSkills = '.codex\skills\.system is managed by Codex and is never overwritten.'
-            routing = 'configs\skills-manifest.json controls shared, Codex-only, and Antigravity-only Skill deployment.'
+            routing = 'configs\skills-manifest.json controls shared, Codex-only, and Antigravity-only Skill deployment. Shared Skills are also deployed to .claude\skills.'
         }
         items = @($new.Keys | Sort-Object | ForEach-Object { [ordered]@{ target = $_; hash = $new[$_] } })
     }

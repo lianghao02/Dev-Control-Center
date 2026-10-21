@@ -1,6 +1,6 @@
 ---
 name: lianghao-development
-description: LiangHao 跨 Agent 軟體工程與專案治理標準技能庫。提供標準化 AUDIT、EVALUATE、FIX、IMPROVE、RELEASE 與跨平台 HANDOFF 流程，支援 ChatGPT、Antigravity、Codex 共用規範。
+description: LiangHao 跨 Agent 軟體工程與專案治理標準（Codex、Antigravity、Claude Code 共用）。在 LiangHao 個人開發專案進行檢查／審查／健檢（AUDIT）、評估定位或規劃產品方向（EVALUATE）、修 Bug／修好（FIX）、改善／優化（IMPROVE）、發布／打包／出版本（RELEASE）、交接／寫 HANDOFF（HANDOFF）時使用；提供各任務的流程、檢核清單與交接範本。
 ---
 
 # 🛡️ LiangHao Development Standard Skill (v1.0.0)

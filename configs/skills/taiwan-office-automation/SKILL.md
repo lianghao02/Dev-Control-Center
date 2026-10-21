@@ -1,6 +1,6 @@
 ---
 name: taiwan-office-automation
-description: 臺灣公務與辦公文件資料自動化共用技能庫。涵蓋民國日期時間正規化、Excel 帳號與長數字完整性保護、Word/PDF 套版生成、臺灣正式公文語氣與公務流程規範。
+description: 臺灣公務與辦公文件資料自動化共用技能庫。涵蓋民國日期時間正規化、Excel 帳號與長數字完整性保護、Word/PDF 套版生成、臺灣正式公文語氣與公務流程規範。處理民國年、公文、簽呈、函稿、帳號或身分證字號等長數字欄位、Excel 前導零與 Word/PDF 報表時使用。
 ---
 
 # 🏛️ Taiwan Office Automation Skill (v1.0.0)

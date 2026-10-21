@@ -1,7 +1,7 @@
 # 📜 全域開發憲法 (Global Development Constitution) v8.5
 
 > **版本歷程**：v8.4 → v8.5 (精簡版：依據架構收斂原則，將細部工作流、技術矩陣、發布檢核清單與交接範本下放至 `lianghao-development` 共用 Skill，憲法專注於不可妥協之最高行為準則、安全底線與真理來源)
-> **核心定位**：所有 Codex 與 Antigravity 開發工作階段皆須遵循的核心行為準則；與當前任務無關的工程條款不強制套用。
+> **核心定位**：所有 Codex、Antigravity 與 Claude Code 開發工作階段皆須遵循的核心行為準則；與當前任務無關的工程條款不強制套用。
 
 ---
 
@@ -88,8 +88,8 @@
 - **交付標準**：依任務範圍提供足以直接套用的完整內容；局部修改交付明確可替換區段，較大修改提供完整檔案，避免無法判斷插入位置的碎片。
 - **參數集中管理 (Config-First)**：可調整參數（閾值、路徑等）應集中管理，避免散落的魔術數字。
 - **簡潔性與架構適當性**：優先採用足以滿足需求的最簡單架構，不因專案成長盲目引入大型前端框架。介面優先採用系統字型堆疊與狀態透明設計（清楚指示目前狀態、下一步與失敗原因）。
-- **引導式需求探索與產品決策**：當使用者要求規劃產品、探索適合方向、透過問卷引導、重新評估既有專案，或表示尚未確定設計細節時，進入預設唯讀之產品探索模式（讀取現況 ➜ 動態訪談 ➜ 主動分析與比較 ➜ 產出決策摘要），詳細規範遵循 `lianghao-development` 之 `references/project-product-assessment.md` 第 5 節。若需求已明確或直接要求修改、製作、測試、發布，不強制啟動問卷。
-- **UI／UX 自主風格探索、真實案例參考與遊戲風格工具 UI 選型**：新介面、明確 UI／UX 改善、視覺改版、遊戲風格工具 UI 選型、UI 概念預覽圖、手機／桌面／響應式調整或主要流程有明確 UX 問題時，依共用 `lianghao-development` 之 `references/agent-execution.md` 第 3、4 節與 `product-design`／`game-design` 進行用途分析、2～3 個可查證案例／風格比較與選型。避免制式 AI 介面，不將 Q 版設為預設；遊戲風格工具 UI 須區分「遊戲類型」與「美術風格」、保留工具軟體本質，且預覽圖與實作分離。一般非 UI 任務不強制研究，亦不得因非必要美術改善延後已通過門檻的發布。
+- **引導式需求探索**：使用者要規劃產品、探索方向或表示尚未確定細節時，先唯讀探索再提出決策摘要（見 `lianghao-development` 之 `project-product-assessment.md` 第 5 節）；需求已明確或直接要求修改時不啟動問卷。
+- **UI／UX 風格探索**：新介面、UI 改版或遊戲風格工具 UI 選型時，先比較 2～3 個可查證案例再選型（見第 6 節路由）；一般非 UI 任務不強制研究，不得因非必要美術改善延後已達門檻的發布。
 - **技術選型以邊界與現場維護成本為準**：
   - 任務領域依效能邊界與維護成本選擇最適工具（AI/MVP 優先 Python；Windows 底層/系統工具優先 C#；海量密集運算優先 Rust；輕量離線工具優先純 Web 並以 Tauri 桌面封裝）。
   - 專案架構與產品評估遵循 `lianghao-development` 之 `references/project-product-assessment.md`。
@@ -108,16 +108,18 @@
 - `00_Dev-Control-Center/IMPROVEMENTS.md`：**跨專案已確認改善總表**（全域唯一彙整表，各 Repository 不自建）。
 - Git Commit / Diff：**實際修改歷史與驗證證據**（文件不重複保存歷史流水帳）。
 - `README.md` / `ARCHITECTURE.md` / `CHANGELOG.md`：依專案需求維護說明、架構與版本記錄。
+- `MEMORY.md`（工作區與各專案）：**長期技術決策與踩坑經驗**；屬歷史參考，不得據以判斷現況或照做已廢止的流程。
 
-**治理文件衝突判斷優先順序**：
+**規則衝突判斷優先順序**（決定「該怎麼做」）：
 1. 使用者當次明確要求
 2. 專案 `AGENTS.md` 的專案長期邊界
 3. 最新有效 `HANDOFF.md` 的當前工作狀態
 4. `IMPROVEMENTS.md` 的待辦與暫緩狀態
-5. Git Commit / Diff 與 Working Tree 的實際證據（Git 實際狀態為最終客觀依據）。
 
-### 4.2 雙 Agent 協作與輪替交接規範
-- **共用單一交接檔**：Codex 與 Antigravity 共用單一 `HANDOFF.md`，嚴禁建立個人專屬交接檔。
+**現況事實判斷**（決定「目前是什麼狀態」）：任何文件描述與 Git Commit／Diff、Working Tree 或實測結果不一致時，一律以後者為準，並在交接時更正文件。
+
+### 4.2 多 Agent 協作與輪替交接規範
+- **共用單一交接檔**：Codex、Antigravity 與 Claude Code 共用單一 `HANDOFF.md`，嚴禁建立個人專屬交接檔。
 - **單一主責原則**：同一輪只指定一個主責實作 Agent；Agent 角色可互換，不固定誰實作、誰 Review。
 - **更新責任歸屬**：完成、中斷或移交任務時，由**當前主責 Agent** 負責更新 `HANDOFF.md`；下一個 Agent 不應重新代為整理前一輪工作。
 - **成果繼承**：已完成、已驗證的工作不因換 Agent 而重新開始或全盤推翻。
@@ -126,7 +128,7 @@
 ### 4.3 Agent 中斷、驗證與審查邊界
 - **安全中斷點**：因額度或中斷無法繼續時，立即停止開新工作，整理至語法完整狀態，誠實記錄未完成項目至 `HANDOFF.md`，確保下一位 Agent 平順接手。
 - **最小必要驗證**：依當次修改範圍精準驗證，核心功能與語法檢驗不可省；關鍵驗證未完成前嚴禁標註「可交付」。
-- **最小讀取順序**：接手時依序讀取：全域 `configs/AGENTS.md` ➜ 專案 `AGENTS.md` ➜ 專案 `HANDOFF.md` ➜ `IMPROVEMENTS.md` ➜ 最新 Commit/Diff ➜ 必要程式碼。嚴禁無理由每次重新全面掃描專案檔案。
+- **最小讀取順序**：接手時依序讀取：全域 `configs/AGENTS.md` ➜ 專案 `AGENTS.md` ➜ 專案 `HANDOFF.md` ➜ `IMPROVEMENTS.md` ➜ 最新 Commit/Diff ➜ 必要程式碼；`README.md`、`MEMORY.md` 與規劃文件僅在需要背景時讀取。嚴禁無理由每次重新全面掃描專案檔案。
 - **審查範圍與停止循環**：Review 角色僅審查本輪 Diff 與受影響的核心邊界。無阻斷性與重要問題後立即停止，嚴禁陷入無限 Review 循環。
 
 ---
@@ -165,7 +167,7 @@
 | 準備交付、提交、推送、建立 PR 前之 Git、測試、Web 實測與敏感資料檢核 | `project-readiness-check` |
 | Playwright 瀏覽器自動化測試、UI 視覺驗證 | `webapp-testing` |
 | PDF、Word、Excel、PowerPoint 等本機文件轉為分析用 Markdown | `document-to-markdown` |
-| 建立、重構或驗證新的 Skill 本身 | `skill-creator` |
+| 建立、重構或驗證新的 Skill 本身 | `skill-creator`（僅 Antigravity；Claude Code 使用內建同名技能） |
 | 新介面設計、明確 UI／UX 改善、自主風格探索、手機／桌面／響應式調整、主要流程 UX 問題、UI／UX 審查、資訊層級與元件狀態檢查 | `product-design`；真實案例參考與遊戲風格工具 UI 選型依 `lianghao-development` 之 `references/agent-execution.md` 第 3、4 節 |
 | 臺灣公務/行政/金融資料處理、民國日期、長數字防轉型、Office/Word/PDF 套版、正式公文語氣 | `taiwan-office-automation` |
 | 使用者原始資料處理、多媒體整理、批次改名、資料清理、衝突與重複防護 | `safe-data-processing` |

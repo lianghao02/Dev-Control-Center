@@ -57,7 +57,7 @@ def main():
               not (ROOT / "15_chainflow-inspector/history" / entry["snapshot_file"]).exists())
 
     intentional = {
-        "00_Dev-Control-Center": {".gitignore", "build_all_desktop_apps.ps1", "scripts/gui.ps1",
+        "00_Dev-Control-Center": {".gitignore", "build_all_desktop_apps.ps1",
             "IMPLEMENTATION_PLAN.md", "HANDOFF.md", "IMPROVEMENTS.md", "config/agent-environment.example.json",
             "docs/python-environment-repair/SYNTHETIC-ACCEPTANCE.md"},
         "04_Photo-Report-Generator": {"README.md", "HANDOFF.md"},

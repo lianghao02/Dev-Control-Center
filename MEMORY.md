@@ -1,6 +1,6 @@
 # 跨專案決策記憶
 
-本檔只保存需要隨 `00_home` Git Repository 跨電腦同步的長期技術決策；各專案的實作細節、Bug 與工作紀錄仍應保存於各自的 `MEMORY.md`、架構文件或工作清單。
+本檔只保存需要隨 `00_Dev-Control-Center` Git Repository 跨電腦同步的長期技術決策；各專案的實作細節、Bug 與工作紀錄仍應保存於各自的 `MEMORY.md`、架構文件或工作清單。
 
 ## 學習歷史
 

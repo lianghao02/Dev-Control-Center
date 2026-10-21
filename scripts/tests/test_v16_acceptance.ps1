@@ -165,20 +165,20 @@ New-Item -ItemType Directory -Path $tempRoot -Force | Out-Null
     $batchSuccess = ($batchResults.Count -eq $testReposList.Count -and $batchResults[0].State -in @('Clean', 'Synced') -and $batchResults[1].State -eq 'Missing')
     Report-Test "9. 單一 Repository 失敗、不影響其他測試" $batchSuccess "批次處理 4 個混合狀態版本庫均全數完成，無提早中斷"
 
-    # 8. 測試：正式 14 個 Repository 狀態掃描測試 (任務 1)
+    # 8. 測試：依專案清冊掃描全部 Repository 狀態 (任務 1)
     $manifestFile = Join-Path $homeRepo 'development-repositories.json'
     $liveManifest = Get-Content -LiteralPath $manifestFile -Raw -Encoding UTF8 | ConvertFrom-Json
-    $manifestCount = $liveManifest.repositories.Count
-    $is14Repos = ($manifestCount -eq 14)
-    
+    $manifestCount = @($liveManifest.repositories).Count
+    $hasRepos = ($manifestCount -gt 0)
+
     $liveScanResults = [System.Collections.Generic.List[object]]::new()
     foreach ($r in $liveManifest.repositories) {
         $livePath = Join-Path $devRoot $r.folder
         $liveSt = Get-ManagedRepositoryStatus -RepositoryPath $livePath
         $liveScanResults.Add($liveSt)
     }
-    $allScanned = ($liveScanResults.Count -eq 14)
-    Report-Test "1. Repository 狀態掃描測試 (14專案)" ($is14Repos -and $allScanned) "成功載入清單 14 個 Repository，並全數完成本機狀態掃描"
+    $allScanned = ($liveScanResults.Count -eq $manifestCount)
+    Report-Test "1. Repository 狀態掃描測試 (依清冊)" ($hasRepos -and $allScanned) "成功載入清單 $manifestCount 個 Repository，並全數完成本機狀態掃描"
 
     # 9. 測試：Build 腳本成功／失敗處理測試 (任務 3)
     $buildScript = Join-Path $homeRepo 'build_all_desktop_apps.ps1'
@@ -199,42 +199,18 @@ New-Item -ItemType Directory -Path $tempRoot -Force | Out-Null
     $versionTestPass = ($vCenter -match '^v?\d+\.\d+' -or $vCenter -eq '未標註') -and ($vPaper -match '^v?\d+\.\d+')
     Report-Test "11. 專案版本號解析功能驗證" $versionTestPass "成功解析各 Repository 之版本號 (如 PaperSwitch: $vPaper)"
 
-    # 12. 測試：啟動 GUI 並完成一次基本操作流程 (任務 6)
-    $guiScript = Join-Path $homeRepo 'scripts\gui.ps1'
-    $xamlPath = Join-Path $homeRepo 'scripts\gui\MainWindow.xaml'
+    # 12. 測試：唯一主入口（終端選單）與薄 BAT 啟動器
     $devHubScript = Join-Path $homeRepo 'scripts\dev-hub.ps1'
     $devHubLauncher = Join-Path $homeRepo '0_開發中樞.bat'
-    $guiReady = (Test-Path -LiteralPath $guiScript) -and (Test-Path -LiteralPath $xamlPath) -and (Test-Path -LiteralPath $devHubScript) -and (Test-Path -LiteralPath $devHubLauncher)
-    $guiInitPass = $false
-    if ($guiReady) {
-        # 測試 XAML 解析與視窗實例化
-        Add-Type -AssemblyName PresentationFramework
-        [xml]$xXml = Get-Content -LiteralPath $xamlPath -Raw -Encoding UTF8
-        $xReader = [System.Xml.XmlNodeReader]::new($xXml)
-        $testWindow = [System.Windows.Markup.XamlReader]::Load($xReader)
-        if ($testWindow -and $testWindow.Title -match 'LiangHao 開發手帳') {
-            # 驗證關鍵控制項與 v1.6 三級按鈕
-            $hasGrid = ($null -ne $testWindow.FindName('GridRepositories'))
-            $hasTabs = ($null -ne $testWindow.FindName('MainTabs'))
-            $hasBuild = ($null -ne $testWindow.FindName('GridDesktopApps'))
-            $hasTools = ($null -ne $testWindow.FindName('GridDevTools'))
-            $hasAgent = ($null -ne $testWindow.FindName('GridAgentItems'))
-            $hasQuickBtn = ($null -ne $testWindow.FindName('BtnQuickScan'))
-            $hasRemoteBtn = ($null -ne $testWindow.FindName('BtnRemoteRefresh'))
-            $hasFullBtn = ($null -ne $testWindow.FindName('BtnFullCheck'))
-            $hasShortcutBtn = ($null -ne $testWindow.FindName('BtnCheckShortcuts'))
-            $guiSource = Get-Content -LiteralPath $guiScript -Raw -Encoding UTF8
-            $hubSource = Get-Content -LiteralPath $devHubScript -Raw -Encoding UTF8
-            $launcherSource = Get-Content -LiteralPath $devHubLauncher -Raw -Encoding Default
-            $hasManualOnlyGuiScan = ($guiSource -notmatch '\$window\.Add_ContentRendered') -and ($guiSource -match '\$btnQuickScan\.Add_Click')
-            $hasCliHub = ($hubSource -match "'QuickScan'") -and ($hubSource -match "'SafeSync'") -and ($hubSource -match "'Gui'")
-            $hasThinLauncher = ($launcherSource -match 'scripts\\dev-hub\.ps1') -and ($launcherSource -match 'where\.exe pwsh\.exe')
-            if ($hasGrid -and $hasTabs -and $hasBuild -and $hasTools -and $hasAgent -and $hasQuickBtn -and $hasRemoteBtn -and $hasFullBtn -and $hasShortcutBtn -and $hasManualOnlyGuiScan -and $hasCliHub -and $hasThinLauncher) {
-                $guiInitPass = $true
-            }
-        }
+    $cliHubPass = $false
+    if ((Test-Path -LiteralPath $devHubScript) -and (Test-Path -LiteralPath $devHubLauncher)) {
+        $hubSource = Get-Content -LiteralPath $devHubScript -Raw -Encoding UTF8
+        $launcherSource = Get-Content -LiteralPath $devHubLauncher -Raw -Encoding Default
+        $hasCliHub = ($hubSource -match "'QuickScan'") -and ($hubSource -match "'SafeSync'") -and ($hubSource -match "'AgentCheck'")
+        $hasThinLauncher = ($launcherSource -match 'scripts\\dev-hub\.ps1') -and ($launcherSource -match 'where\.exe pwsh\.exe')
+        $cliHubPass = $hasCliHub -and $hasThinLauncher
     }
-    Report-Test "10. CLI 主入口與選用 GUI 載入測試" $guiInitPass "XAML、終端選單與薄 BAT 啟動器完整；GUI 保留手動三級掃描且不會自動掃描"
+    Report-Test "10. CLI 主入口載入測試" $cliHubPass "終端選單與薄 BAT 啟動器完整"
 
 }
 

@@ -11,7 +11,7 @@ description: 針對準備提交、推送或建立 PR 的程式專案，執行 Gi
 
 1. 執行 `git status --short --branch`，確認目前分支與遠端；有未提交變更時不得直接 `git pull`。
 2. 依專案現有設定執行最小且相關的測試；不得為測試改寫產品設定或新增相依套件。
-3. Web 專案依 `webapp-testing`：優先使用 Codex 內建 Browser；專案已有 Node.js Playwright 時才使用既有測試。驗證主要互動並記錄 console error、未捕捉例外及必要截圖。
+3. Web 專案依 `webapp-testing`：優先使用 Agent 內建瀏覽器工具；專案已有 Node.js Playwright 時才使用既有測試。驗證主要互動並記錄 console error、未捕捉例外及必要截圖。
 4. 執行 `git diff --check`，再檢視 `git diff` 與 `git status`，排除格式錯誤、不相關產物與遺漏檔案。
 5. 僅掃描即將提交的變更是否有 API 金鑰、權杖、私鑰或密碼連線字串。偵測到疑似值時不得重印完整內容；回報檔案與行號，停止提交或推送建議。
 

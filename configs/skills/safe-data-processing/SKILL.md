@@ -1,6 +1,6 @@
 ---
 name: safe-data-processing
-description: 使用者原始資料安全處理標準技能庫。提供檢視優先 (Inspect)、模擬預覽 (Preview)、複製優先 (Copy)、衝突處理 (Collision)、重複偵測 (Duplicate) 與隔離區 (Quarantine) 機制，確保相片、音訊、影片、CSV/Excel 等使用者原始資產零損壞。
+description: 使用者原始資料安全處理標準技能庫。提供檢視優先 (Inspect)、模擬預覽 (Preview)、複製優先 (Copy)、衝突處理 (Collision)、重複偵測 (Duplicate) 與隔離區 (Quarantine) 機制，確保相片、音訊、影片、CSV/Excel 等使用者原始資產零損壞。批次改名、搬移、整理資料夾、去除重複、刪除或覆寫使用者檔案前使用。
 ---
 
 # 🛡️ Safe Data Processing Skill (v1.0.0)
