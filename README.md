@@ -15,7 +15,7 @@
 ## 技術架構現況（2026-10-16）
 
 - 工作區主力技術依專案用途分流：AI 鑑識與行政自動化維持 Python、免安裝資料與互動工具維持純 Web / Node.js、Windows 原生工具採 C#／.NET 8／WPF。
-- `03_Police-Image-Toolkit`、`06_System-Optimizer-Tool`、`09_PaperSwitch` 與 `19_DesktopFramesPlus` 採 C#／.NET 8／WPF；舊版分別封存於 `legacy_web/` 與 `legacy-python/`，供回歸比對與備援。
+- `03_Police-Image-Toolkit`、`06_System-Optimizer-Tool`、`09_PaperSwitch` 與 `19_DesktopFramesPlus` 採 C#／.NET 8／WPF；原舊版目錄已於 2026-10-21 移除，需要時可由各專案的 Git 歷史取回。
 - `04_Photo-Report-Generator` 採純前端 Web SPA 與 Tauri 2 桌面封裝，不依賴 VBA 或 Microsoft Office；其他專案的技術與遷移邊界以各自 README 為準。
 - 專案入口網站已獨立為 `13_Project-Hub`，採純靜態 Web 與 GitHub Pages 託管。
 - 涵蓋 `14_Google-Photos-Takeout-Organizer`、`15_chainflow-inspector`、`16_Wuxia-Typing-Legend`、`17_Subscription-Manager`、`18_AromaCraft-Studio` 與 `19_DesktopFramesPlus`，總計管理 18 個 Repository（含本中樞）。
