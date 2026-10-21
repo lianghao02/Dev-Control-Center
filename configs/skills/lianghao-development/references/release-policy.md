@@ -10,5 +10,6 @@
 - **Gate 1: Git 潔淨度**：Working Tree 乾淨，無未追蹤臨時檔，分支無分歧。
 - **Gate 2: 自動化測試**：核心測試套件 100% 通過。
 - **Gate 3: 本機實測／Build 驗收**：桌面 App 成功產生免安裝套件，執行檔可啟動無崩潰。
-- **Gate 4: 文件更新**：更新 `CHANGELOG.md` 與版本標記，文案符合台灣繁體中文規範。
+- **Gate 4: 文件更新**：更新 `CHANGELOG.md` 與版本標記，文案符合台灣繁體中文規範。所有版本位置（程式內版本檔、README 標題與下載檔名、頁尾版本字串、打包腳本預設版本）必須同時更新，並以 `00_Dev-Control-Center/scripts/check_release_versions.py` 檢查，`ERR` 不得發布。
+- **Gate 4a: 標記與展示同步**：發布後打 annotated tag 並推送（網頁型專案同樣要打）；以 `--online` 核對 tag 與 Release；更新 `13_Project-Hub` 展示版本。
 - **Gate 5: 機敏資料防禦**：無 Token、本機絕對路徑硬編碼。
