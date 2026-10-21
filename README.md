@@ -52,6 +52,16 @@
 
 成品維持在各專案既有的發布目錄；AG-MONITOR 完整 CPU 可攜包輸出至 `01_AG-MONITOR-Smart-Video-Screening\dist\`。若只想確認路徑與發布腳本是否齊全，可省略 `-Execute` 進行預覽。
 
+## 發布前版本檢查
+
+```powershell
+python scripts/check_release_versions.py            # 檢查全部專案（唯讀）
+python scripts/check_release_versions.py 09 19      # 只檢查指定編號
+python scripts/check_release_versions.py --online   # 另外比對最新 git tag 與 GitHub Release
+```
+
+比對各專案的程式內版本（`version.txt`、`package.json`、`tauri.conf.json`、`.csproj`、`pyproject.toml`）、README 標題與 CHANGELOG 最新已發布標題。程式內版本互相矛盾時結束碼為 1；tag 或 Release 落後只會提醒。發布前請先確認無矛盾，發布後再用 `--online` 核對，並同步 `13_Project-Hub` 的展示版本。
+
 ## 新電腦快速開始
 
 先安裝 Git for Windows，再於 PowerShell 執行：
