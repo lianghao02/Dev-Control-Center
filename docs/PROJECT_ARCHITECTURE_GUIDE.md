@@ -11,7 +11,6 @@
 | `02_Cell-Tower-Map-Locator` | HTML／Leaflet／外部 CDN | 體驗優化 | P2 | 依賴本地化、無底圖的座標／扇形備援、標記叢集或 Canvas 圖層；底圖與地址搜尋仍需網路或合法離線圖資。 |
 | `03_Police-Image-Toolkit` | C# 12／.NET 8／WPF | 效能與相容性強化 | P1 | 維持 C#／WPF 主力，不改回 Web/Tauri；驗證 HEIC/HEIF 與既有格式、批次效能及發行。RAW 須通過格式矩陣測試才承諾支援。 |
 | `04_Photo-Report-Generator` | 純 Web SPA／Tauri 2 | 主重構已完成 | P2 | 維護所見即所得排版與 `docx.js` 匯出；桌面端提供 Tauri 封裝與 Portable ZIP。 |
-| `06_System-Optimizer-Tool` | C# 12／.NET 8／WPF | 維持現狀 | — | 維護 0.30 MB Framework-dependent 單檔 Exe（目標電腦需 .NET 8 Desktop Runtime）、系統匣與 Win32 核心。 |
 | `07_auto-learning-bot` | Python 3.13／Selenium／PySide6 | 維持現狀 | — | 維護 Selenium 自動化、題庫 SQLite 與驗證機制。 |
 | `08_Financial-Data-Parser` | HTML／SheetJS／本地函式庫 | 串流防護與桌面化 | P1 | Web Streams 降低大型 CSV 峰值記憶體；ZIP/XLSX 以實測設定上限與失敗提示；金融欄位一律字串型態；Tauri 為選配。 |
 | `09_PaperSwitch` | C# 12／.NET 8／WPF | 重構升級完成 | — | 具備 .NET 8 原生單檔、WinRT 超高清 PDF 縮圖、STA 執行緒 Office COM 隔離轉檔與向量無損裝訂。 |

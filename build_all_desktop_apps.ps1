@@ -59,7 +59,6 @@ function Get-ReleaseVersion([string]$VersionFile) {
 }
 
 $policeImageToolkitVersion = Get-ReleaseVersion (Join-Path $root '03_Police-Image-Toolkit\src\PoliceImageToolkit\version.txt')
-$systemOptimizerVersion = Get-ReleaseVersion (Join-Path $root '06_System-Optimizer-Tool\version.txt')
 $paperSwitchVersion = Get-ReleaseVersion (Join-Path $root '09_PaperSwitch\version.txt')
 $photoReportVersion = Get-ReleaseVersion (Join-Path $root '04_Photo-Report-Generator\version.txt')
 $autoLearningVersion = (Get-ReleaseVersion (Join-Path $root '07_auto-learning-bot\version.txt')).ToUpperInvariant()
@@ -148,18 +147,6 @@ $projects = @(
         ReleaseFiles = @(
             (Join-Path $root '03_Police-Image-Toolkit\dist\PoliceImageToolkit.exe'),
             (Join-Path $root "03_Police-Image-Toolkit\dist\PoliceImageToolkit-$policeImageToolkitVersion-win-x64.zip")
-        )
-    },
-    [PSCustomObject]@{
-        Name = '06_System-Optimizer-Tool'
-        BuildScript = Join-Path $root '06_System-Optimizer-Tool\dotnet-src\build_release.ps1'
-        BuildArguments = @()
-        SourceExe = Join-Path $root '06_System-Optimizer-Tool\dist\standalone\SystemOptimizer.App.exe'
-        Repo = 'lianghao02/System-Optimizer-Tool'
-        Tag = $systemOptimizerVersion
-        ReleaseFiles = @(
-            (Join-Path $root "06_System-Optimizer-Tool\dist\SystemOptimizer-$systemOptimizerVersion-Standalone-x64.exe"),
-            (Join-Path $root "06_System-Optimizer-Tool\dist\SystemOptimizer-$systemOptimizerVersion-Slim-x64.exe")
         )
     },
     [PSCustomObject]@{
@@ -355,17 +342,6 @@ foreach ($project in $selectedProjects) {
             if ($exePath -ne $saTarget -and (Test-Path -LiteralPath $exePath)) {
                 Copy-Item -LiteralPath $exePath -Destination $saTarget -Force
             }
-        }
-
-        # 針對 06 補充複製 Standalone 與 Slim 命名檔案
-        if ($project.Name -eq '06_System-Optimizer-Tool') {
-            $pubDir = Join-Path $root '06_System-Optimizer-Tool\dist'
-            $saSrc = Join-Path $pubDir 'standalone\SystemOptimizer.App.exe'
-            $slimSrc = Join-Path $pubDir 'slim\SystemOptimizer.App.exe'
-            $saDest = Join-Path $pubDir "SystemOptimizer-$($project.Tag)-Standalone-x64.exe"
-            $slimDest = Join-Path $pubDir "SystemOptimizer-$($project.Tag)-Slim-x64.exe"
-            if ((Test-Path -LiteralPath $saSrc) -and ($saSrc -ne $saDest)) { Copy-Item -LiteralPath $saSrc -Destination $saDest -Force }
-            if ((Test-Path -LiteralPath $slimSrc) -and ($slimSrc -ne $slimDest)) { Copy-Item -LiteralPath $slimSrc -Destination $slimDest -Force }
         }
 
         # 針對 04 補充命名標準 NSIS EXE 與 Portable ZIP
