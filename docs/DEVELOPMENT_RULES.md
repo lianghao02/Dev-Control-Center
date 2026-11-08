@@ -11,17 +11,11 @@
 
 ## Worktree 協作
 
-主工作區只承載 `main`。需要平行開發時，由 `00_Dev-Control-Center/scripts/New-AgentWorktree.ps1` 建立相鄰工作區：
-
-```text
-Smart-Photo-Organizer/        main
-Smart-Photo-Organizer-codex/  codex/dev
-Smart-Photo-Organizer-ag/     ag/dev
-```
+主工作區預設承載 `main`。需要平行開發或隔離任務時，建議建立獨立工作區（如 `git worktree`）或分支隔離：
 
 - 不讓兩個 Agent 同時操作同一資料夾。
-- Worktree 建立前，`main` 必須沒有未提交變更，且只允許 `pull --ff-only`。
-- 開發完成後先執行共用 QA、提交，再由另一個 Agent 檢視分支差異。
+- 建立新工作區前，`main` 必須沒有未提交變更，且只允許 `pull --ff-only`。
+- 開發完成後先執行共用 QA、提交，再由接手 Agent 檢視分支差異。
 
 ## 共用驗證入口
 
