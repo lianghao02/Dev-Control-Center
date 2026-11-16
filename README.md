@@ -1,6 +1,6 @@
 # LiangHao Dev Control Center (開發控制中心)
 
-本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.5、16 個預設 Agent 技能庫（15 個雙平台共用 + 1 個 Antigravity 專用，內含 LiangHao 四大核心領域技能庫）、18 個開發 Repository 清單（含本中樞與其他 17 個專案），以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.8.0**。
+本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.6、16 個預設 Agent 技能庫（15 個共用 + 1 個 Antigravity 專用，內含 LiangHao 四大核心領域技能庫）、17 個開發 Repository 清單（含本中樞與其他 16 個專案），以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.8.0**。
 
 > 🌐 **公開專案展示入口**：所有作品集、Demo 與 GitHub Pages 頁面已獨立遷移至 [lianghao02/Project-Hub](https://github.com/lianghao02/Project-Hub)（展示站：[https://lianghao02.github.io/Project-Hub/](https://lianghao02.github.io/Project-Hub/)）。中央控制中心專注於環境與治理，不再兼任展示網站。
 
@@ -8,7 +8,7 @@
 
 開發中樞將多個 Repository 的環境檢查、啟動入口、Git 狀態與 Agent 規範集中管理。開發背景是跨專案切換時，工具版本、操作步驟與交接文件容易分散，造成重複設定或誤操作。
 
-它面向本機維護者，重點是先檢查、顯示差異，再依明確模式執行。全域憲法與共用 Skills 以 `configs/` 為唯一維護來源；對外成果展示交由 Project Hub，不在此混入展示網站功能。管理範圍為 17 個其他專案，連同本中樞共 18 個 Repository。
+它面向本機維護者，重點是先檢查、顯示差異，再依明確模式執行。全域憲法與共用 Skills 以 `configs/` 為唯一維護來源；對外成果展示交由 Project Hub，不在此混入展示網站功能。管理範圍為 16 個其他專案，連同本中樞共 17 個 Repository。
 
 **典型流程**：查看各專案狀態 → 唯讀環境／設定檢查 → 處理確認過的差異 → 個別專案驗證。
 
@@ -18,7 +18,7 @@
 - `03_Police-Image-Toolkit`、`09_PaperSwitch` 與 `19_DesktopFramesPlus` 採 C#／.NET 8／WPF；原舊版目錄已於 2026-10-21 移除，需要時可由各專案的 Git 歷史取回。
 - `04_Photo-Report-Generator` 採純前端 Web SPA 與 Tauri 2 桌面封裝，不依賴 VBA 或 Microsoft Office；其他專案的技術與遷移邊界以各自 README 為準。
 - 專案入口網站已獨立為 `13_Project-Hub`，採純靜態 Web 與 GitHub Pages 託管。
-- 涵蓋 `14_Google-Photos-Takeout-Organizer`、`15_chainflow-inspector`、`16_Wuxia-Typing-Legend`、`17_Subscription-Manager`、`18_AromaCraft-Studio` 與 `19_DesktopFramesPlus`，總計管理 18 個 Repository（含本中樞）。
+- 涵蓋 `14_Google-Photos-Takeout-Organizer`、`15_chainflow-inspector`、`16_Wuxia-Typing-Legend`、`17_Subscription-Manager`、`18_AromaCraft-Studio` 與 `19_DesktopFramesPlus`，總計管理 17 個 Repository（含本中樞）。
 
 ## 下載、需求與執行入口
 
@@ -56,7 +56,7 @@
 > 原本的 `1_`～`3_` 三個快捷 BAT 已於 2026-10-21 移除（長期未使用），對應功能都在 `0_開發中樞.bat` 的選單內：
 > - **全專案智慧同步**：掃描全部專案的本機與雲端狀態，只拉取乾淨的版本庫、只推送既有提交，未提交的修改一律保留並提示；支援 `main` 與 `master`。
 > - **建置桌面應用程式**：呼叫各專案既有的建置腳本；嚴格分離「建置」與「發布（Release）」。
-> - **環境建置與工具安裝**：Python 專案環境（`01`、`07` embedded；`10`、`12`、`15` 使用 3.13 `.venv`；`14` 僅檢查既有 `.venv`），以及 Git、GitHub CLI、Python 3.13、.NET 8 等核心工具。
+> - **環境建置與工具安裝**：Python 專案環境（`01`、`07` embedded；`12`、`15` 使用 3.13 `.venv`；`14` 僅檢查既有 `.venv`），以及 Git、GitHub CLI、Python 3.13、.NET 8 等核心工具。
 
 成品維持在各專案既有的發布目錄；AG-MONITOR 完整 CPU 可攜包輸出至 `01_AG-MONITOR-Smart-Video-Screening\dist\`。若只想確認路徑與發布腳本是否齊全，可省略 `-Execute` 進行預覽。
 
@@ -90,11 +90,11 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentCheck
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 ```
 
-同步會依 [development-repositories.json](development-repositories.json) 處理 18 個 Repository（含本中樞與其他 17 個專案），缺少的專案會 Clone 到本中樞的上一層資料夾。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
+同步會依 [development-repositories.json](development-repositories.json) 處理 17 個 Repository（含本中樞與其他 16 個專案），缺少的專案會 Clone 到本中樞的上一層資料夾。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
 
 ## Agent 設定與治理機制
 
-- **全域規則唯一編輯源**：[configs/AGENTS.md](configs/AGENTS.md)（部署至各 Agent 環境之全域開發憲法 v8.5）
+- **全域規則唯一編輯源**：[configs/AGENTS.md](configs/AGENTS.md)（部署至各 Agent 環境之全域開發憲法 v8.6）
 - **共用技能庫唯一編輯源**：`configs/skills/`（Canonical 來源目錄，共 16 個預設 Skills，嚴禁反向覆蓋）
 - **分流部署定義檔**：[configs/skills-manifest.json](configs/skills-manifest.json)（定義 15 個雙平台共用與 1 個 Antigravity 專用技能）
 - **跨專案改善事項總表**：[IMPROVEMENTS.md](IMPROVEMENTS.md)（所有專案已確認改善與待辦唯一彙整表）
@@ -166,7 +166,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 
 Junction 屬於選用的本機相容設定，不儲存在 Git 中。詳細規範請參閱 [docs/DEVELOPMENT_ENVIRONMENT.md](docs/DEVELOPMENT_ENVIRONMENT.md)。
 
-環境整理與驗證記錄見 [Python 環境修復](docs/python-environment-repair/RESULTS.md)。`setup_all_envs.ps1 -CheckOnly` 為唯讀檢查；`-Force` 僅對 10／12／15 重新套用需求，不刪除環境。`sync_codex.ps1 -CheckOnly -SkipMcpConfig` 可限縮檢查至憲法與 Skills，確認後才使用 `-Execute -SkipMcpConfig`。
+環境整理與驗證記錄見 [Python 環境修復](docs/python-environment-repair/RESULTS.md)。`setup_all_envs.ps1 -CheckOnly` 為唯讀檢查；`-Force` 僅對 `12`／`15` 重新套用需求，不刪除環境。`sync_codex.ps1 -CheckOnly -SkipMcpConfig` 可限縮檢查至憲法與 Skills，確認後才使用 `-Execute -SkipMcpConfig`。
 
 ## 已知 Bug、限制與疑難排解
 
@@ -184,8 +184,6 @@ Junction 屬於選用的本機相容設定，不儲存在 Git 中。詳細規範
 
 請提供使用版本／啟動方式、作業系統與相關環境、重現步驟、預期及實際結果，以及去識別的錯誤訊息或最小樣本。先保留現場與來源資料；不要附真實案件、完整帳號、密碼、Token 或 API Key。版本修正以對應原始碼與發行包為準。
 
-## 目前可管理倉庫與歷史清單（2026-10-16）
+## 目前可管理倉庫與歷史清單
 
-`development-repositories.json` 目前記錄 18 個管理目標（含本中樞），均已重新 fetch 並確認目前追蹤分支與遠端提交一致；武俠打字傳以獨立 worktree 的正式 master 核對。00、11、13、14 的既有修正於本輪分別提交並推送，狀態以各倉庫 Git 記錄為準；16 原始資料夾仍保留 beta 分支及交接修改。Google 相簿既有 v1.3.0 下載包不含原始碼修正。
-
-使用者已確認 `10_Smart-Photo-Organizer`、`20_Motes-in-Turmoil` 為已廢棄且從 GitHub 刪除的專案；本機資料夾已移至 Windows 資源回收筒，10 已從同步清單移除，20 原本不在清單內。歷史紀錄保留，後續不再同步或重建這兩個專案。
+`development-repositories.json` 目前記錄 17 個管理目標（含本中樞）。使用者已確認 `06_System-Optimizer-Tool`、`10_Smart-Photo-Organizer`、`20_Daily-Photo-Report-30Days`（原 `20_Motes-in-Turmoil`）皆已封存或停用並從本機及同步清冊移除，歷史紀錄保留，後續不再同步或重建。

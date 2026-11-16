@@ -6,7 +6,7 @@ Set-StrictMode -Version Latest
 if ([string]::IsNullOrWhiteSpace($DevelopmentRoot)) { $DevelopmentRoot = Get-HomeDevelopmentRoot $PSScriptRoot }
 $root = [IO.Path]::GetFullPath($DevelopmentRoot)
 $hostExe = Get-HomePowerShell
-$projects = @('01_AG-MONITOR-Smart-Video-Screening','07_auto-learning-bot','10_Smart-Photo-Organizer','12_ClipMask-AI','14_Google-Photos-Takeout-Organizer','15_chainflow-inspector')
+$projects = @('01_AG-MONITOR-Smart-Video-Screening','07_auto-learning-bot','12_ClipMask-AI','14_Google-Photos-Takeout-Organizer','15_chainflow-inspector')
 $failed = @()
 foreach ($name in $projects) {
     $projectDir = Join-Path $root $name
@@ -21,7 +21,7 @@ foreach ($name in $projects) {
         } else {
             $arguments = @('-NoProfile','-ExecutionPolicy','Bypass','-File',$setup)
             if ($CheckOnly) { $arguments += '-CheckOnly' } else { $arguments += '-NoLaunch' }
-            if ($Force -and -not $CheckOnly -and $name -in @('10_Smart-Photo-Organizer','12_ClipMask-AI','15_chainflow-inspector')) { $arguments += '-Force' }
+            if ($Force -and -not $CheckOnly -and $name -in @('12_ClipMask-AI','15_chainflow-inspector')) { $arguments += '-Force' }
             & $hostExe @arguments
         }
         if ($LASTEXITCODE -ne 0) { throw "結束碼：$LASTEXITCODE" }
@@ -32,4 +32,4 @@ foreach ($name in $projects) {
     }
 }
 if ($failed.Count) { throw "環境檢查未通過：$($failed -join ', ')" }
-Write-Host '六個現行 Python 專案環境檢查完成。'
+Write-Host '五個現行 Python 專案環境檢查完成。'

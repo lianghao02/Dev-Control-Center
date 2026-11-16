@@ -24,12 +24,14 @@
   "projectAgentRouting": {
     "sharedExecution": [
       "scripts/qa.ps1",
+      "dotnet-src/scripts/qa.ps1",
       "scripts/test.ps1",
-      "scripts/security-check.ps1",
-      "scripts/git-verify.ps1"
+      "scripts/security-check.ps1"
     ],
-    "codexPrompt": ".agents/AGENTS.md",
-    "antigravityPrompt": ".gemini/AGENTS.md",
-    "policy": "Project prompts are maintained separately. This manifest deploys only global skills and never copies one project's prompt or SKILL.md to the other agent."
+    "defaultPrompt": "AGENTS.md",
+    "codexPrompt": ".agents/AGENTS.md (optional platform-only overrides)",
+    "antigravityPrompt": ".gemini/AGENTS.md (optional platform-only overrides)",
+    "claudePrompt": "~/.claude/CLAUDE.md (@import central constitution; avoid per-repo CLAUDE.md)",
+    "policy": "Project boundaries live in root AGENTS.md; platform subdirs are optional and only used for genuine platform differences. This manifest deploys only global skills across Codex, Antigravity, and Claude Code."
   }
 }

@@ -5,9 +5,9 @@ description: Google 前端主管 Addy Osmani 的 Agent Skills 精華。補充網
 
 # Addy Osmani 前端效能優化 Skill
 
-> 來源：[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) ⭐ Google 前端主管出品
+> 來源：[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)
 
-## 核心效能指標（Core Web Vitals 2024）
+## 核心效能指標（Core Web Vitals）
 
 | 指標 | 全名 | 目標值 | 說明 |
 |:---|:---|:---|:---|
@@ -16,6 +16,8 @@ description: Google 前端主管 Addy Osmani 的 Agent Skills 精華。補充網
 | **INP** | Interaction to Next Paint | ≤ 200ms | 互動到下一次繪製延遲 |
 | **FCP** | First Contentful Paint | ≤ 1.8s | 首次有內容繪製時間 |
 | **TTFB** | Time to First Byte | ≤ 800ms | 伺服器首次回應時間 |
+
+> 如需透過 Chrome DevTools 實測 Trace、剖析 LCP 阻塞來源或追蹤記憶體洩漏，可搭配已安裝的 `chrome-devtools-plugin`（`debug-optimize-lcp`、`memory-leak-debugging`）。
 
 ---
 

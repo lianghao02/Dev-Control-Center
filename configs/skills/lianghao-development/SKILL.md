@@ -66,8 +66,4 @@ description: LiangHao 跨 Agent 軟體工程與專案治理標準（Codex、Anti
 - **範本庫（`templates/`）**：`agent-task.md`、`handoff.md`、`project-scorecard.md`、`release-report.md`。
 - **檢核清單（`checklists/`）**：`baseline.md`、`post-change.md`、`release-gate.md`、`sensitive-data.md`。
 
-- Python 環境盤點、隔離或啟動器修復時，讀取 `references/python-environments.md`。
-- 使用者要求規劃產品、探索方向、問卷引導或重新評估專案時，讀取 `references/project-product-assessment.md` 第 5 節；若需求已明確或要求直接修改，則直接執行不強制啟動問卷。
-- 新介面設計、明確 UI／UX 改善、視覺風格探索、遊戲風格工具 UI 選型、UI 預覽圖、手機／桌面／響應式調整或主要流程 UX 問題時，讀取 `references/agent-execution.md` 第 3、4 節；一般非 UI 任務不強制研究案例。
-- 大型新專案、跨模組功能、架構調整或重大資料／API／安全／復原取捨時，依需要讀取 `references/project-product-assessment.md` 第 4 節；一般局部修改不強制外部研究或新增設計文件。
-- 遊戲架構設計（本機與 Web 網頁遊戲）、核心玩法循環、狀態機邏輯、GDD 規格或遊戲介面與 HUD 時，載入並讀取 `game-design` Skill（工具軟體套用遊戲風格 UI 時一併遵循 `references/agent-execution.md` 第 4 節）。
+按需選讀提示：Python 環境修復讀 `references/python-environments.md`；方向未定之產品探索讀 `references/project-product-assessment.md` 第 5 節；新 UI／改版／遊戲風格工具 UI 讀 `references/agent-execution.md` 第 3、4 節。

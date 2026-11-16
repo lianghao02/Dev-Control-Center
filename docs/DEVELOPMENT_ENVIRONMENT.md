@@ -1,14 +1,10 @@
-# 開發環境與 C 槽搬至 D 槽架構備忘錄
+# 開發環境與工作區路徑架構備忘錄
 
-> 本機 GitHub 開發專案的實體資料位於 D 槽；C 槽舊路徑保留 NTFS Junction，供既有工具與腳本相容使用。
+> 本機 GitHub 開發專案的實體資料位於 `D:\Development\GitHub`；舊路徑 `C:\Users\<使用者名稱>\Documents\GitHub` 若以 NTFS Junction 保留，僅供既有工具與腳本相容使用。
 
-## 1. 路徑對照
+## 1. 路徑動態解析原則
 
-- 實體路徑：`D:\Development\GitHub`
-- 相容路徑：`C:\Users\chia-hao\Documents\GitHub`
-- 連接類型：NTFS Junction（目錄連接點）
-
-後續開啟 Codex 專案時，優先直接選擇 `D:\Development\GitHub`。程式碼不得寫死使用者目錄或磁碟機路徑，應依語言採用下列方式取得執行位置：
+開啟開發專案時優先直接選擇 `D:\Development\GitHub`。程式碼不得寫死使用者目錄或磁碟機路徑，應依語言動態取得執行位置：
 
 - Python：`Path(__file__).resolve().parent`
 - PowerShell：`$PSScriptRoot`
@@ -17,43 +13,36 @@
 
 ## 2. Python 虛擬環境搬遷規範
 
-`.venv` 可能包含建立當時的絕對路徑，不應將既有虛擬環境視為可直接搬移的成品。專案搬遷後應依 `requirements.txt`、`pyproject.toml` 或套件鎖定檔重新建立。
+`.venv` 可能包含建立當時的絕對路徑，不應將既有虛擬環境視為可直接搬移的成品。專案搬遷或更換環境後應依 `requirements.txt`、`pyproject.toml` 或鎖定檔重新建立：
 
-處理順序：
-
-1. 確認系統 Python 可正常執行。
+1. 確認系統目標 Python（3.13）可正常執行。
 2. 確認專案具備完整依賴清單。
-3. 在暫存名稱下建立新虛擬環境並安裝依賴。
-4. 驗證新環境可啟動且必要套件可匯入。
-5. 驗證成功後才替換失效環境；不得使用忽略錯誤的批次刪除。
+3. 在乾淨位置建立新虛擬環境並以 `-m pip` 安裝依賴。
+4. 驗證新環境可啟動且必要套件可匯入，才替換失效環境；不得使用忽略錯誤的批次刪除。
 
 啟動腳本若偵測到 `.venv` 失效，應清楚提示並停止，或在取得使用者確認後重建，不得只修改 `pyvenv.cfg` 後假設環境已修復。
 
-## 3. 專案目錄
+## 3. 現行管理專案目錄（共 17 個）
 
 ```text
 D:\Development\GitHub\
 ├── 00_Dev-Control-Center/
-├── 01_AG-MONITOR-Smart-Video-Screening/
+├── 01_AG-MONITOR-Smart-Video-Screening/      # Python 3.13 (python_embed)
 ├── 02_Cell-Tower-Map-Locator/
 ├── 03_Police-Image-Toolkit/
 ├── 04_Photo-Report-Generator/
-├── 07_auto-learning-bot/
+├── 07_auto-learning-bot/                     # Python 3.13 (python_embed)
 ├── 08_Financial-Data-Parser/
 ├── 09_PaperSwitch/
-├── 10_Smart-Photo-Organizer/
 ├── 11_Calendar-Card-App/
-├── 12_ClipMask-AI/
-└── 13_Project-Hub/
+├── 12_ClipMask-AI/                           # Python 3.13 (.venv)
+├── 13_Project-Hub/
+├── 14_Google-Photos-Takeout-Organizer/       # Python 3.13 (.venv)
+├── 15_chainflow-inspector/                   # Python 3.13 (.venv)
+├── 16_Wuxia-Typing-Legend/
+├── 17_Subscription-Manager/
+├── 18_AromaCraft-Studio/
+└── 19_DesktopFramesPlus/
 ```
 
-## 4. 2026-08-11 實測結果
-
-- C 槽相容路徑類型：`Junction`
-- Junction 目標：`D:\Development\GitHub`
-- D 槽實體路徑：存在
-- 12 個編號專案：全部存在，且各自包含 Git Repository
-- `10_Smart-Photo-Organizer\.venv`：已依 `requirements.txt` 重新建立，核心依賴匯入成功；137 項測試通過、1 項略過
-- 其餘編號專案：未發現根目錄 `.venv`
-
-另有 `auto-learning-bot_Release` 發布成品資料夾，不列入 12 個原始碼 Repository。
+（`05`、`06`、`10`、`20` 已封存或停用，不列入現行同步與環境建置範圍。）
