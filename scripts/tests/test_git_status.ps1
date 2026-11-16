@@ -5,18 +5,35 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot '..\lib\bootstrap.ps1')
 . (Join-Path $PSScriptRoot '..\lib\git-status.ps1')
 
+function Invoke-NativeGit {
+    param([Parameter(Mandatory = $true)][string[]]$Arguments)
+    # Git 會將正常進度寫入 stderr；在 Stop 模式下暫切換為 Continue，改以 ExitCode 判定結果
+    $previousErrorAction = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $output = & git @Arguments 2>&1
+        $exitCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $previousErrorAction
+    }
+    return [pscustomobject]@{
+        ExitCode = $exitCode
+        Output   = @($output)
+    }
+}
+
 function Invoke-TestGit {
     param([Parameter(Mandatory = $true)][string]$Repository, [Parameter(Mandatory = $true)][string[]]$Arguments)
-    $output = & git -C $Repository @Arguments 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        throw "Git 指令失敗：git -C $Repository $($Arguments -join ' ')`n$($output -join [Environment]::NewLine)"
+    $result = Invoke-NativeGit -Arguments (@('-C', $Repository) + $Arguments)
+    if ($result.ExitCode -ne 0) {
+        throw "Git 指令失敗：git -C $Repository $($Arguments -join ' ')`n$($result.Output -join [Environment]::NewLine)"
     }
 }
 
 function New-TestClone {
     param([Parameter(Mandatory = $true)][string]$Remote, [Parameter(Mandatory = $true)][string]$Destination)
-    $output = & git clone --quiet $Remote $Destination 2>&1
-    if ($LASTEXITCODE -ne 0) { throw "無法建立測試版本庫：$($output -join [Environment]::NewLine)" }
+    $result = Invoke-NativeGit -Arguments @('clone', '--quiet', $Remote, $Destination)
+    if ($result.ExitCode -ne 0) { throw "無法建立測試版本庫：$($result.Output -join [Environment]::NewLine)" }
     Invoke-TestGit -Repository $Destination -Arguments @('config', 'user.email', '00-dev-control-center-test@example.invalid')
     Invoke-TestGit -Repository $Destination -Arguments @('config', 'user.name', 'Dev-Control-Center 測試')
 }
@@ -41,9 +58,10 @@ try {
     $candidate = Join-Path $testRoot 'candidate'
     $behind = Join-Path $testRoot 'behind'
     New-Item -ItemType Directory -Path $testRoot | Out-Null
-    & git init --bare $remote 2>&1 | Out-Null
-    & git init $seed 2>&1 | Out-Null
-    if ($LASTEXITCODE -ne 0) { throw '無法建立測試工作版本庫。' }
+    $initBare = Invoke-NativeGit -Arguments @('init', '--bare', $remote)
+    if ($initBare.ExitCode -ne 0) { throw "無法建立測試遠端版本庫：$($initBare.Output -join [Environment]::NewLine)" }
+    $initSeed = Invoke-NativeGit -Arguments @('init', $seed)
+    if ($initSeed.ExitCode -ne 0) { throw "無法建立測試工作版本庫：$($initSeed.Output -join [Environment]::NewLine)" }
     Invoke-TestGit -Repository $seed -Arguments @('config', 'user.email', '00-dev-control-center-test@example.invalid')
     Invoke-TestGit -Repository $seed -Arguments @('config', 'user.name', 'Dev-Control-Center 測試')
     Invoke-TestGit -Repository $seed -Arguments @('branch', '-M', 'main')
@@ -56,8 +74,8 @@ try {
     New-TestClone -Remote $remote -Destination $candidate
     New-TestClone -Remote $remote -Destination $behind
 
-    # 1. 驗證 Synced
-    Assert-RepositoryState -Name 'Synced' -Path $candidate -Expected 'Synced'
+    # 1. 驗證 Clean
+    Assert-RepositoryState -Name 'Clean' -Path $candidate -Expected 'Clean'
 
     # 2. 驗證 Modified
     [IO.File]::AppendAllText((Join-Path $candidate 'state.txt'), "`nmodified", [Text.UTF8Encoding]::new($false))

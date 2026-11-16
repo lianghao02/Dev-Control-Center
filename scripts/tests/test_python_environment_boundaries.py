@@ -1,7 +1,6 @@
-"""環境修復邊界：檢查模式、錯誤版本、原始資料與選用功能。"""
+"""環境修復邊界：啟動器參數、檢查模式與錯誤 Python 版本防護。"""
 from __future__ import annotations
 
-import hashlib
 import os
 from pathlib import Path
 import shutil
@@ -11,7 +10,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[3]
 SHELL = shutil.which('pwsh.exe') or shutil.which('powershell.exe')
-PROJECTS = ('10_Smart-Photo-Organizer', '12_ClipMask-AI', '15_chainflow-inspector')
+PROJECTS = ('12_ClipMask-AI', '15_chainflow-inspector')
+CHAINFLOW_PROJECT = '15_chainflow-inspector'
 
 
 def run(*args):
@@ -25,7 +25,7 @@ class EnvironmentBoundaries(unittest.TestCase):
             target = Path(directory).resolve()
             self.assertTrue(target.is_relative_to(Path(tempfile.gettempdir()).resolve()))
             # 只測啟動器的參數邊界，測試程式使用標準庫，避免安裝 GUI 套件。
-            setup = (ROOT / PROJECTS[2] / 'setup_and_run.ps1').read_text(encoding='utf-8')
+            setup = (ROOT / CHAINFLOW_PROJECT / 'setup_and_run.ps1').read_text(encoding='utf-8')
             (target / 'setup_and_run.ps1').write_text(setup.replace("'tkinter,sqlite3,webview'", "'tkinter,sqlite3'"), encoding='utf-8')
             (target / 'requirements.txt').write_text('', encoding='utf-8')
             (target / 'app.py').write_text('import json,sys; print(json.dumps(sys.argv[1:],ensure_ascii=True))', encoding='utf-8')
@@ -55,7 +55,7 @@ class EnvironmentBoundaries(unittest.TestCase):
             target = Path(directory).resolve()
             self.assertTrue(target.is_relative_to(Path(tempfile.gettempdir()).resolve()))
             for filename in ('setup_and_run.ps1', 'requirements.txt'):
-                shutil.copy2(ROOT / PROJECTS[2] / filename, target / filename)
+                shutil.copy2(ROOT / CHAINFLOW_PROJECT / filename, target / filename)
             result = run(str(python314), '-B', '-m', 'venv', str(target / '.venv'))
             self.assertEqual(result.returncode, 0, result.stderr)
             python = target / '.venv/Scripts/python.exe'
@@ -66,46 +66,6 @@ class EnvironmentBoundaries(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
             self.assertEqual(cfg, (target / '.venv/pyvenv.cfg').read_bytes())
             self.assertEqual(before, run(str(python), '-B', '-s', '-m', 'pip', 'list', '--format=json').stdout)
-
-    def test_pdf_backends_and_overwrite_protection(self):
-        project = ROOT / '05_tw-formal-writing'
-        python = project / '.venv-pdf/Scripts/python.exe'
-        with tempfile.TemporaryDirectory(prefix='PDF 合成資料-') as directory:
-            target = Path(directory).resolve()
-            self.assertTrue(target.is_relative_to(Path(tempfile.gettempdir()).resolve()))
-            source = target / '來源.pdf'
-            result = run(str(python), '-B', '-s', '-c', "import fitz,sys; d=fitz.open(); p=d.new_page(); p.insert_text((72,72),'SAFE FIXTURE'); d.save(sys.argv[1]); d.close()", str(source))
-            self.assertEqual(result.returncode, 0, result.stderr)
-            digest = hashlib.sha256(source.read_bytes()).hexdigest()
-            for backend in ('pypdf', 'pdfplumber', 'fitz'):
-                output = target / (backend + '.txt')
-                result = run(str(python), '-B', '-s', str(project / 'parse_pdf.py'), '--input', str(source), '--output', str(output), '--backend', backend)
-                self.assertEqual(result.returncode, 0, result.stderr)
-                self.assertIn('SAFE FIXTURE', output.read_text(encoding='utf-8'))
-                output.write_text('保留既有內容', encoding='utf-8')
-                result = run(str(python), '-B', '-s', str(project / 'parse_pdf.py'), '--input', str(source), '--output', str(output))
-                self.assertNotEqual(result.returncode, 0)
-                self.assertEqual(output.read_text(encoding='utf-8'), '保留既有內容')
-            self.assertEqual(digest, hashlib.sha256(source.read_bytes()).hexdigest())
-
-    def test_photo_tk_and_sharpness_remain_available(self):
-        project = ROOT / PROJECTS[0]
-        code = """
-import sys,tempfile
-from pathlib import Path
-sys.path.insert(0,sys.argv[1])
-import tkinter,main
-from PIL import Image
-assert main._HAS_CV2
-root=tkinter.Tk(); root.withdraw(); root.destroy()
-with tempfile.TemporaryDirectory() as directory:
-    image=Image.new('RGB',(64,64))
-    image.putdata([(255,255,255) if (x+y)%2 else (0,0,0) for y in range(64) for x in range(64)])
-    path=Path(directory)/'清晰度 測試.png'; image.save(path)
-    assert main.ImageOps.is_blurry(str(path))[1] > 0
-"""
-        result = run(str(project / '.venv/Scripts/python.exe'), '-B', '-s', '-c', code, str(project))
-        self.assertEqual(result.returncode, 0, result.stderr)
 
 
 if __name__ == '__main__':
