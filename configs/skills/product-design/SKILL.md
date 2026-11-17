@@ -31,7 +31,7 @@ description: 用於分析與設計專案 UI／UX、操作流程、資訊層級�
 
 ## 3. 核心設計紅線摘要
 
-- **資訊架構 (IA)**：嚴守 **Identity（定位）➜ Status（狀態）➜ Action（操作）➜ Context（脈絡）** 順序；主導覽上限 5–7 項；低於 30% 使用者在前 30 秒需要的功能預設收進抽屜／彈窗。
+- **資訊架構 (IA)**：檢查 **Identity（定位）、Status（狀態）、Action（操作）、Context（脈絡）** 是否清楚，排列依任務決定；導覽與漸進揭露細則按需讀取 `references/design-standards.md`，不得憑未量測的使用率隱藏功能。
 - **互動與狀態完整性**：重要元件視需求設計 **Empty / Loading / Partial / Populated / Error / Disabled / Read-only / Overflow** 狀態；錯誤須具體指出復原路徑且不得遺失使用者草稿；觸控熱區 ≥ **44×44 px**；危險／不可逆操作須預覽或白話確認。
 - **視覺與 Design Tokens**：先定語意角色色再定色票（品牌色 ≤ 3），文字對比度 ≥ **4.5:1**；採 Base-8 間距與一致字級（≤ 6 階）；尊重 `prefers-reduced-motion`；淺色為預設，深色僅在情境明確（開發／監控／影音／高密度專業介面）時採用。
 - **AI 互動（如有）**：標示推論來源與信心層級、串流預留空間並允許隨時中斷、高風險動作須人類確認、模型失敗時核心功能須能優雅降級。
@@ -39,7 +39,13 @@ description: 用於分析與設計專案 UI／UX、操作流程、資訊層級�
 
 ---
 
-## 4. 詳細參考文件（按需讀取）
+## 4. 審查與修改驗收
+
+- UI 審查或局部改善時，依 [審查與驗收流程](references/ui-review.md) 建立畫面／操作基線、檢查同角色元件一致性並依既有三級分類排序；Quick 僅涵蓋受影響元件與核心路徑，不擴成全面改版。
+- 僅要求審查時保持唯讀；已授權修改則保留前後證據。網頁實測交由 `webapp-testing`，正式無障礙掃描按 `accesslint` 的觸發條件執行，桌面平台驗收沿用 `windows-tool-ux`，不重複建立門檻。
+
+## 5. 詳細參考文件（按需讀取）
 
 - `references/design-standards.md`：完整產品定調、IA 規範、8 狀態定義、視覺系統、Design Tokens 分層、Anti-Patterns 與交付前 Quality Bar。
+- [選用設計工具](references/design-tools.md)：僅在明確評估自動偵測器或獨立圖表輸出時讀取；一般 UI 任務不載入。
 - `references/ai-interface-patterns.md`：AI 原生介面信任／串流／人機把關模式，以及 Full Mode 的 8 段式輸出格式。
