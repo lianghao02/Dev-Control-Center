@@ -12,12 +12,12 @@ description: 針對準備提交、推送或建立 PR 的程式專案，執行 Gi
 1. 執行 `git status --short --branch`，確認目前分支與遠端；有未提交變更時不得直接 `git pull`。
 2. 依專案現有設定執行最小且相關的測試；不得為測試改寫產品設定或新增相依套件。
 3. Web 專案依 `webapp-testing`：優先使用 Agent 內建瀏覽器工具；專案已有 Node.js Playwright 時才使用既有測試。驗證主要互動並記錄 console error、未捕捉例外及必要截圖。
-4. 執行 `git diff --check`，再檢視 `git diff` 與 `git status`，排除格式錯誤、不相關產物與遺漏檔案。
+4. 提交前以 `git diff --cached --check`、`git diff --cached` 檢查即將提交的內容，另用 `git diff --check`、`git status --short` 核對未暫存與未追蹤檔案。推送或建 PR 前依實際目標分支檢查已提交差異（例如 `git diff --check origin/main...HEAD`），避免以乾淨工作目錄代替審查。
 5. 僅掃描即將提交的變更是否有 API 金鑰、權杖、私鑰或密碼連線字串。偵測到疑似值時不得重印完整內容；回報檔案與行號，停止提交或推送建議。
 
 ## 回報與判定
 
 - 每項檢查標示「通過、略過、失敗」與實際指令或情境。
-- 只有 Git 狀態合理、相關測試通過、Web 實測（若適用）通過、`git diff --check` 無錯誤且敏感資料無警訊時，才能標示「可提交」。
+- 只有 Git 狀態合理、相關測試通過、Web 實測（若適用）通過、本次將交付的差異無格式錯誤且敏感資料無警訊時，才能標示「可提交」。
 - 缺少可識別測試或 Web 環境時，標示略過原因，不虛構驗證結果。
 - 提交前顯示範圍與建議 Conventional Commit；推送前確認遠端、分支與待推送提交。

@@ -1,0 +1,374 @@
+{
+  "reviewed_at": "2026-11-17",
+  "method": "唯讀閱讀與重點段落核對；未執行第三方安裝／Hook／偵測器，不代表全面安全稽核",
+  "repositories": [
+    {
+      "repository": "pbakaus/impeccable",
+      "commit": "d41d9860b0094dcb68030657da63461212835aaa",
+      "files": [
+        {
+          "path": "README.md",
+          "sha256": "4a033dceedd19e7edf86b28250fc65c9c52115f18faaea791c327da2681237ab",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/README.md"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "02bb8c3b4e70190e3986c0404ad2fd8d639b4f534252d82379cc1b502b6d1812",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/LICENSE"
+        },
+        {
+          "path": "NOTICE.md",
+          "sha256": "c60a093c2845fd9fb82f9c6f742ece31f379f8190b535309d32d66c45ccffdcb",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/NOTICE.md"
+        },
+        {
+          "path": ".agents/skills/impeccable/SKILL.md",
+          "sha256": "12d15997482e6d0734c5f2dcc4f62cea7bcba19953940214cffa5c6a7758aa93",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.agents/skills/impeccable/SKILL.md"
+        },
+        {
+          "path": ".agents/skills/impeccable/reference/audit.md",
+          "sha256": "c1cc198c61bf4cc32416210f490e9245ecf58d57c17d4a0659f79da0f6ffac2b",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.agents/skills/impeccable/reference/audit.md"
+        },
+        {
+          "path": ".agents/skills/impeccable/reference/critique.md",
+          "sha256": "945c46add59c1519b137263b1dc7b68d631f65f4e48c6bac1a944499dbbbdb42",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.agents/skills/impeccable/reference/critique.md"
+        },
+        {
+          "path": ".agents/skills/impeccable/reference/critique-rubric.md",
+          "sha256": "ba070404e3f61c62b40c25a5d096b803825408de12a0fbb559b1587c89692866",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.agents/skills/impeccable/reference/critique-rubric.md"
+        },
+        {
+          "path": ".agents/skills/impeccable/reference/polish.md",
+          "sha256": "81666fc7f783b4e3514db6554e713dc0479bd9cdedb06e93d15f8b579aae869a",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.agents/skills/impeccable/reference/polish.md"
+        },
+        {
+          "path": ".agents/skills/impeccable/reference/harden.md",
+          "sha256": "4167eb7fc456cdfe09ff0ac2dbcb5e59cee57e590137aab6cc8ec08aafb6d775",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.agents/skills/impeccable/reference/harden.md"
+        },
+        {
+          "path": ".agents/skills/impeccable/reference/adapt.md",
+          "sha256": "fa68e46b9d163923717da6b3826782ded4a4d32434553994b5dd10bdf08d7399",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.agents/skills/impeccable/reference/adapt.md"
+        },
+        {
+          "path": ".agents/skills/impeccable/reference/hooks.md",
+          "sha256": "6e4baca40d38a3829b5140b6f21c7cd30610c2ee11336966d758017fe94899f6",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.agents/skills/impeccable/reference/hooks.md"
+        },
+        {
+          "path": ".agents/skills/impeccable/scripts/impeccable",
+          "sha256": "9a82c1d8a5fc34b0edb3040cf25098c7c5a662e703118e99f96bacd543ed6d68",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.agents/skills/impeccable/scripts/impeccable"
+        },
+        {
+          "path": ".codex/hooks.json",
+          "sha256": "1953c6b4bfd5261bbc77e636b11ee2cc53f280a7c812e9300bd93a7946b64a55",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.codex/hooks.json"
+        },
+        {
+          "path": ".claude/settings.json",
+          "sha256": "ba0d96d88ab40fad1cb522e60b11affc568cfe9d340110ac5e71f834ac3d0f4a",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.claude/settings.json"
+        },
+        {
+          "path": ".impeccable/config.json",
+          "sha256": "2b2d44647293869887958d2575657d7df50cddf72cdb1e6f0727a47ebddaaf81",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/.impeccable/config.json"
+        },
+        {
+          "path": "crates/detect/Cargo.toml",
+          "sha256": "a20cb6f5b6b7959a0444efedebf7b02e0186b36135095641dc497bf7b371ffd8",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/crates/detect/Cargo.toml"
+        },
+        {
+          "path": "crates/detect/src/cli.rs",
+          "sha256": "3e3cd817259f28d0f66276e9d47155dac4c6ee18e725e57db3669de4ba0733cf",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/crates/detect/src/cli.rs"
+        },
+        {
+          "path": "crates/account/src/health.rs",
+          "sha256": "f8285c408fb048dde0a10d1dca2bbd63401694572570242b8f486d888cbe325b",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/crates/account/src/health.rs"
+        },
+        {
+          "path": "crates/browser/src/lib.rs",
+          "sha256": "bd58013f492ab393ad372333e56101b2f550b52757a362cf7cb1558aadc91a06",
+          "url": "https://github.com/pbakaus/impeccable/blob/d41d9860b0094dcb68030657da63461212835aaa/crates/browser/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "repository": "Leonxlnx/taste-skill",
+      "commit": "f6b76575f949707b4e3c37cd86cb44b0b98643e8",
+      "files": [
+        {
+          "path": "README.md",
+          "sha256": "f044ee75b88772dc957b9526bde5d5229eccaca8d3caf4a3e6a4aab0c349c237",
+          "url": "https://github.com/Leonxlnx/taste-skill/blob/f6b76575f949707b4e3c37cd86cb44b0b98643e8/README.md"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "4575a543ab88dad12ccea7d97e563d0bce5b448b06072e65d3264497dad326df",
+          "url": "https://github.com/Leonxlnx/taste-skill/blob/f6b76575f949707b4e3c37cd86cb44b0b98643e8/LICENSE"
+        },
+        {
+          "path": "install.sh",
+          "sha256": "18eb1038f27b6abd926971a97ca41212225575da0c03b3168c35a0f2d6a2b2f8",
+          "url": "https://github.com/Leonxlnx/taste-skill/blob/f6b76575f949707b4e3c37cd86cb44b0b98643e8/install.sh"
+        },
+        {
+          "path": "skills/taste-skill/SKILL.md",
+          "sha256": "0c7a5852a5217be79cab422c6d58329b776f0c25bd6da8a7a01707ce75be6206",
+          "url": "https://github.com/Leonxlnx/taste-skill/blob/f6b76575f949707b4e3c37cd86cb44b0b98643e8/skills/taste-skill/SKILL.md"
+        },
+        {
+          "path": "skills/taste-skill/scripts/consistency.mjs",
+          "sha256": "080b835e99353f63650f8966813d735f142293119cd371c554b66a1effc5e3da",
+          "url": "https://github.com/Leonxlnx/taste-skill/blob/f6b76575f949707b4e3c37cd86cb44b0b98643e8/skills/taste-skill/scripts/consistency.mjs"
+        },
+        {
+          "path": "skills/taste-skill/scripts/gate.mjs",
+          "sha256": "f5b9b70ea93dbbbff73e9df72259385573d37b97f2634f258bf5954ed993fd4c",
+          "url": "https://github.com/Leonxlnx/taste-skill/blob/f6b76575f949707b4e3c37cd86cb44b0b98643e8/skills/taste-skill/scripts/gate.mjs"
+        },
+        {
+          "path": "skills/taste-skill/references/gate.md",
+          "sha256": "14946f5ad6b4abdf6dad65a693b2eeb98912e8253b9c4f10da0840e4efafc651",
+          "url": "https://github.com/Leonxlnx/taste-skill/blob/f6b76575f949707b4e3c37cd86cb44b0b98643e8/skills/taste-skill/references/gate.md"
+        }
+      ]
+    },
+    {
+      "repository": "cathrynlavery/diagram-design",
+      "commit": "f6db0decea96de66b901331a0f79a8d4b147ebae",
+      "files": [
+        {
+          "path": "README.md",
+          "sha256": "87e14081accb116c309fc830d7051a35160ffa4d093386e4a53d479603cc8e98",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/README.md"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "bb7e12e91fecef43024111123ff784cec6c485585561d8b552557c0173b3ed29",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/LICENSE"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES.md",
+          "sha256": "ad931154e2f91bf545fc9c442666a2159aa56c0af3cca0b7246e02c6efeab6ba",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/THIRD_PARTY_LICENSES.md"
+        },
+        {
+          "path": ".codex-plugin/plugin.json",
+          "sha256": "4a5f615b841c940899e0f0becd5bf00c40be3893fa8558a6bcb33d85264121a4",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/.codex-plugin/plugin.json"
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "sha256": "9b6c56b5bad686e187c549269410ee05772a6f2345391542db517ccf1e47c6c8",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/.claude-plugin/plugin.json"
+        },
+        {
+          "path": "skills/diagram-design/SKILL.md",
+          "sha256": "fba2015046dd6bfdd99b91c4b17c30bff5ebb3bd088de0e6863b41259c5026b8",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/skills/diagram-design/SKILL.md"
+        },
+        {
+          "path": "skills/diagram-design/references/style-guide.md",
+          "sha256": "320881ec802004384c09ce4f4f087b9242d926b08071d6b908160e14c707d155",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/skills/diagram-design/references/style-guide.md"
+        },
+        {
+          "path": "skills/diagram-design/references/layout-budget.md",
+          "sha256": "12043c659df9ce146f8ecc45e247ddc14b04f1c5724cc4cb6286b60cc1e758f2",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/skills/diagram-design/references/layout-budget.md"
+        },
+        {
+          "path": "skills/diagram-design/scripts/self_check.py",
+          "sha256": "94055febf79eff9bfef42b4fc2635ad83f35fffeb798985fa8477c0bc8e133c5",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/skills/diagram-design/scripts/self_check.py"
+        },
+        {
+          "path": "skills/diagram-design/scripts/verify_geometry.py",
+          "sha256": "e87c22d2720bfe354b595940d2cf93b555fb5176c823ed3ea46c31a68a10ffd3",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/skills/diagram-design/scripts/verify_geometry.py"
+        },
+        {
+          "path": "skills/diagram-design/scripts/export_png.py",
+          "sha256": "430ddcc2d39441808bd4217fbdeb944dbb6de0be281782705a81747986d7d348",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/skills/diagram-design/scripts/export_png.py"
+        },
+        {
+          "path": "scripts/verify-screenshot-freshness.py",
+          "sha256": "21892b93fc7f940fc977334233988d17e2a361e8121d551defdcc417411183c7",
+          "url": "https://github.com/cathrynlavery/diagram-design/blob/f6db0decea96de66b901331a0f79a8d4b147ebae/scripts/verify-screenshot-freshness.py"
+        }
+      ]
+    },
+    {
+      "repository": "Nutlope/hallmark",
+      "commit": "04977e15f3dfd6ee4b74c887dac3eb52665d6c92",
+      "files": [
+        {
+          "path": "README.md",
+          "sha256": "d21933f906e8b9a2db0d32982b1523a679a89e97dc77a635e124c9a98ac3d8c5",
+          "url": "https://github.com/Nutlope/hallmark/blob/04977e15f3dfd6ee4b74c887dac3eb52665d6c92/README.md"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "06088a8b94598626f27612dea42300154bf7be967c85d9d3eee4490cb056af7d",
+          "url": "https://github.com/Nutlope/hallmark/blob/04977e15f3dfd6ee4b74c887dac3eb52665d6c92/LICENSE"
+        },
+        {
+          "path": "package.json",
+          "sha256": "433c44dd3d32d92581f893a6108b3d36a15e3b45b18bcf43b173661516d65776",
+          "url": "https://github.com/Nutlope/hallmark/blob/04977e15f3dfd6ee4b74c887dac3eb52665d6c92/package.json"
+        },
+        {
+          "path": "skills/hallmark/SKILL.md",
+          "sha256": "25a1ff92d925b2389e8409f42fb8ad7e033fceca8b5d1f07ed4ca4c28da53dc3",
+          "url": "https://github.com/Nutlope/hallmark/blob/04977e15f3dfd6ee4b74c887dac3eb52665d6c92/skills/hallmark/SKILL.md"
+        },
+        {
+          "path": "skills/hallmark/scripts/install.mjs",
+          "sha256": "f4d6959d35f5e01efb94f2f88b43f10e8d296e9bd2ff06e5c002c7f87aeeb488",
+          "url": "https://github.com/Nutlope/hallmark/blob/04977e15f3dfd6ee4b74c887dac3eb52665d6c92/skills/hallmark/scripts/install.mjs"
+        },
+        {
+          "path": "skills/hallmark/scripts/install-hook.mjs",
+          "sha256": "f0ce8b6e834652bcc560438952701ef467f4b29ee5d577e917632cb7d92ddc76",
+          "url": "https://github.com/Nutlope/hallmark/blob/04977e15f3dfd6ee4b74c887dac3eb52665d6c92/skills/hallmark/scripts/install-hook.mjs"
+        },
+        {
+          "path": "skills/hallmark/scripts/sloplint.mjs",
+          "sha256": "23fb94903ae0e3b709019380443163bdc50390a246911e3423b83695e4bc8037",
+          "url": "https://github.com/Nutlope/hallmark/blob/04977e15f3dfd6ee4b74c887dac3eb52665d6c92/skills/hallmark/scripts/sloplint.mjs"
+        }
+      ]
+    },
+    {
+      "repository": "alchaincyf/huashu-design",
+      "commit": "e8d1148a80d5a281d4247cffe320add3df017928",
+      "files": [
+        {
+          "path": "README.md",
+          "sha256": "791096fa9762a69b2f1403ffc0209c111f6ca2c8d05d0cb919113153aee9e47b",
+          "url": "https://github.com/alchaincyf/huashu-design/blob/e8d1148a80d5a281d4247cffe320add3df017928/README.md"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "6d6a2a9caf2e6d2b76974050427053b2892d8aa4c33fd168ce63a537fcee9d96",
+          "url": "https://github.com/alchaincyf/huashu-design/blob/e8d1148a80d5a281d4247cffe320add3df017928/LICENSE"
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "a8d4e5e89ce17696fbaff477f8f864a1fd91f1b38665425b484c1e8f83e20584",
+          "url": "https://github.com/alchaincyf/huashu-design/blob/e8d1148a80d5a281d4247cffe320add3df017928/SKILL.md"
+        },
+        {
+          "path": "package.json",
+          "sha256": "08ab79572e738532bec501a31241c854ad1810f001b6ae14e50d1bcd76f1a294",
+          "url": "https://github.com/alchaincyf/huashu-design/blob/e8d1148a80d5a281d4247cffe320add3df017928/package.json"
+        },
+        {
+          "path": "SECURITY.md",
+          "sha256": "963f799c2f9fcaf544c6672c1e86dd6bf533b6bb40e9d4bfc23330f2c058c908",
+          "url": "https://github.com/alchaincyf/huashu-design/blob/e8d1148a80d5a281d4247cffe320add3df017928/SECURITY.md"
+        },
+        {
+          "path": "references/critique-guide.md",
+          "sha256": "44b800eb73b31c5ef5235fbd07977c722ab7c95e610e47f5673a7008554bea69",
+          "url": "https://github.com/alchaincyf/huashu-design/blob/e8d1148a80d5a281d4247cffe320add3df017928/references/critique-guide.md"
+        },
+        {
+          "path": "scripts/polish.py",
+          "sha256": "a844334757224538d6088c7cf17d6a18041cbc4dda02d3ad0d3ba7f91e4ccc7d",
+          "url": "https://github.com/alchaincyf/huashu-design/blob/e8d1148a80d5a281d4247cffe320add3df017928/scripts/polish.py"
+        }
+      ]
+    },
+    {
+      "repository": "rohitg00/awesome-claude-design",
+      "commit": "7f60ee56b9340f8c2671a08c2d8aab4037546a64",
+      "files": [
+        {
+          "path": "README.md",
+          "sha256": "56dea0857f71f407172145794951ddfdc5426ecee9e1286132c874231d2ab76f",
+          "url": "https://github.com/rohitg00/awesome-claude-design/blob/7f60ee56b9340f8c2671a08c2d8aab4037546a64/README.md"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "d116e214adbcab1c96e680695bcda5c629f00d72425f83e18770ce5e156c17d4",
+          "url": "https://github.com/rohitg00/awesome-claude-design/blob/7f60ee56b9340f8c2671a08c2d8aab4037546a64/LICENSE"
+        },
+        {
+          "path": "prompts/README.md",
+          "sha256": "92f7569050239360a1130a0ea9cb6ba072e58752cd1367e27b7ff29177aed6bc",
+          "url": "https://github.com/rohitg00/awesome-claude-design/blob/7f60ee56b9340f8c2671a08c2d8aab4037546a64/prompts/README.md"
+        }
+      ]
+    },
+    {
+      "repository": "Ilm-Alan/frontend-design",
+      "commit": "f8966e6cc9b90247aa102d71f7e675ec3462b419",
+      "files": [
+        {
+          "path": "README.md",
+          "sha256": "735fa765119691c6dc8aed4c643859cebf4ad7e6c854131039fdde1dff0132aa",
+          "url": "https://github.com/Ilm-Alan/frontend-design/blob/f8966e6cc9b90247aa102d71f7e675ec3462b419/README.md"
+        },
+        {
+          "path": "LICENSE.txt",
+          "sha256": "31b0a86aca1c1be3789b7ce82ac3c385a5e1ee61e5a4fd8326c51181ba25e9e7",
+          "url": "https://github.com/Ilm-Alan/frontend-design/blob/f8966e6cc9b90247aa102d71f7e675ec3462b419/LICENSE.txt"
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "86b01376501fd27e936b3c64243b30251a310cc34a4a7c3a73608b3691de0002",
+          "url": "https://github.com/Ilm-Alan/frontend-design/blob/f8966e6cc9b90247aa102d71f7e675ec3462b419/SKILL.md"
+        }
+      ]
+    },
+    {
+      "repository": "ara-mkr/claude-artisan",
+      "commit": "ae6d3add319e7be885f8b02fc0feec8085b0bfc1",
+      "files": [
+        {
+          "path": "README.md",
+          "sha256": "14d2513bb728f370008834814ec4b75a4b53842c38380b64211b93cf70ce7256",
+          "url": "https://github.com/ara-mkr/claude-artisan/blob/ae6d3add319e7be885f8b02fc0feec8085b0bfc1/README.md"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "601c9ed82171f0bdad355766b1dba0a326a5ba0a7740faaf4307b33df043bb78",
+          "url": "https://github.com/ara-mkr/claude-artisan/blob/ae6d3add319e7be885f8b02fc0feec8085b0bfc1/LICENSE"
+        },
+        {
+          "path": "design-language/LICENSE.txt",
+          "sha256": "091f95a1eb085d7c02d91f1d004c14278a9182d637daba46c0d2e7cb431456bb",
+          "url": "https://github.com/ara-mkr/claude-artisan/blob/ae6d3add319e7be885f8b02fc0feec8085b0bfc1/design-language/LICENSE.txt"
+        },
+        {
+          "path": "design-language/SKILL.md",
+          "sha256": "7f7506cbd417ad94101d2c518aa4315e7148e6684fd29ddfee4ab0cce824762e",
+          "url": "https://github.com/ara-mkr/claude-artisan/blob/ae6d3add319e7be885f8b02fc0feec8085b0bfc1/design-language/SKILL.md"
+        },
+        {
+          "path": "design-language/scripts/consistency_audit.py",
+          "sha256": "c80689bfd5a8a4e237e3fdcea4993907f49672ad70c13f6fa76bccc707d4879a",
+          "url": "https://github.com/ara-mkr/claude-artisan/blob/ae6d3add319e7be885f8b02fc0feec8085b0bfc1/design-language/scripts/consistency_audit.py"
+        },
+        {
+          "path": "design-language/scripts/contrast_check.py",
+          "sha256": "7b113c0e29a02ca3699c1ff9ce2f423b1ac945c9b2f001701c58b229df332623",
+          "url": "https://github.com/ara-mkr/claude-artisan/blob/ae6d3add319e7be885f8b02fc0feec8085b0bfc1/design-language/scripts/contrast_check.py"
+        }
+      ]
+    }
+  ]
+}

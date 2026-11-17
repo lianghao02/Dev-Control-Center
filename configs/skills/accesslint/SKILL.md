@@ -1,7 +1,7 @@
 ---
 name: accesslint
 description: >
-  自動化無障礙 (a11y) 掃描與檢測工具。針對 WCAG 2.1 / 2.2 標準驗證 HTML 頁面。
+  無障礙 (a11y) 檢測流程與離線 axe 執行範例；需既有瀏覽器及本機引擎，非內附掃描工具。依 WCAG 2.1 / 2.2 檢查 HTML 頁面並記錄人工驗證限制。
   適用於對外網站、正式公務系統、有明確 WCAG 無障礙要求或使用者指定檢測的場景。
 ---
 
@@ -23,7 +23,7 @@ description: >
 |:---|:---|
 | **對比度** | 文字與背景色彩對比度 ≥ 4.5:1（正文）/ 3:1（大文字） |
 | **語意 HTML** | 標題層級（`<h1>` → `<h6>`）層級正確、使用語意標籤 |
-| **表單標籤** | 每個 `<input>` 具備對應 `<label>` 或 `aria-label` |
+| **表單標籤** | 可操作的表單控制項有可辨識的名稱，例如可見關聯標籤、按鈕文字或適用的 ARIA 命名 |
 | **圖片替代文字** | `<img>` 具備適當 `alt` 屬性 |
 | **鍵盤可及性** | 互動元素可用 Tab 鍵操作與觸發 |
 | **焦點視覺** | 焦點指示器清晰可見（`:focus` 樣式） |
@@ -31,35 +31,63 @@ description: >
 
 ---
 
-## 掃描工具與離線防禦原則（對齊 `webapp-testing` 與 `data-safety`）
+## 掃描工具與離線防禦原則（對齊 `webapp-testing` 與 `lianghao-development/references/data-safety.md`）
 
+- **工具可用性**：本 Skill 提供執行規範與範例，未內附 axe 或瀏覽器引擎。先確認本機 axe 路徑、版本與授權來源；缺少工具時記為「自動掃描略過」，仍可記錄實際完成的人工檢查，不臨時下載或假稱通過。
 - **工具優先序**：優先使用 Agent 內建瀏覽器／Playwright MCP 或專案既有 Node.js Playwright 測試環境；**不得為單次無障礙掃描臨時執行 `pip install playwright` 或改動專案相依套件**。
 - **離線與隱私防線**：涉及公務、警政、個資或離線環境之專案，一律注入本機離線 `axe.min.js`，嚴禁未經授權載入外部 CDN。
 
 ### 掃描實作範例（本機離線 `axe.min.js` 優先）
 
+以專案規定的 WCAG 版本及等級選擇 axe 規則標籤。下例選取 axe 提供的 WCAG 2.2 AA 相關標籤，若目標是 2.1 AA，移除 `wcag22aa`。不支援或無法自動檢查的準則列為待人工驗證。掃描每個相關狀態前先完成必要操作，等實際內容可見。
+
 ```javascript
 // Node.js Playwright 既有環境範例（優先載入本機 axe.min.js）
 await page.goto(url, { waitUntil: 'domcontentloaded' });
-await page.addScriptTag({ path: localAxePath }); // 公務/離線專案強制使用本機路徑
-const results = await page.evaluate(async () => {
-  const res = await window.axe.run();
+// 以實際狀態定位，例如先開啟設定彈窗，再等彈窗內的控制項可見。
+await page.locator(readySelector).waitFor({ state: 'visible', timeout: 10000 });
+await page.addScriptTag({ path: localAxePath });
+const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+const results = await page.evaluate(async (tags) => {
+  const supported = new Set(window.axe.getRules(tags).flatMap(rule => rule.tags));
+  const unavailable = tags.filter(tag => !supported.has(tag));
+  if (unavailable.length) {
+    throw new Error(`本機 axe 缺少規則標籤：${unavailable.join(', ')}`);
+  }
+  const res = await window.axe.run({ runOnly: { type: 'tag', values: tags } });
   return {
+    engine: res.testEngine.version,
+    tags,
     violations: res.violations.map(v => ({
       id: v.id,
       impact: v.impact,
       description: v.description,
       helpUrl: v.helpUrl,
-      nodes: v.nodes.length
+      nodes: v.nodes.map(n => ({
+        target: n.target,
+        failureSummary: n.failureSummary
+      }))
+    })),
+    incomplete: res.incomplete.map(v => ({
+      id: v.id,
+      nodes: v.nodes.map(n => ({ target: n.target, failureSummary: n.failureSummary }))
     })),
     passes: res.passes.length
   };
-});
+}, tags);
 ```
 
 ---
 
+## 掃描結果的限制與追蹤
+
+- 記錄 axe 版本、規則集、頁面／狀態、瀏覽器與尺寸；保留違規節點的 selector、failureSummary 及需人工判斷的 incomplete 項目，避免只留數量而無法定位。
+- 另實際檢查鍵盤順序、焦點可見度、彈窗焦點返回及錯誤復原；未測的輔助科技明列待驗證。零 violations 只代表本次已執行規則未發現問題，不等於 WCAG 全面合規。
+- axe impact 保留為工具原始等級；交付優先順序依 [UI 審查流程](../product-design/references/ui-review.md) 的任務影響分類判斷，不將 moderate 一律視為可忽略。修改後以相同狀態重掃並核對新增、解決及保留項目。
+
 ## 報告輸出格式
+
+以下僅為格式示例，不是實測結果：
 
 ```text
 🔍 無障礙掃描報告
