@@ -23,7 +23,7 @@ description: >
 |:---|:---|
 | **對比度** | 文字與背景色彩對比度 ≥ 4.5:1（正文）/ 3:1（大文字） |
 | **語意 HTML** | 標題層級（`<h1>` → `<h6>`）層級正確、使用語意標籤 |
-| **表單標籤** | 每個 `<input>` 具備對應 `<label>` 或 `aria-label` |
+| **表單標籤** | 可操作的表單控制項有可辨識的名稱，例如可見關聯標籤、按鈕文字或適用的 ARIA 命名 |
 | **圖片替代文字** | `<img>` 具備適當 `alt` 屬性 |
 | **鍵盤可及性** | 互動元素可用 Tab 鍵操作與觸發 |
 | **焦點視覺** | 焦點指示器清晰可見（`:focus` 樣式） |
@@ -39,13 +39,25 @@ description: >
 
 ### 掃描實作範例（本機離線 `axe.min.js` 優先）
 
+以專案規定的 WCAG 版本及等級選擇 axe 規則標籤。下例選取 axe 提供的 WCAG 2.2 AA 相關標籤，若目標是 2.1 AA，移除 `wcag22aa`。不支援或無法自動檢查的準則列為待人工驗證。掃描每個相關狀態前先完成必要操作，等實際內容可見。
+
 ```javascript
 // Node.js Playwright 既有環境範例（優先載入本機 axe.min.js）
 await page.goto(url, { waitUntil: 'domcontentloaded' });
-await page.addScriptTag({ path: localAxePath }); // 公務/離線專案強制使用本機路徑
-const results = await page.evaluate(async () => {
-  const res = await window.axe.run();
+// 以實際狀態定位，例如先開啟設定彈窗，再等彈窗內的控制項可見。
+await page.locator(readySelector).waitFor({ state: 'visible', timeout: 10000 });
+await page.addScriptTag({ path: localAxePath });
+const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+const results = await page.evaluate(async (tags) => {
+  const supported = new Set(window.axe.getRules(tags).flatMap(rule => rule.tags));
+  const unavailable = tags.filter(tag => !supported.has(tag));
+  if (unavailable.length) {
+    throw new Error(`本機 axe 缺少規則標籤：${unavailable.join(', ')}`);
+  }
+  const res = await window.axe.run({ runOnly: { type: 'tag', values: tags } });
   return {
+    engine: res.testEngine.version,
+    tags,
     violations: res.violations.map(v => ({
       id: v.id,
       impact: v.impact,
@@ -62,7 +74,7 @@ const results = await page.evaluate(async () => {
     })),
     passes: res.passes.length
   };
-});
+}, tags);
 ```
 
 ---

@@ -67,7 +67,9 @@ I＝Impeccable 的 `.agents/skills/impeccable/`；T＝Taste 的 `skills/taste-sk
 
 只有最後的 Python 檢查器新增了實際自動化；其餘主要是提示詞／流程補強。截圖、axe、像素差異、SVG 幾何、效能及 Windows 驗收都仍需對應工具或實機。本輪沒有新增自動視覺偵測引擎。
 
-## 5. 驗證結果與處理方式前後比較
+## 5. 初次驗證結果與處理方式前後比較
+
+後續複審修正與補測見第 8 節。
 
 | 驗證 | 實際結果／限制 |
 |---|---|
@@ -113,3 +115,11 @@ I＝Impeccable 的 `.agents/skills/impeccable/`；T＝Taste 的 `skills/taste-sk
 - 不認定 Impeccable 已可安全離線採用：固定版本下仍需在不降低沙箱、隔離帳號與禁止外傳的環境做實際偵測器試驗；本輪只完成來源評估，沒有動態誤報率／耗時資料。
 - Diagram 獨立使用有價值，但需明確製圖需求才啟用；預設字型連網、PNG 依賴、profile 寫入與升版行為須另驗。此次沒有安裝或修改全域 style guide。
 - 規範衝突經人工追蹤並收斂，不等於長期多平臺行為已保證。PowerShell 部署、本輪新 Browser 驗收、Windows 實機與輔助科技仍未通過；PR 應以 Draft 供審查，不自動合併。
+
+## 8. PR 複審修正與補測
+
+- 結構檢查新增參考式連結、常用 Markdown 章節錨點及平台分流驗證。共用 Skill 引用未部署到其中任一平台的檔案時會失敗。8 組 Python 測試通過。
+- 同步與部署驗證使用同一份分流計畫。Linux PowerShell 7.4.22 在暫存設定檔執行 `-CheckOnly` 列出 50 個項目且保持唯讀。8 組環境測試通過，確認 46 個 Skill 目標內容、AGY 專用分流，以及 Codex 缺檔、AGY 參考檔過期都會被攔下。Windows PowerShell 5.1、本機實際部署與 Agent 載入仍待驗證。
+- 交付檢查補上 `git diff --cached --check`，推送或開 PR 時另檢查相對實際目標分支的提交差異。隔離 Git 測試重現一般差異檢查漏掉已暫存尾端空白。
+- 無障礙範例等待目標狀態再掃描，明確指定 axe 的 WCAG 標籤。3 個模擬情境通過，涵蓋就緒後掃描、等待逾時與引擎缺少標籤。瀏覽器實際掃描仍待驗證。
+- 局部 Web 修正依影響取樣，跨頁與版面變更保留合適尺寸和縮放驗收。明確但跨模組或具相容性風險的 Bug 依規劃條件判斷。Windows 正式與 Portable 發布流程均指向既有 Windows 10／11 清單。

@@ -6,7 +6,7 @@
    - 分支已與遠端對齊，無衝突或遺漏提交。
 2. **完整測試與建置驗收**：
    - 執行全套自動化測試，通過率 100%。
-   - 若為桌面或可攜應用，完成建置並於跨路徑／乾淨環境驗證可正常啟動（詳見 `checklists/release-gate.md`）。
+   - 若為桌面或可攜應用，完成建置並於跨路徑／乾淨環境驗證可正常啟動（詳見 [發布清單](../checklists/release-gate.md)，其中包含適用的 Windows 10／11 雙系統驗收）。
 3. **版本號與文件更新**：
    - 同步更新所有版本宣告檔、`README.md` 與 `CHANGELOG.md`（繁體中文發布說明與亮點）。
    - 於 `00_Dev-Control-Center` 執行 `python scripts/check_release_versions.py <專案編號>` 確認無 `ERR`。

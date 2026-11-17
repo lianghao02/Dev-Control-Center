@@ -13,6 +13,8 @@ try {
     $global:OutputEncoding = [System.Text.Encoding]::UTF8
 } catch {}
 
+. (Join-Path $PSScriptRoot 'lib\skill-deployment.ps1')
+
 Write-Host "=================================================================" -ForegroundColor Cyan
 Write-Host "  LiangHao Agent 環境驗證 (verify-agent-environment)" -ForegroundColor Cyan
 Write-Host "=================================================================" -ForegroundColor Cyan
@@ -31,6 +33,7 @@ $report = [ordered]@{
     AntigravityReferencePass = $false
     CodexReferencePass = $false
     AutomaticSkillDeployment = 'NOT VERIFIED'
+    DeploymentTargetsChecked = 0
     CheckDetails = @()
 }
 
@@ -113,51 +116,52 @@ if ($report.ResolverPass) {
     Write-Host $report.CheckDetails[-1] -ForegroundColor Green
 }
 
-# 4. 驗證平台原生自動載入部署與 Hash 一致性
-$codexSkillPath = Join-Path $env:USERPROFILE '.agents\skills\lianghao-development'
-$antiSkillPath = Join-Path $env:USERPROFILE '.gemini\config\skills\lianghao-development'
-$claudeSkillPath = Join-Path $env:USERPROFILE '.claude\skills\lianghao-development'
-
-function Get-TreeHashForVerify([string]$Path) {
-    if (-not (Test-Path -LiteralPath $Path)) { return $null }
-    $records = Get-ChildItem -LiteralPath $Path -File -Recurse -Force |
-        Sort-Object FullName |
-        ForEach-Object {
-            $relative = $_.FullName.Substring($Path.Length).TrimStart('\')
-            '{0}|{1}' -f $relative, (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash
+# 4. 依部署分流清單逐一比對受管 Skill 的整個目錄。
+try {
+    $plan = Get-SkillDeploymentPlan (Split-Path -Parent $PSScriptRoot) $env:USERPROFILE
+    if ($plan.Items.Count -eq 0) { throw 'Skill 分流清單沒有任何部署目標。' }
+    $sourceHashes = @{}
+    $report.AutomaticSkillDeployment = 'PASS'
+    foreach ($item in $plan.Items) {
+        $label = "$($item.Platform) / $($item.Name)"
+        $sourceFile = Join-Path $item.Source 'SKILL.md'
+        $targetFile = Join-Path $item.Target 'SKILL.md'
+        $report.DeploymentTargetsChecked++
+        $problem = if (-not (Test-Path -LiteralPath $sourceFile -PathType Leaf)) {
+            "中央來源缺少 SKILL.md：$sourceFile"
+        } elseif (-not (Test-Path -LiteralPath $targetFile -PathType Leaf)) {
+            "部署目標缺少 SKILL.md：$targetFile"
+        } else {
+            if (-not $sourceHashes.ContainsKey($item.Source)) {
+                $sourceHashes[$item.Source] = Get-TreeHash $item.Source
+            }
+            if ($sourceHashes[$item.Source] -ne (Get-TreeHash $item.Target)) {
+                "部署目錄內容與中央來源不同：$($item.Target)"
+            }
         }
-    $stream = [IO.MemoryStream]::new([Text.Encoding]::UTF8.GetBytes(($records -join "`n")))
-    try { return (Get-FileHash -InputStream $stream -Algorithm SHA256).Hash }
-    finally { $stream.Dispose() }
-}
+        if ($problem) {
+            $report.AutomaticSkillDeployment = 'FAIL'
+            $report.CheckDetails += "[FAIL] ${label}：$problem"
+            Write-Host $report.CheckDetails[-1] -ForegroundColor Red
+        }
+    }
 
-$codexExists = Test-Path -LiteralPath (Join-Path $codexSkillPath 'SKILL.md')
-$antiExists = Test-Path -LiteralPath (Join-Path $antiSkillPath 'SKILL.md')
-$claudeExists = Test-Path -LiteralPath (Join-Path $claudeSkillPath 'SKILL.md')
-
-if ($codexExists -and $antiExists -and $claudeExists -and $report.ResolverPass) {
-    $canonicalHash = Get-TreeHashForVerify $report.SkillHome
-    $codexHash = Get-TreeHashForVerify $codexSkillPath
-    $antiHash = Get-TreeHashForVerify $antiSkillPath
-    $claudeHash = Get-TreeHashForVerify $claudeSkillPath
-
-    $vCodex = if (Test-Path -LiteralPath (Join-Path $codexSkillPath 'VERSION')) { (Get-Content (Join-Path $codexSkillPath 'VERSION') -Raw).Trim() } else { $null }
-    $vAnti = if (Test-Path -LiteralPath (Join-Path $antiSkillPath 'VERSION')) { (Get-Content (Join-Path $antiSkillPath 'VERSION') -Raw).Trim() } else { $null }
-    $vClaude = if (Test-Path -LiteralPath (Join-Path $claudeSkillPath 'VERSION')) { (Get-Content (Join-Path $claudeSkillPath 'VERSION') -Raw).Trim() } else { $null }
-
-    if ($canonicalHash -eq $codexHash -and $canonicalHash -eq $antiHash -and $canonicalHash -eq $claudeHash -and $vCodex -eq $report.Version -and $vAnti -eq $report.Version -and $vClaude -eq $report.Version) {
-        $report.AutomaticSkillDeployment = 'PASS'
-        $report.CheckDetails += "[PASS] 平台原生自動部署驗證通過 (Codex、Antigravity 與 Claude Code 目錄就緒、Version=$($report.Version)、TreeHash 完全一致)"
-        Write-Host $report.CheckDetails[-1] -ForegroundColor Green
-    } else {
+    # 解析器可能指向另一份工作區，需核對其核心 Skill 與部署來源一致。
+    $canonical = Join-Path (Split-Path -Parent $PSScriptRoot) 'configs\skills\lianghao-development'
+    if ($report.ResolverPass -and $sourceHashes.ContainsKey($canonical) -and
+        $report.SkillHome -ne $canonical -and (Get-TreeHash $report.SkillHome) -ne $sourceHashes[$canonical]) {
         $report.AutomaticSkillDeployment = 'FAIL'
-        $report.CheckDetails += "[FAIL] 平台原生自動部署 Hash 或版本不一致 (Canonical: $canonicalHash, Codex: $codexHash, Anti: $antiHash, Claude: $claudeHash)"
+        $report.CheckDetails += "[FAIL] Resolver 選取的 lianghao-development 與中央部署來源內容不同：$($report.SkillHome)"
         Write-Host $report.CheckDetails[-1] -ForegroundColor Red
     }
-} else {
+} catch {
     $report.AutomaticSkillDeployment = 'FAIL'
-    $report.CheckDetails += "[FAIL] 平台原生自動部署目標目錄未就緒 (Codex: $codexExists, Anti: $antiExists, Claude: $claudeExists)"
+    $report.CheckDetails += "[FAIL] Skill 部署檢查無法完成：$($_.Exception.Message)"
     Write-Host $report.CheckDetails[-1] -ForegroundColor Red
+}
+if ($report.AutomaticSkillDeployment -eq 'PASS') {
+    $report.CheckDetails += "[PASS] $($report.DeploymentTargetsChecked) 個 Skill 部署目標與中央來源一致"
+    Write-Host $report.CheckDetails[-1] -ForegroundColor Green
 }
 
 $allPass = $report.ResolverPass -and $report.CanonicalFilesPass -and $report.AntigravityReferencePass -and $report.CodexReferencePass -and ($report.AutomaticSkillDeployment -eq 'PASS')

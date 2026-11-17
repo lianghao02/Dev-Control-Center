@@ -12,6 +12,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 . (Join-Path $PSScriptRoot 'lib\bootstrap.ps1')
+. (Join-Path $PSScriptRoot 'lib\skill-deployment.ps1')
 
 if (-not $Execute -and -not $Force -and -not $CheckOnly) {
     $CheckOnly = $true
@@ -23,29 +24,10 @@ if ([string]::IsNullOrWhiteSpace($homeRepo)) {
 }
 $githubRoot = Split-Path -Parent $homeRepo
 $codexHome = Join-Path $env:USERPROFILE '.codex'
-$agentHome = Join-Path $env:USERPROFILE '.agents'
-$codexSkillRoot = Join-Path $agentHome 'skills'
 $antigravityHome = Join-Path $env:USERPROFILE '.gemini\config'
-$antigravitySkillRoot = Join-Path $antigravityHome 'skills'
 $claudeHome = Join-Path $env:USERPROFILE '.claude'
-$claudeSkillRoot = Join-Path $claudeHome 'skills'
 $manifestPath = Join-Path $codexHome 'antigravity-bridge.json'
-$skillManifestPath = Join-Path $homeRepo 'configs\skills-manifest.json'
-
-function Get-TreeHash([string]$Path) {
-    if (Test-Path -LiteralPath $Path -PathType Leaf) {
-        return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash
-    }
-    $records = Get-ChildItem -LiteralPath $Path -File -Recurse -Force |
-        Sort-Object FullName |
-        ForEach-Object {
-            $relative = $_.FullName.Substring($Path.Length).TrimStart('\')
-            '{0}|{1}' -f $relative, (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash
-        }
-    $stream = [IO.MemoryStream]::new([Text.Encoding]::UTF8.GetBytes(($records -join "`n")))
-    try { return (Get-FileHash -InputStream $stream -Algorithm SHA256).Hash }
-    finally { $stream.Dispose() }
-}
+$skillPlan = Get-SkillDeploymentPlan $homeRepo $env:USERPROFILE
 
 function Get-TextHash([string]$Content) {
     $bytes = [Text.Encoding]::UTF8.GetBytes($Content)
@@ -108,7 +90,7 @@ function Sync-ManagedItem([string]$Source, [string]$Target, [hashtable]$Old, [ha
         $fullTarget = [IO.Path]::GetFullPath($Target)
         $allowedFiles = @((Join-Path $codexHome 'AGENTS.md'), (Join-Path $antigravityHome 'AGENTS.md'), (Join-Path $antigravityHome 'mcp_config.json'), (Join-Path $claudeHome 'CLAUDE.md'))
         $safeSkillTarget = $false
-        foreach ($allowedRoot in @($codexSkillRoot,$antigravitySkillRoot,$claudeSkillRoot)) {
+        foreach ($allowedRoot in $skillPlan.Roots.Values) {
             if ($fullTarget.StartsWith([IO.Path]::GetFullPath($allowedRoot).TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase)) { $safeSkillTarget = $true }
         }
         if ($fullTarget -notin $allowedFiles -and -not $safeSkillTarget) { throw "拒絕移除未受管路徑：$fullTarget" }
@@ -130,10 +112,6 @@ if (Test-Path -LiteralPath $manifestPath) {
 $new = @{}
 # 選擇性同步仍保留其他既有受管項目的雜湊。
 foreach ($target in $old.Keys) { $new[$target] = $old[$target] }
-if (-not (Test-Path -LiteralPath $skillManifestPath -PathType Leaf)) {
-    throw "找不到 Skill 分流清單：$skillManifestPath"
-}
-$skillManifest = Get-Content -LiteralPath $skillManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $items = @(
     @{ Source = Join-Path $homeRepo 'configs\AGENTS.md'; Target = Join-Path $codexHome 'AGENTS.md' },
     @{ Source = Join-Path $homeRepo 'configs\AGENTS.md'; Target = Join-Path $antigravityHome 'AGENTS.md' }
@@ -156,31 +134,12 @@ if (-not $SkipMcpConfig -and (Test-Path -LiteralPath $mcpConfigSrc -PathType Lea
     $mcpConfigContent = $mcpConfigContent.Replace('__HOME_REPO__', $resolvedHomeRepo)
     $items += @{ Source = $mcpConfigSrc; Target = Join-Path $antigravityHome 'mcp_config.json'; Content = $mcpConfigContent }
 }
-$skillSets = @(
-    @{ Name = '共用'; Skills = @($skillManifest.shared); Targets = @($codexSkillRoot, $antigravitySkillRoot, $claudeSkillRoot) },
-    @{ Name = 'Codex 專用'; Skills = @($skillManifest.codexOnly); Targets = @($codexSkillRoot) },
-    @{ Name = 'Antigravity 專用'; Skills = @($skillManifest.antigravityOnly); Targets = @($antigravitySkillRoot) }
-)
-$assignedSkills = @{}
-foreach ($set in $skillSets) {
-    foreach ($skill in $set.Skills) {
-        $skillName = [string]$skill
-        if ([string]::IsNullOrWhiteSpace($skillName)) { continue }
-        if ($assignedSkills.ContainsKey($skillName)) {
-            throw "Skill [$skillName] 同時出現在 [$($assignedSkills[$skillName])] 與 [$($set.Name)]，請只保留一個分流類別。"
-        }
-        $assignedSkills[$skillName] = $set.Name
-        $source = Join-Path $homeRepo "configs\skills\$skillName"
-        foreach ($targetRoot in $set.Targets) {
-            $items += @{ Source = $source; Target = Join-Path $targetRoot $skillName }
-        }
-    }
-}
+$items += $skillPlan.Items
 $availableConfigSkillDirs = Get-ChildItem -LiteralPath (Join-Path $homeRepo 'configs\skills') -Directory -ErrorAction SilentlyContinue
 $availableRootSkillDirs = Get-ChildItem -LiteralPath (Join-Path $homeRepo 'skills') -Directory -ErrorAction SilentlyContinue
 $allSkillDirs = @($availableConfigSkillDirs) + @($availableRootSkillDirs)
 foreach ($dir in $allSkillDirs) {
-    if (-not $assignedSkills.ContainsKey($dir.Name)) {
+    if (-not $skillPlan.Assigned.ContainsKey($dir.Name)) {
         Write-Warning "發現未分流的 Skill 目錄 [$($dir.Name)]，未包含於 configs\skills-manifest.json 中。"
     }
 }

@@ -67,6 +67,31 @@ class SkillContractsTest(unittest.TestCase):
         self.skill.write_text(self.skill.read_text(encoding="utf-8") + '\n`references/missing.md`\n', encoding="utf-8")
         self.assertTrue(any('無效行內引用' in e for e in self.errors()))
 
+    def test_link_must_be_deployed_to_every_source_platform(self):
+        data = json.loads(self.manifest.read_text(encoding="utf-8"))
+        data["antigravityOnly"] = ["agy-only"]
+        self.manifest.write_text(json.dumps(data), encoding="utf-8")
+        target = self.home.parent / "agy-only" / "SKILL.md"
+        target.parent.mkdir()
+        target.write_text("---\nname: agy-only\ndescription: Example\n---\n[共用來源](../example/SKILL.md)\n", encoding="utf-8")
+        self.assertFalse(self.errors())
+        with self.skill.open("a", encoding="utf-8") as stream:
+            stream.write("[專用技能](../agy-only/SKILL.md)\n")
+        self.assertTrue(any("未部署到 Claude Code, Codex" in e for e in self.errors()))
+
+    def test_reference_style_link_and_heading_fragment(self):
+        target = self.home / "references" / "valid.md"
+        target.parent.mkdir()
+        target.write_text("# 雙系統驗收\n", encoding="utf-8")
+        with self.skill.open("a", encoding="utf-8") as stream:
+            stream.write("[清單][os]\n\n[os]: references/valid.md#雙系統驗收\n")
+        self.assertFalse(self.errors())
+        with self.skill.open("a", encoding="utf-8") as stream:
+            stream.write("[錯誤](references/valid.md#不存在的章節)\n[missing]: references/missing.md\n")
+        errors = self.errors()
+        self.assertTrue(any("找不到 Markdown 章節" in e for e in errors))
+        self.assertTrue(any("無效相對連結 references/missing.md" in e for e in errors))
+
 
 if __name__ == '__main__':
     unittest.main()

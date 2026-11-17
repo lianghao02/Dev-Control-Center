@@ -6,15 +6,23 @@
 from __future__ import annotations
 
 import argparse
+from functools import cache
+from html import unescape
 import json
 from pathlib import Path
 import re
 from urllib.parse import unquote, urlsplit
 
-GROUPS = ("shared", "codexOnly", "antigravityOnly")
+PLATFORMS = {
+    "shared": {"Codex", "Antigravity", "Claude Code"},
+    "codexOnly": {"Codex"},
+    "antigravityOnly": {"Antigravity"},
+}
 NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 INLINE = re.compile(r"`((?:\.{1,2}/|references/|checklists/|workflows/|templates/|examples/|scripts/|assets/)[\w./-]+\.(?:md|py|ps1|yaml|json))`")
-LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
+LINK = re.compile(r"\[[^\]]*\]\(\s*(<[^>]+>|[^\s)]+)(?:\s+[\"'][^\n]*?[\"'])?\s*\)")
+LINK_DEFINITION = re.compile(r"^ {0,3}\[[^\]]+\]:\s*(<[^>]+>|\S+)")
+HEADING = re.compile(r"^ {0,3}#{1,6}\s+(.+?)\s*#*\s*$")
 FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 
 
@@ -61,14 +69,38 @@ def prose_lines(text: str):
             yield line
 
 
+@cache
+def markdown_anchors(text: str) -> set[str]:
+    """解析本庫使用的 Markdown 標題與顯式 HTML 錨點。"""
+    ids: set[str] = set()
+    previous = ""
+    for line in prose_lines(text):
+        match = HEADING.match(line)
+        heading = match[1] if match else ""
+        if re.fullmatch(r" {0,3}(?:=+|-+)\s*", line):
+            heading = previous.strip()
+        if heading:
+            heading = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", heading)
+            heading = re.sub(r"<[^>]+>", "", heading)
+            slug = re.sub(r"[^\w\- ]", "", unescape(heading).lower()).replace(" ", "-")
+            anchor, suffix = slug, 1
+            while anchor in ids:
+                anchor = f"{slug}-{suffix}"
+                suffix += 1
+            ids.add(anchor)
+        ids.update(re.findall(r"""<[^>]+\s(?:id|name)=["']([^"']+)["']""", line))
+        previous = line if not match else ""
+    return ids
+
+
 def check(root: Path) -> tuple[list[str], dict[str, int]]:
     errors: list[str] = []
-    skills = root / "configs/skills"
+    skills = (root / "configs/skills").resolve()
     try:
         manifest = json.loads((root / "configs/skills-manifest.json").read_text(encoding="utf-8"))
-        if manifest.get("schemaVersion") != 2:
+        if not isinstance(manifest, dict) or manifest.get("schemaVersion") != 2:
             raise ValueError("預期 Manifest schemaVersion=2")
-        sets = {g: manifest[g] for g in GROUPS}
+        sets = {g: manifest[g] for g in PLATFORMS}
         if not all(isinstance(v, list) and all(isinstance(n, str) and NAME.fullmatch(n) for n in v) for v in sets.values()):
             raise ValueError("分流須為合法 Skill 名稱陣列")
     except (OSError, ValueError, KeyError, TypeError) as exc:
@@ -76,6 +108,7 @@ def check(root: Path) -> tuple[list[str], dict[str, int]]:
     assigned = [n for group in sets.values() for n in group]
     if len(assigned) != len(set(assigned)):
         errors.append("Manifest 分流重複")
+    platforms = {name: PLATFORMS[group] for group, names in sets.items() for name in names}
     actual = {p.name for p in skills.iterdir() if p.is_dir()}
     if set(assigned) != actual:
         errors.append(f"Manifest/目錄不一致：{sorted(set(assigned) ^ actual)}")
@@ -90,24 +123,37 @@ def check(root: Path) -> tuple[list[str], dict[str, int]]:
             errors.append(f"{name}: {exc}")
         for p in sorted(home.rglob("*.md")):
             for line in prose_lines(p.read_text(encoding="utf-8")):
-                for ref in LINK.findall(line):
-                    ref = ref.strip("<>")
+                definition = LINK_DEFINITION.match(line)
+                for target in [definition[1]] if definition else LINK.findall(line):
+                    ref = target.strip("<>")
                     parsed = urlsplit(ref)
-                    if parsed.scheme or parsed.netloc or not parsed.path:
+                    if parsed.scheme or parsed.netloc or not (parsed.path or parsed.fragment):
                         continue
-                    path = (p.parent / unquote(parsed.path)).resolve()
+                    path = (p.parent / unquote(parsed.path)).resolve() if parsed.path else p
                     links += 1
-                    if not path.is_relative_to(skills.resolve()) or not path.is_file():
+                    if not path.is_relative_to(skills) or not path.is_file():
                         errors.append(f"{p.relative_to(root)}: 無效相對連結 {ref}")
+                        continue
+                    missing = platforms.get(name, set()) - platforms.get(path.relative_to(skills).parts[0], set())
+                    if missing:
+                        errors.append(f"{p.relative_to(root)}: {ref} 未部署到 {', '.join(sorted(missing))}")
+                    if parsed.fragment and path.suffix.lower() == ".md":
+                        if unquote(parsed.fragment) not in markdown_anchors(path.read_text(encoding="utf-8")):
+                            errors.append(f"{p.relative_to(root)}: 找不到 Markdown 章節 {ref}")
                 for ref in INLINE.findall(line):
                     # 行內 references/ 路徑依文件位置或 Skill 根目錄；跨 Skill 須同列明示擁有者。
                     owner = skills / "lianghao-development" if "`lianghao-development`" in line else home
                     candidates = [(p.parent / ref).resolve(), (owner / ref).resolve()]
                     inline += 1
-                    if not any(c.is_relative_to(skills.resolve()) and c.is_file() for c in candidates):
+                    target = next((c for c in candidates if c.is_relative_to(skills) and c.is_file()), None)
+                    if target is None:
                         errors.append(f"{p.relative_to(root)}: 無效行內引用 {ref}")
+                    else:
+                        missing = platforms.get(name, set()) - platforms.get(target.relative_to(skills).parts[0], set())
+                        if missing:
+                            errors.append(f"{p.relative_to(root)}: {ref} 未部署到 {', '.join(sorted(missing))}")
     return errors, {"skills": len(actual), "links": links, "inline_refs": inline,
-                    "deployment_targets": len(sets["shared"]) * 3 + len(sets["codexOnly"]) + len(sets["antigravityOnly"])}
+                    "deployment_targets": sum(len(names) * len(PLATFORMS[group]) for group, names in sets.items())}
 
 
 def main() -> int:

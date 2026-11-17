@@ -41,14 +41,15 @@ Report-Check "1. Resolver 預設/工作區解析測試" $t1Pass "成功解析 Sk
 
 # 測試 2: Resolver - 環境變數優先級覆寫測試
 $fakeTempRoot = Join-Path ([IO.Path]::GetTempPath()) ("fake-skill-" + [Guid]::NewGuid().ToString('N'))
-New-Item -ItemType Directory -Path $fakeTempRoot -Force | Out-Null
-[IO.File]::WriteAllText((Join-Path $fakeTempRoot 'VERSION'), '9.9.9', [Text.UTF8Encoding]::new($false))
+$fakeSkillHome = Join-Path $fakeTempRoot 'configs\skills\lianghao-development'
+New-Item -ItemType Directory -Path $fakeSkillHome -Force | Out-Null
+[IO.File]::WriteAllText((Join-Path $fakeSkillHome 'VERSION'), '9.9.9', [Text.UTF8Encoding]::new($false))
 
 $oldEnv = $env:LIANGHAO_SKILL_HOME
 try {
-    $env:LIANGHAO_SKILL_HOME = $fakeTempRoot
+    $env:LIANGHAO_SKILL_HOME = $fakeSkillHome
     $res2 = & $resolverScript -Detailed
-    $t2Pass = ($res2.Status -eq 'FOUND' -and $res2.SkillHome -eq [IO.Path]::GetFullPath($fakeTempRoot) -and $res2.Version -eq '9.9.9' -and $res2.Source -match 'EnvironmentVariable')
+    $t2Pass = ($res2.Status -eq 'FOUND' -and $res2.SkillHome -eq [IO.Path]::GetFullPath($fakeSkillHome) -and $res2.Version -eq '9.9.9' -and $res2.Source -match 'EnvironmentVariable')
     Report-Check "2. Resolver 環境變數優先級測試" $t2Pass "成功由環境變數優先覆寫 (Version: $($res2.Version))"
 } finally {
     $env:LIANGHAO_SKILL_HOME = $oldEnv
@@ -131,10 +132,43 @@ try {
     Remove-Item -LiteralPath $tempConfigDir -Recurse -Force -ErrorAction SilentlyContinue
 }
 
-# 測試 6: Verify-Agent-Environment 驗收腳本測試
-$verifyRes = & $verifyScript -Detailed
-$t6Pass = ($verifyRes.ResolverPass -and $verifyRes.CanonicalFilesPass -and $verifyRes.AntigravityReferencePass -and $verifyRes.CodexReferencePass -and $verifyRes.AutomaticSkillDeployment -eq 'PASS')
-Report-Check "6. 全環境驗收驗證腳本測試" $t6Pass "verify-agent-environment.ps1 回報全數通過 (含平台原生自動部署 PASS)"
+# 測試 6、8：在隔離的暫存設定檔中檢查實際同步與漏檔偵測。
+$tempProfile = Join-Path ([IO.Path]::GetTempPath()) ("skill-profile-" + [Guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $tempProfile -Force | Out-Null
+$oldProfile = $env:USERPROFILE
+try {
+    $env:USERPROFILE = $tempProfile
+    $syncScript = Join-Path $homeRepo 'scripts\sync_codex.ps1'
+    & $syncScript -CheckOnly -SkipMcpConfig | Out-Null
+    $previewReadOnly = @(Get-ChildItem -LiteralPath $tempProfile -Force).Count -eq 0
+    & $syncScript -Execute -SkipMcpConfig | Out-Null
+
+    $verifyRes = & $verifyScript -Detailed
+    $manifest = Get-Content -LiteralPath (Join-Path $homeRepo 'configs\skills-manifest.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+    $expectedTargets = 3 * @($manifest.shared).Count + @($manifest.codexOnly).Count + @($manifest.antigravityOnly).Count
+    $t6Pass = ($previewReadOnly -and $verifyRes.ResolverPass -and $verifyRes.CanonicalFilesPass -and
+        $verifyRes.AntigravityReferencePass -and $verifyRes.CodexReferencePass -and
+        $verifyRes.AutomaticSkillDeployment -eq 'PASS' -and $verifyRes.DeploymentTargetsChecked -eq $expectedTargets)
+    Report-Check "6. 全環境驗收驗證腳本測試" $t6Pass "預覽唯讀，完整比對 $expectedTargets 個部署目標"
+
+    $agyOnly = Join-Path $tempProfile '.gemini\config\skills\skill-creator\SKILL.md'
+    $codexOnly = Join-Path $tempProfile '.agents\skills\skill-creator'
+    $claudeOnly = Join-Path $tempProfile '.claude\skills\skill-creator'
+    $routesCorrect = ((Test-Path -LiteralPath $agyOnly -PathType Leaf) -and
+        -not (Test-Path -LiteralPath $codexOnly) -and -not (Test-Path -LiteralPath $claudeOnly))
+
+    $removedEntry = Join-Path $tempProfile '.agents\skills\product-design\SKILL.md'
+    $staleReference = Join-Path $tempProfile '.gemini\config\skills\product-design\references\ui-review.md'
+    Remove-Item -LiteralPath $removedEntry
+    Add-Content -LiteralPath $staleReference -Value 'isolated stale content' -Encoding UTF8
+    $broken = & $verifyScript -Detailed
+    $t8Pass = ($routesCorrect -and $broken.AutomaticSkillDeployment -eq 'FAIL' -and
+        ($broken.CheckDetails -match 'Codex / product-design.*缺少 SKILL.md') -and
+        ($broken.CheckDetails -match 'Antigravity / product-design.*內容與中央來源不同'))
+} finally {
+    $env:USERPROFILE = $oldProfile
+    Remove-Item -LiteralPath $tempProfile -Recurse -Force -ErrorAction SilentlyContinue
+}
 
 # 測試 7: 跨 Agent Handoff 解析與跨平台元資料完整性
 $sampleHandoff = Join-Path $canonicalSkill 'examples\sample-handoff.md'
@@ -147,48 +181,8 @@ $hasTaskType = ($handoffContent -match 'Task Type.*?(AUDIT|EVALUATE|FIX|IMPROVE|
 $t7Pass = ($hasRepoName -and $hasBranch -and $hasCommit -and $hasSkillVersion -and $hasTaskType)
 Report-Check "7. 跨 Agent Handoff 標準元資料驗證" $t7Pass "示範 Handoff 具備 Repo/Branch/Commit/SkillVersion/TaskType 五大關鍵標識"
 
-# 測試 8: 平台原生自動載入目錄與 Hash 一致性校驗
-# 測試 8: 平台原生自動載入目錄與 Hash 一致性校驗 (四大共用 Skill)
-$allSharedSkills = @(
-    'lianghao-development',
-    'taiwan-office-automation',
-    'safe-data-processing',
-    'windows-tool-ux'
-)
-$allSkillsPass = $true
-$skillsCheckedCount = 0
-
-foreach ($sk in $allSharedSkills) {
-    $canDir = Join-Path $homeRepo "configs\skills\$sk"
-    $cSkillDir = Join-Path $env:USERPROFILE ".agents\skills\$sk"
-    $aSkillDir = Join-Path $env:USERPROFILE ".gemini\config\skills\$sk"
-    $clSkillDir = Join-Path $env:USERPROFILE ".claude\skills\$sk"
-    $cFile = Join-Path $cSkillDir 'SKILL.md'
-    $aFile = Join-Path $aSkillDir 'SKILL.md'
-    $clFile = Join-Path $clSkillDir 'SKILL.md'
-
-    if ((Test-Path -LiteralPath $cFile) -and (Test-Path -LiteralPath $aFile) -and (Test-Path -LiteralPath $clFile)) {
-        $cVer = (Get-Content -LiteralPath (Join-Path $canDir 'VERSION') -Raw).Trim()
-        $codexVer = (Get-Content -LiteralPath (Join-Path $cSkillDir 'VERSION') -Raw).Trim()
-        $antiVer = (Get-Content -LiteralPath (Join-Path $aSkillDir 'VERSION') -Raw).Trim()
-        $claudeVer = (Get-Content -LiteralPath (Join-Path $clSkillDir 'VERSION') -Raw).Trim()
-
-        $canHash = (Get-FileHash -LiteralPath (Join-Path $canDir 'SKILL.md') -Algorithm SHA256).Hash
-        $codexHash = (Get-FileHash -LiteralPath $cFile -Algorithm SHA256).Hash
-        $antiHash = (Get-FileHash -LiteralPath $aFile -Algorithm SHA256).Hash
-        $claudeHash = (Get-FileHash -LiteralPath $clFile -Algorithm SHA256).Hash
-
-        if ($cVer -eq '1.0.0' -and $codexVer -eq '1.0.0' -and $antiVer -eq '1.0.0' -and $claudeVer -eq '1.0.0' -and $canHash -eq $codexHash -and $canHash -eq $antiHash -and $canHash -eq $claudeHash) {
-            $skillsCheckedCount++
-        } else {
-            $allSkillsPass = $false
-        }
-    } else {
-        $allSkillsPass = $false
-    }
-}
-$t8Pass = ($allSkillsPass -and $skillsCheckedCount -eq 4)
-Report-Check "8. 原生 Skill 目錄存在性與版本一致性" $t8Pass "四大共用 Skill 皆完整部署至 Codex、Antigravity 與 Claude Code，且 VERSION/Hash 完全一致"
+# 測試 8：只部署到目標平台，並能找出遺失入口及過期參考檔。
+Report-Check "8. Skill 分流與部署漏檔偵測" $t8Pass "AGY 專用 Skill 分流正確，遺失 SKILL.md 及過期參考檔皆回報失敗"
 
 Write-Host "-----------------------------------------------------------------" -ForegroundColor Cyan
 Write-Host "測試結果統計：通過 $passCount / 失敗 $failCount (共 $($passCount + $failCount) 項)" -ForegroundColor $(if ($failCount -eq 0) { 'Green' } else { 'Red' })
