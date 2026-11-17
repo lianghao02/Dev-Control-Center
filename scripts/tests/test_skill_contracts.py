@@ -20,7 +20,7 @@ class SkillContractsTest(unittest.TestCase):
         self.home.mkdir(parents=True)
         self.manifest = self.root / "configs/skills-manifest.json"
         self.manifest.write_text(json.dumps({"schemaVersion": 2, "shared": ["example"],
-                                            "codexOnly": [], "antigravityOnly": []}))
+                                            "codexOnly": [], "antigravityOnly": []}), encoding="utf-8")
         self.skill = self.home / "SKILL.md"
         self.skill.write_text("---\nname: example\ndescription: >\n  範例流程與觸發條件\n---\n", encoding="utf-8")
 
@@ -35,9 +35,9 @@ class SkillContractsTest(unittest.TestCase):
         self.assertEqual(before, {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob('*') if p.is_file()})
 
     def test_duplicate_manifest_assignment(self):
-        data = json.loads(self.manifest.read_text())
+        data = json.loads(self.manifest.read_text(encoding="utf-8"))
         data['codexOnly'] = ['example']
-        self.manifest.write_text(json.dumps(data))
+        self.manifest.write_text(json.dumps(data), encoding="utf-8")
         self.assertIn('Manifest 分流重複', self.errors())
 
     def test_unassigned_skill(self):
@@ -50,21 +50,21 @@ class SkillContractsTest(unittest.TestCase):
                         '---\nname: other\ndescription: x\n---\n',
                         '---\nname: example\ndescription:\n---\n']:
             with self.subTest(content=content):
-                self.skill.write_text(content)
+                self.skill.write_text(content, encoding="utf-8")
                 self.assertTrue(self.errors())
 
     def test_missing_and_escaping_links(self):
         for ref in ['references/missing.md', '../../../../outside.md']:
             with self.subTest(ref=ref):
-                self.skill.write_text(self.skill.read_text() + f'\n[錯誤引用]({ref})\n')
+                self.skill.write_text(self.skill.read_text(encoding="utf-8") + f'\n[錯誤引用]({ref})\n', encoding="utf-8")
                 self.assertTrue(any('無效相對連結' in e for e in self.errors()))
 
     def test_relative_reference_and_code_fence(self):
         (self.home / 'references').mkdir()
-        (self.home / 'references/valid.md').write_text('有效文件')
-        self.skill.write_text(self.skill.read_text() + '\n[參考](references/valid.md)\n`references/valid.md`\n```md\n[範例](missing.md)\n```\n')
+        (self.home / 'references/valid.md').write_text('有效文件', encoding="utf-8")
+        self.skill.write_text(self.skill.read_text(encoding="utf-8") + '\n[參考](references/valid.md)\n`references/valid.md`\n```md\n[範例](missing.md)\n```\n', encoding="utf-8")
         self.assertFalse(self.errors())
-        self.skill.write_text(self.skill.read_text() + '\n`references/missing.md`\n')
+        self.skill.write_text(self.skill.read_text(encoding="utf-8") + '\n`references/missing.md`\n', encoding="utf-8")
         self.assertTrue(any('無效行內引用' in e for e in self.errors()))
 
 
