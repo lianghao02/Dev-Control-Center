@@ -180,18 +180,20 @@ New-Item -ItemType Directory -Path $tempRoot -Force | Out-Null
     $allScanned = ($liveScanResults.Count -eq $manifestCount)
     Report-Test "1. Repository 狀態掃描測試 (依清冊)" ($hasRepos -and $allScanned) "成功載入清單 $manifestCount 個 Repository，並全數完成本機狀態掃描"
 
-    # 9. 測試：Build 腳本成功／失敗處理測試 (任務 3)
-    $buildScript = Join-Path $homeRepo 'build_all_desktop_apps.ps1'
-    $buildScriptExists = (Test-Path -LiteralPath $buildScript -PathType Leaf)
-    $buildPreviewPass = $false
-    if ($buildScriptExists) {
-        $homePs = Get-HomePowerShell
-        $proc = Start-Process -FilePath $homePs -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $buildScript) -NoNewWindow -Wait -PassThru
-        if ($proc.ExitCode -eq 0) {
-            $buildPreviewPass = $true
+    # 9. 測試：發布前版本一致性檢查腳本 (唯讀)
+    $versionScript = Join-Path $homeRepo 'scripts\check_release_versions.py'
+    $versionScriptExists = (Test-Path -LiteralPath $versionScript -PathType Leaf)
+    $versionCheckPass = $false
+    if ($versionScriptExists) {
+        $pyCmd = Get-Command python.exe, py.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($pyCmd) {
+            $proc = Start-Process -FilePath $pyCmd.Source -ArgumentList @($versionScript) -NoNewWindow -Wait -PassThru
+            if ($proc.ExitCode -eq 0) {
+                $versionCheckPass = $true
+            }
         }
     }
-    Report-Test "7. Build 腳本成功／失敗處理測試" ($buildScriptExists -and $buildPreviewPass) "成功執行 build_all_desktop_apps.ps1 預覽模式，ExitCode 為 0，未異常當機"
+    Report-Test "7. 發布前版本一致性檢查測試" ($versionScriptExists -and $versionCheckPass) "成功執行 check_release_versions.py，ExitCode 為 0，未發現版本矛盾"
 
     # 10. 測試：專案版本解析功能 Get-RepositoryVersion (任務 1)
     $vCenter = Get-RepositoryVersion $homeRepo

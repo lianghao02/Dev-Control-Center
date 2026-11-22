@@ -37,28 +37,23 @@
 |---|---|---|---|
 | [1] | `QuickScan` | 唯讀快速檢查所有專案的本機 Git 狀態 | `scripts\workspace_sync_hub.ps1 -Action QuickScan` |
 | [2] | `SafeSync` | 補 Clone 缺少的專案 → 安全快轉 → 推送既有提交 | `scripts\workspace_sync_hub.ps1 -Action Auto` |
-| [3] | `Build` | 建置桌面應用程式（不建立 Release） | `build_all_desktop_apps.ps1 -Execute` |
-| [4] | `AgentCheck`／`AgentSync` | 檢查或同步全域憲法與共用 Skills | `scripts\sync_codex.ps1 -CheckOnly`／`-Execute` |
-| [5] | `Environment` | 開發工具鏈與 Python 環境檢查 | `scripts\setup_environment_hub.ps1` |
+| [3] | `AgentCheck`／`AgentSync` | 檢查或同步全域憲法與共用 Skills | `scripts\sync_codex.ps1 -CheckOnly`／`-Execute` |
+| [4] | `Environment` | 開發工具鏈與 Python 環境檢查 | `scripts\setup_environment_hub.ps1` |
 
-多專案 Git 同步只由 `scripts\workspace_sync_hub.ps1` 負責。
+多專案 Git 同步只由 `scripts\workspace_sync_hub.ps1` 負責（桌面應用建置與打包改由各專案自行維護，中樞專注於 AI 規範同步與專案清冊治理）。
 
 補充說明：
 
-   - 選單項目 **`[4] 檢查 / 同步 Agent 設定`** 支援一鍵執行：
-      - `1`：**AgentCheck（唯讀檢查）**，比對本機與雙平台（Codex / Antigravity）的技能目錄與雜湊一致性。
-      - `2`：**AgentSync（正式同步）**，一鍵將全域憲法與 16 個預設 Skills（15 個雙平台共用 + 1 個 Antigravity 專用）鏡像推播至雙平台原生設定目錄。
+   - 選單項目 **`[3] 檢查 / 同步 Agent 設定`** 支援一鍵執行：
+      - `1`：**AgentCheck（唯讀檢查）**，比對本機與三平台（Codex / Antigravity / Claude）的技能目錄與雜湊一致性。
+      - `2`：**AgentSync（正式同步）**，一鍵將全域憲法與 16 個預設 Skills（15 個共用 + 1 個 Antigravity 專用）鏡像推播至各平台原生設定目錄。
    - 優先使用 PowerShell 7，未安裝時自動退回 Windows PowerShell 5.1；以 BAT 自身位置推導路徑，不依賴固定磁碟代號或目前工作目錄。
    - PowerShell 7 的唯讀快速掃描採最多 4 條平行工作；Windows PowerShell 5.1 維持序列掃描，兩者均使用相同安全狀態分類。
 
-> 2026-10-21 收斂入口：移除 GUI 儀表板（`0_控制中心_手帳儀表板.bat`、`scripts/gui.ps1`、`scripts/gui/MainWindow.xaml`）與重複的同步腳本 `scripts/sync_projects.ps1`、`scripts/push_projects.ps1`。GUI 自行實作了另一份 Git 同步邏輯且專案數寫死，與終端選單重複；需要時可從 Git 歷史取回。
->
-> 原本的 `1_`～`3_` 三個快捷 BAT 已於 2026-10-21 移除（長期未使用），對應功能都在 `0_開發中樞.bat` 的選單內：
+> 2026-11-22 收斂定位：將本專案專注收斂為「AI 規矩總部 + 工具清冊」，移除過時的跨專案總打包腳本（`build_all_desktop_apps.ps1`）與一次性目錄整理／修補驗證腳本；各桌面專案改由各自腳本維護建置。
+> 2026-10-21 收斂入口：移除 GUI 儀表板與重複的同步腳本。
 > - **全專案智慧同步**：掃描全部專案的本機與雲端狀態，只拉取乾淨的版本庫、只推送既有提交，未提交的修改一律保留並提示；支援 `main` 與 `master`。
-> - **建置桌面應用程式**：呼叫各專案既有的建置腳本；嚴格分離「建置」與「發布（Release）」。
-> - **環境建置與工具安裝**：Python 專案環境（`01`、`07` embedded；`12`、`15` 使用 3.13 `.venv`；`14` 僅檢查既有 `.venv`），以及 Git、GitHub CLI、Python 3.13、.NET 8 等核心工具。
-
-成品維持在各專案既有的發布目錄；AG-MONITOR 完整 CPU 可攜包輸出至 `01_AG-MONITOR-Smart-Video-Screening\dist\`。若只想確認路徑與發布腳本是否齊全，可省略 `-Execute` 進行預覽。
+> - **環境建置與工具安裝**：Python 專案環境（`01`、`07` embedded；`12` 使用 3.13 `.venv`；`14` 僅檢查既有 `.venv`），以及 Git、GitHub CLI、Python 3.13、.NET 8 等核心工具。
 
 ## 發布前版本檢查
 
@@ -90,7 +85,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentCheck
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 ```
 
-同步會依 [development-repositories.json](development-repositories.json) 處理 17 個 Repository（含本中樞與其他 16 個專案），缺少的專案會 Clone 到本中樞的上一層資料夾。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
+同步會依 [development-repositories.json](development-repositories.json) 處理 16 個 Repository（含本中樞與其他 15 個專案），缺少的專案會 Clone 到本中樞的上一層資料夾。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
 
 ## Agent 設定與治理機制
 

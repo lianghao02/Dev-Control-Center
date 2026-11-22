@@ -15,7 +15,7 @@ Write-Host '=================================================================' -
 Write-Host '🛠️ 【環境建置與工具安裝中樞】' -ForegroundColor Yellow
 Write-Host '=================================================================' -ForegroundColor Cyan
 Write-Host '請選擇要執行的環境操作：' -ForegroundColor Cyan
-Write-Host '  [1] 🐍 建置 Python 專案環境（01、07 embedded；12、14、15 .venv）'
+Write-Host '  [1] 🐍 建置 Python 專案環境（01、07 embedded；12、14 .venv）'
 Write-Host '  [2] 🔧 診斷並安裝開發者工具鏈 (Git, GH CLI, Rust, .NET SDK, Playwright)'
 Write-Host '  [0] 離開 (或直接按 Enter)'
 Write-Host '=================================================================' -ForegroundColor Cyan
