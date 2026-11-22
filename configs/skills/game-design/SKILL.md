@@ -93,7 +93,7 @@ description: 遊戲架構設計、核心玩法循環、狀態機邏輯、工業�
   - **情境浮動 HUD**：非戰鬥狀態隱藏數值條；僅在玩家點擊或受到狀態影響時，以 Toast 或動態 Floating Text 呈現。
 
 ### 5.2 互動與跨裝置容錯 (Interaction & Responsive Rules)
-- **雙模操作映射 (Hybrid Input)**：所有 UI 點擊區（Hitbox）不可小於 44×44 CSS 像素，確保手機瀏覽器觸控不誤觸，同時支援 PC 滑鼠 Hover 反饋。
+- **雙模操作映射 (Hybrid Input)**：支援行動裝置時，UI 點擊區（Hitbox）不可小於 44×44 CSS 像素，確保手機瀏覽器觸控不誤觸，同時支援 PC 滑鼠 Hover 反饋；若專案 `AGENTS.md` 明確定位為純桌機鍵盤遊戲並排除手機／平板，則以專案邊界為準，不強制觸控重排。
 - **全螢幕降級策略 (Fullscreen Fallback)**：
   - 預設提供一鍵切換 Fullscreen API 按鈕。
   - 偵測到 iOS Safari 或不支援強制全螢幕環境時，自動切換至「純視窗最大化（Windowed Fullscreen）」排版，並鎖定頁面預防雙擊縮放（Pinch-to-zoom）與下拉重新整理（Pull-to-refresh）。
@@ -128,4 +128,4 @@ description: 遊戲架構設計、核心玩法循環、狀態機邏輯、工業�
 - [ ] 是否已覆蓋極端情境（如數值歸零、冷卻中連擊、背包滿載、輸入溢出）？
 - [ ] 是否具備完整狀態機定義，可直接轉換為研發團隊的 GDD 或開發需求？
 - [ ] **（Web 遊戲專屬）**：核心 HUD 佔比是否 <= 20%，選單深度是否 <= 2 層，且具備 Safe Frame 9 宮格錨點防裁切設計？
-- [ ] **（Web 遊戲專屬）**：首屏封裝是否預估於 15MB 內，且支援 44×44 CSS 像素觸控防誤觸與 Fullscreen 降級？
+- [ ] **（Web 遊戲專屬）**：首屏封裝是否預估於 15MB 內，且支援 Fullscreen 降級（支援行動端時另須滿足 44×44 CSS 像素觸控防誤觸）？

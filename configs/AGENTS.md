@@ -1,6 +1,6 @@
-# 📜 全域開發憲法 (Global Development Constitution) v8.6
+# 📜 全域開發憲法 (Global Development Constitution) v8.7
 
-> **版本歷程**：v8.5 → v8.6（精實收斂：消除與 `lianghao-development` 重複條文與雙邊 Skill 路由表、對齊現況事實優先順序、精簡常駐語彙表）
+> **版本歷程**：v8.6 → v8.7（補齊規則衝突層級中全域憲法定位、最小讀取免重讀已注入憲法與按需讀跨專案總表、補上第三方外掛防線與 `test`/`ci` Commit 類型）
 > **核心定位**：所有 Codex、Antigravity 與 Claude Code 開發工作階段皆須遵循的最高行為準則；與當前任務無關的工程條款不強制套用。
 
 ---
@@ -34,6 +34,7 @@
   - 未知之未提交修改絕對不得覆寫、stash 丟棄或抹除；遇到非 Clean 狀態應優先釐清或停止回報。
   - 嚴禁無授權的 `git reset --hard`、`git clean -fdx`、force push 或破壞性遠端對齊；commit 與 push 前須確認分支、remote 正確並獲使用者當次明確同意，禁止混入其他工作階段修改。
 - **敏感資訊隔離**：API Key、密碼、Token 嚴禁硬編碼在程式碼或版本庫中。
+- **第三方外掛與工具防線**：不隨意套用須竄改主程式（如 Electron ASAR 注入）或代管／轉發個人帳號憑證的非官方工具；IDE 擴充與桌面外掛不納入共用 Skill 目錄。
 - **環境可攜性與路徑／編碼強健性**：
   - **禁止環境硬編碼**：不得寫死固定磁碟代號、使用者個人目錄、Repository 絕對路徑或假設目前工作目錄；統一優先使用程式自身位置、相對路徑、集中設定、環境變數與 OS 標準路徑 API。
   - **Windows 編碼與啟動器**：文字讀寫明確指定編碼（JSON／Markdown／一般原始碼優先無 BOM UTF-8；含中文字元且須相容 Windows PowerShell 5.1 的 `.ps1` 須使用**含 BOM UTF-8**）。二進位檔嚴禁套用文字編碼參數。BAT 僅作薄啟動器；PowerShell 路徑優先使用 `$PSScriptRoot` 與 `Join-Path`。
@@ -67,10 +68,11 @@
 - Git Commit / Diff：**實際修改歷史與驗證證據**；`README.md` / `ARCHITECTURE.md` / `CHANGELOG.md` 依專案需求維護；`MEMORY.md` 僅作長期決策與踩坑歷史參考，不得據以推斷現況。
 
 **規則衝突判斷優先順序**（決定「該怎麼做」）：
-1. 使用者當次明確要求
-2. 專案 `AGENTS.md` 的長期邊界
-3. 最新有效 `HANDOFF.md` 的當前狀態
-4. `IMPROVEMENTS.md` 的待辦與暫緩狀態
+1. 使用者當次明確要求（不得違反第 2 節安全與憑證防線）
+2. 專案 `AGENTS.md` 的長期邊界與例外
+3. 全域 `configs/AGENTS.md` 的通用基準
+4. 最新有效 `HANDOFF.md` 的當前狀態
+5. `IMPROVEMENTS.md` 的待辦與暫緩狀態
 
 **現況事實判斷**（決定「目前是什麼狀態」）：任何文件描述與 Git Commit／Diff、Working Tree 或實測結果不一致時，一律以後者為準，並在交接時更正文件。
 
@@ -80,7 +82,7 @@
 
 ### 4.3 驗證、最小讀取與審查邊界
 - **最小必要驗證**：關鍵驗證未完成前嚴禁標註「可交付」。
-- **最小讀取順序**：接手時依序讀取：全域 `configs/AGENTS.md` ➜ 專案 `AGENTS.md` ➜ 專案 `HANDOFF.md` ➜ `IMPROVEMENTS.md` ➜ 最新 Commit／Diff ➜ 必要程式碼；`README.md`、`MEMORY.md` 與規劃文件僅在需要背景時才讀。嚴禁每次無故全專案掃描。
+- **最小讀取順序**：接手時依序讀取：全域 `configs/AGENTS.md`（平台已自動注入則免重讀）➜ 專案 `AGENTS.md` ➜ 專案 `HANDOFF.md` ➜ 最新 Commit／Diff ➜ 必要程式碼；`IMPROVEMENTS.md` 僅在跨專案健檢或規劃時讀取，`README.md`、`MEMORY.md` 與規劃文件僅在需要背景時才讀。嚴禁每次無故全專案掃描。
 - **審查邊界**：Review 僅檢視本輪 Diff 與受影響核心邊界，無阻斷性或重要問題即停止。
 
 ---
@@ -88,7 +90,7 @@
 ## 5. Git Commit 語法
 
 遵循 Conventional Commits 小寫格式 `type: 台灣繁體中文簡述`：
-`feat`（新增功能）｜`fix`（修復 Bug）｜`refactor`（重構）｜`docs`（文件）｜`sync`（同步上游／依賴）｜`chore`（維護／設定）｜`perf`（效能）｜`design`（視覺／UI）
+`feat`（新增功能）｜`fix`（修復 Bug）｜`refactor`（重構）｜`docs`（文件）｜`test`（測試）｜`ci`（CI／自動化）｜`sync`（同步上游／依賴）｜`chore`（維護／設定）｜`perf`（效能）｜`design`（視覺／UI）
 
 ---
 

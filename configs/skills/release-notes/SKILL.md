@@ -1,10 +1,6 @@
 ---
 name: release-notes
-description: >
-  AI Release Note 寫作規範。涵蓋：里程碑標題格式、更新摘要結構、
-  Features List 排版、Emoji 表情符號運用、技術細節與效益描述、
-  `CHANGELOG.md` 版本區塊格式。
-  觸發情境：撰寫版本 Release Note、更新 CHANGELOG.md、對外發布版本說明。
+description: AI Release Note 寫作規範。涵蓋：里程碑標題格式、更新摘要結構、Features List 排版、Emoji 表情符號運用、技術細節與效益描述、`CHANGELOG.md` 版本區塊格式。觸發情境：撰寫版本 Release Note、更新 CHANGELOG.md、對外發布版本說明。
 ---
 
 # 📝 Release Note 寫作規範 (Release Notes Skill)

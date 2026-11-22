@@ -1,6 +1,6 @@
 # LiangHao Dev Control Center (開發控制中心)
 
-本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.6、16 個預設 Agent 技能庫（15 個共用 + 1 個 Antigravity 專用，內含 LiangHao 四大核心領域技能庫）、17 個開發 Repository 清單（含本中樞與其他 16 個專案），以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.8.0**。
+本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.7、16 個預設 Agent 技能庫（15 個共用 + 1 個 Antigravity 專用，內含 LiangHao 四大核心領域技能庫）、16 個開發 Repository 清單（含本中樞與其他 15 個專案），以及 Windows 環境檢查與設定同步腳本。目前版本為 **v1.8.0**。
 
 > 🌐 **公開專案展示入口**：所有作品集、Demo 與 GitHub Pages 頁面已獨立遷移至 [lianghao02/Project-Hub](https://github.com/lianghao02/Project-Hub)（展示站：[https://lianghao02.github.io/Project-Hub/](https://lianghao02.github.io/Project-Hub/)）。中央控制中心專注於環境與治理，不再兼任展示網站。
 
@@ -8,7 +8,7 @@
 
 開發中樞將多個 Repository 的環境檢查、啟動入口、Git 狀態與 Agent 規範集中管理。開發背景是跨專案切換時，工具版本、操作步驟與交接文件容易分散，造成重複設定或誤操作。
 
-它面向本機維護者，重點是先檢查、顯示差異，再依明確模式執行。全域憲法與共用 Skills 以 `configs/` 為唯一維護來源；對外成果展示交由 Project Hub，不在此混入展示網站功能。管理範圍為 16 個其他專案，連同本中樞共 17 個 Repository。
+它面向本機維護者，重點是先檢查、顯示差異，再依明確模式執行。全域憲法與共用 Skills 以 `configs/` 為唯一維護來源；對外成果展示交由 Project Hub，不在此混入展示網站功能。管理範圍為 15 個其他專案，連同本中樞共 16 個 Repository。
 
 **典型流程**：查看各專案狀態 → 唯讀環境／設定檢查 → 處理確認過的差異 → 個別專案驗證。
 
@@ -89,9 +89,9 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 
 ## Agent 設定與治理機制
 
-- **全域規則唯一編輯源**：[configs/AGENTS.md](configs/AGENTS.md)（部署至各 Agent 環境之全域開發憲法 v8.6）
+- **全域規則唯一編輯源**：[configs/AGENTS.md](configs/AGENTS.md)（部署至各 Agent 環境之全域開發憲法 v8.7）
 - **共用技能庫唯一編輯源**：`configs/skills/`（Canonical 來源目錄，共 16 個預設 Skills，嚴禁反向覆蓋）
-- **分流部署定義檔**：[configs/skills-manifest.json](configs/skills-manifest.json)（定義 15 個雙平台共用與 1 個 Antigravity 專用技能）
+- **分流部署定義檔**：[configs/skills-manifest.json](configs/skills-manifest.json)（定義 15 個三平台共用與 1 個 Antigravity 專用技能）
 - **跨專案改善事項總表**：[IMPROVEMENTS.md](IMPROVEMENTS.md)（所有專案已確認改善與待辦唯一彙整表）
 - **當前交接狀態斷點**：[HANDOFF.md](HANDOFF.md)（本專案之工作交接與中斷紀錄）
 
@@ -115,17 +115,17 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 
 使用者層的 `~/.claude/CLAUDE.md` 不受「工作區與專案資料夾不得建立 `CLAUDE.md`」限制；該限制只針對 Repository 內的檔案。
 
-其餘 11 個雙平台共用技能（`accesslint`、`addyosmani-perf`、`caveman`、`document-to-markdown`、`game-design`、`github-workflow`、`product-design`、`project-planning`、`project-readiness-check`、`release-notes`、`webapp-testing`）與 Antigravity 專用的 `skill-creator` 皆由 `configs/skills-manifest.json` 統一管理分流。`%USERPROFILE%\.codex\skills` 的個人獨立 Skill 與系統原生 Skill 均不會被覆寫。
+其餘 11 個三平台共用技能（`accesslint`、`addyosmani-perf`、`caveman`、`document-to-markdown`、`game-design`、`github-workflow`、`product-design`、`project-planning`、`project-readiness-check`、`release-notes`、`webapp-testing`）與 Antigravity 專用的 `skill-creator` 皆由 `configs/skills-manifest.json` 統一管理分流。`%USERPROFILE%\.codex\skills` 的個人獨立 Skill 與系統原生 Skill 均不會被覆寫。
 
 ### 單獨檢查或同步指令
 
 ```powershell
-# 唯讀檢查（比對本機與雙平台目錄狀態與 Hash）
+# 唯讀檢查（比對本機與三平台目錄狀態與 Hash）
 .\scripts\sync_codex.ps1 -CheckOnly
 # 或透過 dev-hub 執行
 .\scripts\dev-hub.ps1 -Action AgentCheck
 
-# 正式同步（將全域憲法與所有共用 Skill 推播至雙平台）
+# 正式同步（將全域憲法與所有共用 Skill 推播至三平台）
 .\scripts\sync_codex.ps1 -Execute
 # 或透過 dev-hub 執行
 .\scripts\dev-hub.ps1 -Action AgentSync
@@ -156,12 +156,12 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 
 ## 路徑架構
 
-- 實體開發路徑：`D:\Development\GitHub`
+- 開發工作區範例路徑：`<磁碟>:\Development\GitHub`（所有腳本皆由自身位置推導，不依賴固定磁碟代號）
 - 舊工具相容路徑：`C:\Users\<使用者名稱>\Documents\GitHub`
 
 Junction 屬於選用的本機相容設定，不儲存在 Git 中。詳細規範請參閱 [docs/DEVELOPMENT_ENVIRONMENT.md](docs/DEVELOPMENT_ENVIRONMENT.md)。
 
-環境整理與驗證記錄見 [Python 環境修復](docs/python-environment-repair/RESULTS.md)。`setup_all_envs.ps1 -CheckOnly` 為唯讀檢查；`-Force` 僅對 `12`／`15` 重新套用需求，不刪除環境。`sync_codex.ps1 -CheckOnly -SkipMcpConfig` 可限縮檢查至憲法與 Skills，確認後才使用 `-Execute -SkipMcpConfig`。
+環境整理與驗證記錄見 [Python 環境修復](docs/python-environment-repair/RESULTS.md)。`sync_codex.ps1 -CheckOnly -SkipMcpConfig` 可限縮檢查至憲法與 Skills，確認後才使用 `-Execute -SkipMcpConfig`。
 
 ## 已知 Bug、限制與疑難排解
 
@@ -181,4 +181,4 @@ Junction 屬於選用的本機相容設定，不儲存在 Git 中。詳細規範
 
 ## 目前可管理倉庫與歷史清單
 
-`development-repositories.json` 目前記錄 17 個管理目標（含本中樞）。使用者已確認 `06_System-Optimizer-Tool`、`10_Smart-Photo-Organizer`、`20_Daily-Photo-Report-30Days`（原 `20_Motes-in-Turmoil`）皆已封存或停用並從本機及同步清冊移除，歷史紀錄保留，後續不再同步或重建。
+`development-repositories.json` 目前記錄 16 個管理目標（含本中樞）。使用者已確認 `06_System-Optimizer-Tool`、`10_Smart-Photo-Organizer`、`15_chainflow-inspector`、`20_Daily-Photo-Report-30Days`（原 `20_Motes-in-Turmoil`）皆已封存或停用並從本機及同步清冊移除，歷史紀錄保留，後續不再同步或重建。
