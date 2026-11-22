@@ -18,7 +18,6 @@
 | `12_ClipMask-AI` | Python 3.13／Qt6／PyAV／VAD | 效能與去識別化 | P1 | 離線影音去識別化、AI 人臉追蹤與智慧聽打工作站。 |
 | `13_Project-Hub` | 純 Web (HTML5 / Vanilla JS) | 維持現狀 | — | 公開展示所有開發工具與專案的 GitHub Pages 入口網站。 |
 | `14_Google-Photos-Takeout-Organizer` | Python／Copy-Only 多分卷整理 | 維持現狀 | — | 遵循「分析 → 人工確認 → 複製 → SHA-256 驗證」，來源 100% 唯讀，不改寫原始 Takeout。 |
-| `15_chainflow-inspector` | Python 3.13／鏈上法證蒐集與診斷 | 活躍維護 | P1 | 固化公開鏈上資料蒐集、FlowEvents 正規化與 Agent Analysis Bundle 匯出，嚴格區分程式蒐證與 Agent 研判。 |
 | `16_Wuxia-Typing-Legend` | 純 Web (HTML5 Canvas / Vanilla JS) | 活躍維護 | — | 國小國語文與英打 RPG 網頁遊戲，整合教育部離線字庫與水墨戰鬥狀態機。 |
 | `17_Subscription-Manager` | Web／Node.js 20+／Firebase Hosting | 維持現狀 | — | 個人訂閱與固定支出管理，支援響應式桌面側欄與手機底部導覽。 |
 | `18_AromaCraft-Studio` | Web／Node.js 20+／Firebase 同步 | 維持現狀 | — | 手作精油配方、密度換算、包材成本試算與離線待同步佇列管理。 |

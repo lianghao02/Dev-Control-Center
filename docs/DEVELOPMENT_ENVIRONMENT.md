@@ -38,11 +38,10 @@ D:\Development\GitHub\
 ├── 12_ClipMask-AI/                           # Python 3.13 (.venv)
 ├── 13_Project-Hub/
 ├── 14_Google-Photos-Takeout-Organizer/       # Python 3.13 (.venv)
-├── 15_chainflow-inspector/                   # Python 3.13 (.venv)
 ├── 16_Wuxia-Typing-Legend/
 ├── 17_Subscription-Manager/
 ├── 18_AromaCraft-Studio/
 └── 19_DesktopFramesPlus/
 ```
 
-（`05`、`06`、`10`、`20` 已封存或停用，不列入現行同步與環境建置範圍。）
+（`05`、`06`、`10`、`15`、`20` 已封存或停用，不列入現行同步與環境建置範圍。）
