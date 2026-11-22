@@ -42,6 +42,23 @@
 
 多專案 Git 同步只由 `scripts\workspace_sync_hub.ps1` 負責（桌面應用建置與打包改由各專案自行維護，中樞專注於 AI 規範同步與專案清冊治理）。
 
+```mermaid
+flowchart TD
+    A["雙擊 0_開發中樞.bat\n(薄啟動器 → scripts/dev-hub.ps1)"] --> B{"選擇執行項目"}
+
+    B -->|"[1] QuickScan / [2] SafeSync"| C["workspace_sync_hub.ps1\n讀取 development-repositories.json (16 個專案)"]
+    B -->|"[3] AgentCheck / AgentSync"| D["sync_codex.ps1\n檢查或部署憲法與 Skills"]
+    B -->|"[4] Environment"| E["setup_environment_hub.ps1\n檢查本機工具鏈與 Python 環境"]
+    B -->|"發版前版本核對"| F["check_release_versions.py\n跨專案版本比對 (公開展示交由 13_Project-Hub)"]
+
+    C --> G{"各專案 Git 狀態判別"}
+    G -->|"Missing"| H["補 Clone 至上一層工作區"]
+    G -->|"Modified (有未提交修改)"| I["直接略過並保留現場\n嚴禁 checkout / stash / 覆寫"]
+    G -->|"Behind"| J["僅執行 pull --ff-only\n不自動 merge 或 rebase"]
+    G -->|"Ahead"| K["僅推送既有提交\n不自動執行 git add / commit"]
+    G -->|"Synced / Diverged / Error"| L["記錄狀態並於結尾清單回報"]
+```
+
 補充說明：
 
    - 選單項目 **`[3] 檢查 / 同步 Agent 設定`** 支援一鍵執行：
@@ -94,6 +111,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 - **分流部署定義檔**：[configs/skills-manifest.json](configs/skills-manifest.json)（定義 15 個三平台共用與 1 個 Antigravity 專用技能）
 - **跨專案改善事項總表**：[IMPROVEMENTS.md](IMPROVEMENTS.md)（所有專案已確認改善與待辦唯一彙整表）
 - **當前交接狀態斷點**：[HANDOFF.md](HANDOFF.md)（本專案之工作交接與中斷紀錄）
+- **Skill 契約唯讀檢核（v1.8.0 新增）**：`scripts/check_skill_contracts.py`（驗證 16 套 Skill 的 frontmatter、單行 `description` 與參考路徑結構）
 
 ### LiangHao 16 個預設技能庫與四大核心基準套件 (Shared Skill Pack v2)
 
@@ -116,6 +134,19 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 使用者層的 `~/.claude/CLAUDE.md` 不受「工作區與專案資料夾不得建立 `CLAUDE.md`」限制；該限制只針對 Repository 內的檔案。
 
 其餘 11 個三平台共用技能（`accesslint`、`addyosmani-perf`、`caveman`、`document-to-markdown`、`game-design`、`github-workflow`、`product-design`、`project-planning`、`project-readiness-check`、`release-notes`、`webapp-testing`）與 Antigravity 專用的 `skill-creator` 皆由 `configs/skills-manifest.json` 統一管理分流。`%USERPROFILE%\.codex\skills` 的個人獨立 Skill 與系統原生 Skill 均不會被覆寫。
+
+```mermaid
+flowchart LR
+    S1["configs/AGENTS.md\n全域開發憲法 v8.7 (唯一編輯源)"] --> CHK
+    S2["configs/skills/\n16 個 Skills (唯一編輯源)"] --> CHK
+    S3["configs/skills-manifest.json\n分流定義 (15 共用 + 1 專用)"] --> CHK
+
+    CHK["sync_codex.ps1 -CheckOnly\n唯讀比對目錄與雜湊"] -->|"差異確認無誤後執行 -Execute"| DIST["單向備份並推播部署"]
+
+    DIST --> C1["Codex\n.codex/AGENTS.md (複製)\n.agents/skills/ (15 個共用)"]
+    DIST --> C2["Antigravity\n.gemini/config/AGENTS.md (複製)\n.gemini/config/skills/ (15 共用 + skill-creator)"]
+    DIST --> C3["Claude Code\n.claude/CLAUDE.md (@匯入中央憲法)\n.claude/skills/ (15 個共用)"]
+```
 
 ### 單獨檢查或同步指令
 

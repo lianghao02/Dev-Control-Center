@@ -4,6 +4,7 @@
 
 - **收斂中樞定位**：聚焦為「AI 規範總部 + 工具清冊」，移除跨專案總打包腳本（`build_all_desktop_apps.ps1`）與一次性整理／修復驗證腳本，並移除已廢止之 `15_chainflow-inspector` 引用（管理目標收斂為 16 個 Repository）。
 - **全域憲法 v8.7 與 16 套 Skill 契約對齊**：補齊規則衝突層級中全域憲法定位、最小讀取免重讀已注入憲法、第三方外掛安全防線與 `test`/`ci` Commit 類型；統一全數 16 套 Skill 的單行 `description` 格式與桌機遊戲邊界，並強化 `check_skill_contracts.py` 唯讀結構檢查。
+- **中樞圖解文件**：`README.md` 補入中樞安全同步與全域憲法／Skills 三平台部署 Mermaid 流程圖，並補齊 `check_skill_contracts.py` 說明。
 
 ## 2026-10-21
 
