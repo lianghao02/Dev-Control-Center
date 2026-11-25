@@ -20,7 +20,7 @@
 
 - **`01_AG-MONITOR-Smart-Video-Screening`（維護）**：核心架構穩定，無待處理重大阻斷問題。
 - **`04_Photo-Report-Generator`（維護 / v2.3.0）**：已完成單元測試、Playwright E2E、Golden Baseline 與 Tauri 打包發布；僅於真實 Bug、明確業務需求、相容性或安全問題時重開開發。
-- **`07_auto-learning-bot`（維護 / V2.1.0）**：已發布 V2.1.0，僅於實際 Bug、公務平臺前端改版或依賴失效時維護。
+- **`07_auto-learning-bot`（維護 / V2.3.0）**：已發布 V2.3.0，僅於實際 Bug、公務平臺前端改版或依賴失效時維護。
 - **`13_Project-Hub`（維護）**：採純靜態無框架架構與 GitHub Pages 託管；僅於專案新增或正式版本更迭時同步資料陣列。
 - **`15_chainflow-inspector`（已廢止 / 封存）**：2026-11-22 停止開發與使用，本機專案資料夾、中央專案清冊及展示站引用已移除；遠端 Repository 依使用者需求辦理移除。
 
