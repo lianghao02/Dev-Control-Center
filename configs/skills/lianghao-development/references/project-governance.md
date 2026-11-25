@@ -3,10 +3,11 @@
 ## 1. 核心定位與真理來源 (Source of Truth)
 - 各層級文件權限明確劃分，彼此不重複保存相同資訊，避免維護衝突。
 - **規則衝突優先順序**（決定「該怎麼做」）：
-  1. 使用者當次明確指示
+  1. 使用者當次明確指示（不得違反全域憲法安全與憑證底線）
   2. 專案 `AGENTS.md` 之長期邊界與例外
-  3. 最新有效 `HANDOFF.md` 之工作斷點與狀態
-  4. `00_Dev-Control-Center/IMPROVEMENTS.md` 跨專案改善總表
+  3. 全域 `configs/AGENTS.md` 之通用基準
+  4. 最新有效 `HANDOFF.md` 之工作斷點與狀態
+  5. `00_Dev-Control-Center/IMPROVEMENTS.md` 跨專案改善總表
 - **現況事實判定**（決定「目前是什麼狀態」）：任何文件描述與 Git Commit / Diff、Working Tree 或實測結果不一致時，一律以 **Git 實況與實測證據** 為準，並在交接時更正過時文件。
 
 ## 2. 文件職責界定

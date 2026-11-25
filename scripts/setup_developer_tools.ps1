@@ -221,7 +221,7 @@ Write-Host "  ℹ️  Tauri 建置需 Node.js、Rust／Cargo、C++ Build Tools�
 
 Write-Host ""
 Write-Host '【三、 Python 專案環境檢測（開發與發布分開）】' -ForegroundColor Yellow
-$pyProjects = @('01_AG-MONITOR-Smart-Video-Screening','07_auto-learning-bot','12_ClipMask-AI','14_Google-Photos-Takeout-Organizer','15_chainflow-inspector')
+$pyProjects = @('01_AG-MONITOR-Smart-Video-Screening','07_auto-learning-bot','12_ClipMask-AI','14_Google-Photos-Takeout-Organizer')
 $missingPyEnvs = @()
 foreach ($p in $pyProjects) {
     $relative = if ($p -in @('01_AG-MONITOR-Smart-Video-Screening','07_auto-learning-bot')) { 'python_embed\python.exe' } else { '.venv\Scripts\python.exe' }

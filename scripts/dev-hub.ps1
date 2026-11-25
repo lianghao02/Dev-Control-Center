@@ -1,7 +1,7 @@
 ﻿# UTF-8 Compatibility
 [CmdletBinding()]
 param(
-    [ValidateSet('Menu', 'QuickScan', 'SafeSync', 'Build', 'AgentCheck', 'AgentSync', 'Environment')]
+    [ValidateSet('Menu', 'QuickScan', 'SafeSync', 'AgentCheck', 'AgentSync', 'Environment')]
     [string]$Action = 'Menu'
 )
 
@@ -39,9 +39,6 @@ function Invoke-DevHubAction {
         'SafeSync' {
             Invoke-DevHubScript (Join-Path $PSScriptRoot 'workspace_sync_hub.ps1') @('-Action', 'Auto')
         }
-        'Build' {
-            Invoke-DevHubScript (Join-Path $homeRepo 'build_all_desktop_apps.ps1') @('-Execute')
-        }
         'AgentCheck' {
             Invoke-DevHubScript (Join-Path $PSScriptRoot 'sync_codex.ps1') @('-CheckOnly')
         }
@@ -68,11 +65,9 @@ function Show-DevHubMenu {
     Write-Host '[2] 跟 GitHub 對齊所有專案'
     Write-Host '    補下載缺少的專案、拉下 GitHub 上的新進度、上傳已 commit 的內容' -ForegroundColor DarkGray
     Write-Host '    還沒 commit 的修改不會被動到，該專案會直接跳過' -ForegroundColor DarkGray
-    Write-Host '[3] 重新打包所有桌面程式（exe／zip）'
-    Write-Host '    會直接開始編譯，需要幾分鐘；不會發布到 GitHub' -ForegroundColor DarkGray
-    Write-Host '[4] 更新 AI 助手的規則與技能（Codex／Antigravity／Claude）'
+    Write-Host '[3] 更新 AI 助手的規則與技能（Codex／Antigravity／Claude）'
     Write-Host '    改過 configs 資料夾後使用；可先只比對差異' -ForegroundColor DarkGray
-    Write-Host '[5] 檢查電腦上的開發工具是否齊全'
+    Write-Host '[4] 檢查電腦上的開發工具是否齊全'
     Write-Host '    Git、.NET、Python 等' -ForegroundColor DarkGray
     Write-Host '[Q] 離開'
     Write-Host ''
@@ -86,15 +81,14 @@ if ($Action -ne 'Menu') {
 
 while ($true) {
     Show-DevHubMenu
-    $choice = (Read-Host '請輸入數字 1～5，或 Q 離開').Trim().ToUpperInvariant()
+    $choice = (Read-Host '請輸入數字 1～4，或 Q 離開').Trim().ToUpperInvariant()
     if ($choice -eq 'Q') { break }
 
     try {
         switch ($choice) {
             '1' { Invoke-DevHubAction -SelectedAction 'QuickScan' }
             '2' { Invoke-DevHubAction -SelectedAction 'SafeSync' }
-            '3' { Invoke-DevHubAction -SelectedAction 'Build' }
-            '4' {
+            '3' {
                 Write-Host '  1 = 只比對差異，不寫入'
                 Write-Host '  2 = 正式更新到 Codex、Antigravity 與 Claude'
                 $agentChoice = (Read-Host '請輸入 1 或 2（其他鍵取消）').Trim()
@@ -102,7 +96,7 @@ while ($true) {
                 elseif ($agentChoice -eq '2') { Invoke-DevHubAction -SelectedAction 'AgentSync' }
                 else { Write-Host '已取消，沒有做任何變更。' -ForegroundColor Gray }
             }
-            '5' { Invoke-DevHubAction -SelectedAction 'Environment' }
+            '4' { Invoke-DevHubAction -SelectedAction 'Environment' }
             default { Write-Host '沒有這個選項，什麼都沒做。' -ForegroundColor Yellow }
         }
     } catch {

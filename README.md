@@ -1,6 +1,6 @@
 # LiangHao Dev Control Center (開發控制中心)
 
-本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.6、16 個預設 Agent 技能庫（15 個共用 + 1 個 Antigravity 專用，內含 LiangHao 四大核心領域技能庫）、17 個開發 Repository 清單（含本中樞與其他 16 個專案），以及 Windows 環境重建與一鍵自癒佈置腳本。目前版本為 **v1.8.0**。
+本 Repository 為 LiangHao 開發環境與多專案治理的中央控制中心。保存全域開發憲法 v8.7、16 個預設 Agent 技能庫（15 個共用 + 1 個 Antigravity 專用，內含 LiangHao 四大核心領域技能庫）、16 個開發 Repository 清單（含本中樞與其他 15 個專案），以及 Windows 環境檢查與設定同步腳本。目前版本為 **v1.8.0**。
 
 > 🌐 **公開專案展示入口**：所有作品集、Demo 與 GitHub Pages 頁面已獨立遷移至 [lianghao02/Project-Hub](https://github.com/lianghao02/Project-Hub)（展示站：[https://lianghao02.github.io/Project-Hub/](https://lianghao02.github.io/Project-Hub/)）。中央控制中心專注於環境與治理，不再兼任展示網站。
 
@@ -8,7 +8,7 @@
 
 開發中樞將多個 Repository 的環境檢查、啟動入口、Git 狀態與 Agent 規範集中管理。開發背景是跨專案切換時，工具版本、操作步驟與交接文件容易分散，造成重複設定或誤操作。
 
-它面向本機維護者，重點是先檢查、顯示差異，再依明確模式執行。全域憲法與共用 Skills 以 `configs/` 為唯一維護來源；對外成果展示交由 Project Hub，不在此混入展示網站功能。管理範圍為 16 個其他專案，連同本中樞共 17 個 Repository。
+它面向本機維護者，重點是先檢查、顯示差異，再依明確模式執行。全域憲法與共用 Skills 以 `configs/` 為唯一維護來源；對外成果展示交由 Project Hub，不在此混入展示網站功能。管理範圍為 15 個其他專案，連同本中樞共 16 個 Repository。
 
 **典型流程**：查看各專案狀態 → 唯讀環境／設定檢查 → 處理確認過的差異 → 個別專案驗證。
 
@@ -18,7 +18,7 @@
 - `03_Police-Image-Toolkit`、`09_PaperSwitch` 與 `19_DesktopFramesPlus` 採 C#／.NET 8／WPF；原舊版目錄已於 2026-10-21 移除，需要時可由各專案的 Git 歷史取回。
 - `04_Photo-Report-Generator` 採純前端 Web SPA 與 Tauri 2 桌面封裝，不依賴 VBA 或 Microsoft Office；其他專案的技術與遷移邊界以各自 README 為準。
 - 專案入口網站已獨立為 `13_Project-Hub`，採純靜態 Web 與 GitHub Pages 託管。
-- 涵蓋 `14_Google-Photos-Takeout-Organizer`、`15_chainflow-inspector`、`16_Wuxia-Typing-Legend`、`17_Subscription-Manager`、`18_AromaCraft-Studio` 與 `19_DesktopFramesPlus`，總計管理 17 個 Repository（含本中樞）。
+- 涵蓋 `14_Google-Photos-Takeout-Organizer`、`16_Wuxia-Typing-Legend`、`17_Subscription-Manager`、`18_AromaCraft-Studio` 與 `19_DesktopFramesPlus`，總計管理 16 個 Repository（含本中樞）。
 
 ## 下載、需求與執行入口
 
@@ -37,28 +37,40 @@
 |---|---|---|---|
 | [1] | `QuickScan` | 唯讀快速檢查所有專案的本機 Git 狀態 | `scripts\workspace_sync_hub.ps1 -Action QuickScan` |
 | [2] | `SafeSync` | 補 Clone 缺少的專案 → 安全快轉 → 推送既有提交 | `scripts\workspace_sync_hub.ps1 -Action Auto` |
-| [3] | `Build` | 建置桌面應用程式（不建立 Release） | `build_all_desktop_apps.ps1 -Execute` |
-| [4] | `AgentCheck`／`AgentSync` | 檢查或同步全域憲法與共用 Skills | `scripts\sync_codex.ps1 -CheckOnly`／`-Execute` |
-| [5] | `Environment` | 開發工具鏈與 Python 環境檢查 | `scripts\setup_environment_hub.ps1` |
+| [3] | `AgentCheck`／`AgentSync` | 檢查或同步全域憲法與共用 Skills | `scripts\sync_codex.ps1 -CheckOnly`／`-Execute` |
+| [4] | `Environment` | 開發工具鏈與 Python 環境檢查 | `scripts\setup_environment_hub.ps1` |
 
-多專案 Git 同步只由 `scripts\workspace_sync_hub.ps1` 負責。
+多專案 Git 同步只由 `scripts\workspace_sync_hub.ps1` 負責（桌面應用建置與打包改由各專案自行維護，中樞專注於 AI 規範同步與專案清冊治理）。
+
+```mermaid
+flowchart TD
+    A["雙擊 0_開發中樞.bat\n(薄啟動器 → scripts/dev-hub.ps1)"] --> B{"選擇執行項目"}
+
+    B -->|"[1] QuickScan / [2] SafeSync"| C["workspace_sync_hub.ps1\n讀取 development-repositories.json (16 個專案)"]
+    B -->|"[3] AgentCheck / AgentSync"| D["sync_codex.ps1\n檢查或部署憲法與 Skills"]
+    B -->|"[4] Environment"| E["setup_environment_hub.ps1\n檢查本機工具鏈與 Python 環境"]
+    B -->|"發版前版本核對"| F["check_release_versions.py\n跨專案版本比對 (公開展示交由 13_Project-Hub)"]
+
+    C --> G{"各專案 Git 狀態判別"}
+    G -->|"Missing"| H["補 Clone 至上一層工作區"]
+    G -->|"Modified (有未提交修改)"| I["直接略過並保留現場\n嚴禁 checkout / stash / 覆寫"]
+    G -->|"Behind"| J["僅執行 pull --ff-only\n不自動 merge 或 rebase"]
+    G -->|"Ahead"| K["僅推送既有提交\n不自動執行 git add / commit"]
+    G -->|"Synced / Diverged / Error"| L["記錄狀態並於結尾清單回報"]
+```
 
 補充說明：
 
-   - 選單項目 **`[4] 檢查 / 同步 Agent 設定`** 支援一鍵執行：
-      - `1`：**AgentCheck（唯讀檢查）**，比對本機與雙平台（Codex / Antigravity）的技能目錄與雜湊一致性。
-      - `2`：**AgentSync（正式同步）**，一鍵將全域憲法與 16 個預設 Skills（15 個雙平台共用 + 1 個 Antigravity 專用）鏡像推播至雙平台原生設定目錄。
+   - 選單項目 **`[3] 檢查 / 同步 Agent 設定`** 支援一鍵執行：
+      - `1`：**AgentCheck（唯讀檢查）**，比對本機與三平台（Codex / Antigravity / Claude）的技能目錄與雜湊一致性。
+      - `2`：**AgentSync（正式同步）**，一鍵將全域憲法與 16 個預設 Skills（15 個共用 + 1 個 Antigravity 專用）鏡像推播至各平台原生設定目錄。
    - 優先使用 PowerShell 7，未安裝時自動退回 Windows PowerShell 5.1；以 BAT 自身位置推導路徑，不依賴固定磁碟代號或目前工作目錄。
    - PowerShell 7 的唯讀快速掃描採最多 4 條平行工作；Windows PowerShell 5.1 維持序列掃描，兩者均使用相同安全狀態分類。
 
-> 2026-10-21 收斂入口：移除 GUI 儀表板（`0_控制中心_手帳儀表板.bat`、`scripts/gui.ps1`、`scripts/gui/MainWindow.xaml`）與重複的同步腳本 `scripts/sync_projects.ps1`、`scripts/push_projects.ps1`。GUI 自行實作了另一份 Git 同步邏輯且專案數寫死，與終端選單重複；需要時可從 Git 歷史取回。
->
-> 原本的 `1_`～`3_` 三個快捷 BAT 已於 2026-10-21 移除（長期未使用），對應功能都在 `0_開發中樞.bat` 的選單內：
+> 2026-11-22 收斂定位：將本專案專注收斂為「AI 規矩總部 + 工具清冊」，移除過時的跨專案總打包腳本（`build_all_desktop_apps.ps1`）與一次性目錄整理／修補驗證腳本；各桌面專案改由各自腳本維護建置。
+> 2026-10-21 收斂入口：移除 GUI 儀表板與重複的同步腳本。
 > - **全專案智慧同步**：掃描全部專案的本機與雲端狀態，只拉取乾淨的版本庫、只推送既有提交，未提交的修改一律保留並提示；支援 `main` 與 `master`。
-> - **建置桌面應用程式**：呼叫各專案既有的建置腳本；嚴格分離「建置」與「發布（Release）」。
-> - **環境建置與工具安裝**：Python 專案環境（`01`、`07` embedded；`12`、`15` 使用 3.13 `.venv`；`14` 僅檢查既有 `.venv`），以及 Git、GitHub CLI、Python 3.13、.NET 8 等核心工具。
-
-成品維持在各專案既有的發布目錄；AG-MONITOR 完整 CPU 可攜包輸出至 `01_AG-MONITOR-Smart-Video-Screening\dist\`。若只想確認路徑與發布腳本是否齊全，可省略 `-Execute` 進行預覽。
+> - **環境建置與工具安裝**：Python 專案環境（`01`、`07` embedded；`12` 使用 3.13 `.venv`；`14` 僅檢查既有 `.venv`），以及 Git、GitHub CLI、Python 3.13、.NET 8 等核心工具。
 
 ## 發布前版本檢查
 
@@ -90,15 +102,16 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentCheck
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 ```
 
-同步會依 [development-repositories.json](development-repositories.json) 處理 17 個 Repository（含本中樞與其他 16 個專案），缺少的專案會 Clone 到本中樞的上一層資料夾。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
+同步會依 [development-repositories.json](development-repositories.json) 處理 16 個 Repository（含本中樞與其他 15 個專案），缺少的專案會 Clone 到本中樞的上一層資料夾。遇到既有未提交變更時會略過；遇到分支分歧時會繼續檢查其餘專案並於結尾列出，不會自動刪除任何本機資料夾，也不會強制覆蓋 Git 歷史。
 
 ## Agent 設定與治理機制
 
-- **全域規則唯一編輯源**：[configs/AGENTS.md](configs/AGENTS.md)（部署至各 Agent 環境之全域開發憲法 v8.6）
+- **全域規則唯一編輯源**：[configs/AGENTS.md](configs/AGENTS.md)（部署至各 Agent 環境之全域開發憲法 v8.7）
 - **共用技能庫唯一編輯源**：`configs/skills/`（Canonical 來源目錄，共 16 個預設 Skills，嚴禁反向覆蓋）
-- **分流部署定義檔**：[configs/skills-manifest.json](configs/skills-manifest.json)（定義 15 個雙平台共用與 1 個 Antigravity 專用技能）
+- **分流部署定義檔**：[configs/skills-manifest.json](configs/skills-manifest.json)（定義 15 個三平台共用與 1 個 Antigravity 專用技能）
 - **跨專案改善事項總表**：[IMPROVEMENTS.md](IMPROVEMENTS.md)（所有專案已確認改善與待辦唯一彙整表）
 - **當前交接狀態斷點**：[HANDOFF.md](HANDOFF.md)（本專案之工作交接與中斷紀錄）
+- **Skill 契約唯讀檢核（v1.8.0 新增）**：`scripts/check_skill_contracts.py`（驗證 16 套 Skill 的 frontmatter、單行 `description` 與參考路徑結構）
 
 ### LiangHao 16 個預設技能庫與四大核心基準套件 (Shared Skill Pack v2)
 
@@ -120,17 +133,30 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 
 使用者層的 `~/.claude/CLAUDE.md` 不受「工作區與專案資料夾不得建立 `CLAUDE.md`」限制；該限制只針對 Repository 內的檔案。
 
-其餘 11 個雙平台共用技能（`accesslint`、`addyosmani-perf`、`caveman`、`document-to-markdown`、`game-design`、`github-workflow`、`product-design`、`project-planning`、`project-readiness-check`、`release-notes`、`webapp-testing`）與 Antigravity 專用的 `skill-creator` 皆由 `configs/skills-manifest.json` 統一管理分流。`%USERPROFILE%\.codex\skills` 的個人獨立 Skill 與系統原生 Skill 均不會被覆寫。
+其餘 11 個三平台共用技能（`accesslint`、`addyosmani-perf`、`caveman`、`document-to-markdown`、`game-design`、`github-workflow`、`product-design`、`project-planning`、`project-readiness-check`、`release-notes`、`webapp-testing`）與 Antigravity 專用的 `skill-creator` 皆由 `configs/skills-manifest.json` 統一管理分流。`%USERPROFILE%\.codex\skills` 的個人獨立 Skill 與系統原生 Skill 均不會被覆寫。
+
+```mermaid
+flowchart LR
+    S1["configs/AGENTS.md\n全域開發憲法 v8.7 (唯一編輯源)"] --> CHK
+    S2["configs/skills/\n16 個 Skills (唯一編輯源)"] --> CHK
+    S3["configs/skills-manifest.json\n分流定義 (15 共用 + 1 專用)"] --> CHK
+
+    CHK["sync_codex.ps1 -CheckOnly\n唯讀比對目錄與雜湊"] -->|"差異確認無誤後執行 -Execute"| DIST["單向備份並推播部署"]
+
+    DIST --> C1["Codex\n.codex/AGENTS.md (複製)\n.agents/skills/ (15 個共用)"]
+    DIST --> C2["Antigravity\n.gemini/config/AGENTS.md (複製)\n.gemini/config/skills/ (15 共用 + skill-creator)"]
+    DIST --> C3["Claude Code\n.claude/CLAUDE.md (@匯入中央憲法)\n.claude/skills/ (15 個共用)"]
+```
 
 ### 單獨檢查或同步指令
 
 ```powershell
-# 唯讀檢查（比對本機與雙平台目錄狀態與 Hash）
+# 唯讀檢查（比對本機與三平台目錄狀態與 Hash）
 .\scripts\sync_codex.ps1 -CheckOnly
 # 或透過 dev-hub 執行
 .\scripts\dev-hub.ps1 -Action AgentCheck
 
-# 正式同步（將全域憲法與所有共用 Skill 推播至雙平台）
+# 正式同步（將全域憲法與所有共用 Skill 推播至三平台）
 .\scripts\sync_codex.ps1 -Execute
 # 或透過 dev-hub 執行
 .\scripts\dev-hub.ps1 -Action AgentSync
@@ -161,12 +187,12 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $hub -Action AgentSync
 
 ## 路徑架構
 
-- 實體開發路徑：`D:\Development\GitHub`
+- 開發工作區範例路徑：`<磁碟>:\Development\GitHub`（所有腳本皆由自身位置推導，不依賴固定磁碟代號）
 - 舊工具相容路徑：`C:\Users\<使用者名稱>\Documents\GitHub`
 
 Junction 屬於選用的本機相容設定，不儲存在 Git 中。詳細規範請參閱 [docs/DEVELOPMENT_ENVIRONMENT.md](docs/DEVELOPMENT_ENVIRONMENT.md)。
 
-環境整理與驗證記錄見 [Python 環境修復](docs/python-environment-repair/RESULTS.md)。`setup_all_envs.ps1 -CheckOnly` 為唯讀檢查；`-Force` 僅對 `12`／`15` 重新套用需求，不刪除環境。`sync_codex.ps1 -CheckOnly -SkipMcpConfig` 可限縮檢查至憲法與 Skills，確認後才使用 `-Execute -SkipMcpConfig`。
+環境整理與驗證記錄見 [Python 環境修復](docs/python-environment-repair/RESULTS.md)。`sync_codex.ps1 -CheckOnly -SkipMcpConfig` 可限縮檢查至憲法與 Skills，確認後才使用 `-Execute -SkipMcpConfig`。
 
 ## 已知 Bug、限制與疑難排解
 
@@ -186,4 +212,4 @@ Junction 屬於選用的本機相容設定，不儲存在 Git 中。詳細規範
 
 ## 目前可管理倉庫與歷史清單
 
-`development-repositories.json` 目前記錄 17 個管理目標（含本中樞）。使用者已確認 `06_System-Optimizer-Tool`、`10_Smart-Photo-Organizer`、`20_Daily-Photo-Report-30Days`（原 `20_Motes-in-Turmoil`）皆已封存或停用並從本機及同步清冊移除，歷史紀錄保留，後續不再同步或重建。
+`development-repositories.json` 目前記錄 16 個管理目標（含本中樞）。使用者已確認 `06_System-Optimizer-Tool`、`10_Smart-Photo-Organizer`、`15_chainflow-inspector`、`20_Daily-Photo-Report-30Days`（原 `20_Motes-in-Turmoil`）皆已封存或停用並從本機及同步清冊移除，歷史紀錄保留，後續不再同步或重建。

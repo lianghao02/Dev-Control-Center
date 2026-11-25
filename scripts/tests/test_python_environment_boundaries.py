@@ -10,8 +10,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[3]
 SHELL = shutil.which('pwsh.exe') or shutil.which('powershell.exe')
-PROJECTS = ('12_ClipMask-AI', '15_chainflow-inspector')
-CHAINFLOW_PROJECT = '15_chainflow-inspector'
+PROJECTS = ('12_ClipMask-AI',)
+TARGET_PROJECT = '12_ClipMask-AI'
 
 
 def run(*args):
@@ -25,10 +25,13 @@ class EnvironmentBoundaries(unittest.TestCase):
             target = Path(directory).resolve()
             self.assertTrue(target.is_relative_to(Path(tempfile.gettempdir()).resolve()))
             # 只測啟動器的參數邊界，測試程式使用標準庫，避免安裝 GUI 套件。
-            setup = (ROOT / CHAINFLOW_PROJECT / 'setup_and_run.ps1').read_text(encoding='utf-8')
-            (target / 'setup_and_run.ps1').write_text(setup.replace("'tkinter,sqlite3,webview'", "'tkinter,sqlite3'"), encoding='utf-8')
+            setup = (ROOT / TARGET_PROJECT / 'setup_and_run.ps1').read_text(encoding='utf-8')
+            (target / 'setup_and_run.ps1').write_text(
+                setup.replace("'PySide6.QtWidgets,PySide6.QtMultimedia,cv2,av,numpy,PIL,sounddevice'", "'sys'"),
+                encoding='utf-8',
+            )
             (target / 'requirements.txt').write_text('', encoding='utf-8')
-            (target / 'app.py').write_text('import json,sys; print(json.dumps(sys.argv[1:],ensure_ascii=True))', encoding='utf-8')
+            (target / 'run.py').write_text('import json,sys; print(json.dumps(sys.argv[1:],ensure_ascii=True))', encoding='utf-8')
             result = run(str(python313), '-B', '-m', 'venv', str(target / '.venv'))
             self.assertEqual(result.returncode, 0, result.stderr)
             expected = ['含 空白.txt', '--flag', '值']
@@ -55,7 +58,7 @@ class EnvironmentBoundaries(unittest.TestCase):
             target = Path(directory).resolve()
             self.assertTrue(target.is_relative_to(Path(tempfile.gettempdir()).resolve()))
             for filename in ('setup_and_run.ps1', 'requirements.txt'):
-                shutil.copy2(ROOT / CHAINFLOW_PROJECT / filename, target / filename)
+                shutil.copy2(ROOT / TARGET_PROJECT / filename, target / filename)
             result = run(str(python314), '-B', '-m', 'venv', str(target / '.venv'))
             self.assertEqual(result.returncode, 0, result.stderr)
             python = target / '.venv/Scripts/python.exe'

@@ -1,8 +1,6 @@
 ---
 name: caveman
-description: >
-  極簡省 Token 模式。僅在使用者明確要求（如：使用 caveman 指令、要求極簡回覆、省 Token 模式）時啟用。
-  以極短語言輸出技術說明，可大幅降低說明文字的 Token 使用量，保留完整程式碼與技術精確度。
+description: 極簡省 Token 模式。僅在使用者明確要求（如：使用 caveman 指令、要求極簡回覆、省 Token 模式）時啟用。以極短語言輸出技術說明，可大幅降低說明文字的 Token 使用量，保留完整程式碼與技術精確度。
 ---
 
 # Caveman Mode — 極簡輸出省 Token 工具

@@ -20,9 +20,10 @@ skill-name/
 ```
 
 - 資料夾與 `name` 使用全小寫連字號。
-- YAML frontmatter 只保留 `name` 與 `description`；描述須說明功能與觸發情境。
+- YAML frontmatter 只保留 `name` 與 `description`；`description` 一律使用單行純量字串（避免 `>` 摺疊區塊造成跨工具解析差異），並清楚寫明功能與觸發情境。
 - `SKILL.md` 保持精簡，使用祈使句；詳細內容放入 `references/`。
-- 新增或修改後驗證 frontmatter、名稱、路徑與實際工作流程；不得宣稱未執行的測試。
+- IDE 擴充套件、Antigravity 2.0 桌面外掛或外部 Marketplace 插件不納入 `configs/skills/`，避免與跨平台共用 Skill 混淆。
+- 新增或修改後驗證 frontmatter、名稱、路徑與實際工作流程；在控制中心 Repository 根目錄執行 `python scripts/check_skill_contracts.py`（唯讀、僅標準函式庫），再使用環境既有 YAML 解析器檢查完整語法；不得宣稱未執行的測試。此靜態檢查不替代下方 PowerShell 部署預覽。
 
 ## 單一來源與分流
 

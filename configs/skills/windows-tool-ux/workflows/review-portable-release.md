@@ -1,5 +1,7 @@
 # Portable 免安裝發行包相容性審驗流程 (Review Portable Release Workflow)
 
+依 [Windows 雙系統清單](../checklists/windows-compatibility.md) 分別記錄適用系統的結果，下列步驟用於各系統的免安裝驗收。
+
 1. **乾淨虛擬機/隔離目錄測試**：
    - 將 Portable ZIP 解壓縮至未安裝任何開發環境、使用者名稱含中文且路徑含空白之測試資料夾。
 2. **免安裝點擊驗收**：

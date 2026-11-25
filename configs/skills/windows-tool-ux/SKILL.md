@@ -37,7 +37,7 @@ description: Windows 桌面與公務工具產品設計與 UX 體驗技能庫。�
   - `review-startup.md`：冷啟動瓶頸定位與假死消除流程。
   - `review-portable-release.md`：Portable 免安裝發行包相容性審驗。
 - **檢核清單（`checklists/`）**：
-  - `windows-compatibility.md`：Windows 10、非 Admin、中文路徑合規檢核。
+  - `windows-compatibility.md`：Windows 10／11 分別實機驗收、非 Admin、中文路徑合規檢核。
   - `desktop-ux.md`：狀態可見度、高 DPI 縮放與錯誤提示檢核。
   - `portable-release.md`：免安裝打包潔淨度與相依性驗收檢核。
 - **範例庫（`examples/`）**：
